@@ -48,6 +48,7 @@ class Navigation:
 
     def __del__(self):
         Display.stop_message()
+        pyautogui.hotkey('alt','tab',interval=0.1)
 
 
 if __name__ == "__main__":

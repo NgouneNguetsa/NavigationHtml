@@ -15,7 +15,7 @@ class Constante:
 
     user32 = ctypes.windll.user32
     folder = Path(__file__).parent
-    screenWidth, _ = pyautogui.size()
+    screenWidth, screenHeight = pyautogui.size()
     VERSION_REACTIVE = False
 
     tl_group = [
