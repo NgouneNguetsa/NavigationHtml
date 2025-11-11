@@ -1,7 +1,7 @@
-from constants import pyautogui, keyboard, time
+from Constants import pyautogui, keyboard, time
 from DisplayManagement import Display
 from UrlManagement import Url
-from constants import Constante
+from Constants import Constante
 
 class Navigation:
 
@@ -54,3 +54,4 @@ if __name__ == "__main__":
 
     prog = Navigation()
     prog.Run()
+    del prog

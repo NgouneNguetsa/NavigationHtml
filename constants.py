@@ -9,7 +9,6 @@ import os
 from pathlib import Path
 import re
 import ctypes
-# from DisplayManagement import get_active_window_info
 
 
 class Constante:
@@ -20,9 +19,9 @@ class Constante:
     VERSION_REACTIVE = False
 
     tl_group = [
-            ["nobadnovel","shanghaifantasy","shinningnoveltranslations"],
-            ["brightnovels","otakutl"], # First research method
-            ["botitranslation"] # Second research method
+            ["nobadnovel","shanghaifantasy","shinningnoveltranslations"], # First research method
+            ["brightnovels","otakutl"], # Second research method
+            ["botitranslation"] # Third research method
         ]
 
     def InitVal():

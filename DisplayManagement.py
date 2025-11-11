@@ -1,5 +1,5 @@
-from constants import ctypes, gw, keyboard, time
-from constants import Constante
+from Constants import ctypes, gw, keyboard, time
+from Constants import Constante
 
 class Display:
 

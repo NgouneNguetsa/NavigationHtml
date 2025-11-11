@@ -1,5 +1,5 @@
-from constants import re, pyperclip, pyautogui, time, requests, BeautifulSoup
-from constants import Constante
+from Constants import re, pyperclip, pyautogui, time, requests, BeautifulSoup
+from Constants import Constante
 
 class Url:
     # --- Mapping des fonctions par direction ---
@@ -28,13 +28,13 @@ class Url:
         # Compile une seule regex globale
         Url.global_regex = re.compile("|".join(Url.patterns))
 
-    def increment_chapter_number(url, prefix="", chapter_number=1, suffix="", extension=""):
+    def increment_chapter_number(url, prefix, chapter_number : int, suffix, extension):
         """Incrémente le numéro de chapitre et reconstruit l'URL avec les éléments donnés"""
         new_chap = f"{prefix}{chapter_number + 1}{suffix}{extension}" if prefix else f"{chapter_number + 1}{suffix}{extension}"
         
         return url.replace(f"{prefix}{chapter_number}{suffix}{extension}" if prefix else f"{chapter_number}{suffix}{extension}", new_chap)
 
-    def decrement_chapter_number(url, prefix, chapter_number, suffix, extension):
+    def decrement_chapter_number(url, prefix, chapter_number : int, suffix, extension):
         """Décrémente le numéro de chapitre et reconstruit l'URL avec les éléments donnés"""
         new_chap = f"{prefix}{chapter_number - 1}{suffix}{extension}" if prefix else f"{chapter_number - 1}{suffix}{extension}"
         
@@ -69,10 +69,10 @@ class Url:
             
             if direction == "next":
                 # Incrémentation du numéro et reconstruction de l'URL
-                new_url = Url.increment_chapter_number(url, prefix, chapter_number, suffix)
+                new_url = Url.increment_chapter_number(url, prefix, chapter_number, suffix, "")
             else:
                 # Décrémentation du numéro et reconstruction de l'URL
-                new_url = Url.decrement_chapter_number(url, prefix, chapter_number, suffix)
+                new_url = Url.decrement_chapter_number(url, prefix, chapter_number, suffix, "")
             
             return new_url
         return None
@@ -87,10 +87,10 @@ class Url:
             
             if direction == "next":
                 # Incrémentation du numéro et reconstruction de l'URL
-                new_url = Url.increment_chapter_number(url, prefix, chapter_number, extension=extension)
+                new_url = Url.increment_chapter_number(url, prefix, chapter_number, "", extension)
             else:
                 # Décrémentation du numéro et reconstruction de l'URL
-                new_url = Url.decrement_chapter_number(url, prefix, chapter_number, extension=extension)
+                new_url = Url.decrement_chapter_number(url, prefix, chapter_number, "", extension)
             
             return new_url
         return None
@@ -104,10 +104,10 @@ class Url:
             
             if direction == "next":
                 # Incrémentation du numéro et reconstruction de l'URL
-                new_url = Url.increment_chapter_number(url, prefix, chapter_number)
+                new_url = Url.increment_chapter_number(url, prefix, chapter_number, "", "")
             else:
                 # Décrémentation du numéro et reconstruction de l'URL
-                new_url = Url.decrement_chapter_number(url, prefix, chapter_number)
+                new_url = Url.decrement_chapter_number(url, prefix, chapter_number, "", "")
             
             return new_url
         return None
@@ -122,10 +122,10 @@ class Url:
             
             if direction == "next":
                 # Incrémentation du numéro et reconstruction de l'URL
-                new_url = Url.increment_chapter_number(url, chapter_number=chapter_number, suffix=suffix, extension=extension)
+                new_url = Url.increment_chapter_number(url, "", chapter_number, suffix, extension)
             else:
                 # Décrémentation du numéro et reconstruction de l'URL
-                new_url = Url.decrement_chapter_number(url, chapter_number=chapter_number, suffix=suffix, extension=extension)
+                new_url = Url.decrement_chapter_number(url, "", chapter_number, suffix, extension)
             
             return new_url
         return None
@@ -139,10 +139,10 @@ class Url:
             
             if direction == "next":
                 # Incrémentation du numéro et reconstruction de l'URL
-                new_url = Url.increment_chapter_number(url, chapter_number=chapter_number, suffix=suffix)
+                new_url = Url.increment_chapter_number(url, "", chapter_number, suffix, "")
             else:
                 # Décrémentation du numéro et reconstruction de l'URL
-                new_url = Url.decrement_chapter_number(url, chapter_number=chapter_number, suffix=suffix)
+                new_url = Url.decrement_chapter_number(url, "", chapter_number, suffix, "")
             
             return new_url
         return None
@@ -156,10 +156,10 @@ class Url:
             
             if direction == "next":
                 # Incrémentation du numéro et reconstruction de l'URL
-                new_url = Url.increment_chapter_number(url, chapter_number=chapter_number, extension=extension)
+                new_url = Url.increment_chapter_number(url, "", chapter_number, "", extension)
             else:
                 # Décrémentation du numéro et reconstruction de l'URL
-                new_url = Url.decrement_chapter_number(url, chapter_number=chapter_number, extension=extension)
+                new_url = Url.decrement_chapter_number(url, "", chapter_number, "" ,extension)
             
             return new_url
         return None
@@ -172,15 +172,41 @@ class Url:
             
             if direction == "next":
                 # Incrémentation du numéro et reconstruction de l'URL
-                new_url = Url.increment_chapter_number(url, chapter_number=chapter_number)
+                new_url = Url.increment_chapter_number(url, "", chapter_number, "", "")
             else:
                 # Décrémentation du numéro et reconstruction de l'URL
-                new_url = Url.decrement_chapter_number(url, chapter_number=chapter_number)
+                new_url = Url.decrement_chapter_number(url, "", chapter_number, "", "")
             
             return new_url
         return None
 
-    def search_and_go_next_page_1st_method(url, soup):
+    def search_and_go_next_page_1st_method(url,soup):
+        """Cherche le prochain lien html présent dans la page html du lien actuel"""
+        start_url = ""
+        for c in url:
+            if start_url.endswith("chapter"):
+                break
+            start_url += c
+
+        if start_url == url:
+            start_url = ""
+            for c in url:
+                if c.isnumeric():
+                    break
+                start_url += c
+
+        # Liste de tous les liens
+        links = [a["href"] for a in soup.find_all("a", href=True) if a["href"].startswith(start_url) and url not in a["href"]]
+        
+        if len(links) < 2:
+            pyautogui.alert("Pas de nouveau chapitre disponible")
+            time.sleep(1.5)
+            exit()
+        else:
+            pyperclip.copy(links[1])
+            Url.copy_paste(True)
+
+    def search_and_go_next_page_2nd_method(url, soup):
         """Main function to handle all URL cases and search the next page"""
         
         # Mapping des cas aux fonctions respectives
@@ -217,7 +243,7 @@ class Url:
                 Url.copy_paste(True)
                 return
 
-    def search_and_go_next_page_2nd_method():
+    def search_and_go_next_page_3rd_method():
         """Détecte le bouton Next sur l'écran et clique dessus"""
         
         for image_path in Constante.imagesNextButton:
@@ -233,7 +259,28 @@ class Url:
                 pyautogui.moveTo(Constante.screenWidth,y)
                 break
 
-    def search_and_go_last_page_1st_method(url, soup):
+    def search_and_go_last_page_1st_method(url,soup):
+        """Cherche le précédent lien html présent dans la page html du lien actuel"""
+        start_url = ""
+        for c in url:
+            if start_url.endswith("chapter"):
+                break
+            start_url += c
+
+        if start_url == url:
+            start_url = ""
+            for c in url:
+                if c.isnumeric():
+                    break
+                start_url += c
+            
+        # Liste de tous les liens
+        links = [a["href"] for a in soup.find_all("a", href=True) if a["href"].startswith(start_url) and url not in a["href"]]
+        
+        pyperclip.copy(links[0])
+        Url.copy_paste(True)
+
+    def search_and_go_last_page_2nd_method(url, soup):
         """Main function to handle all URL cases and search the next page"""
         
         # Mapping des cas aux fonctions respectives
@@ -270,7 +317,7 @@ class Url:
                 Url.copy_paste(True)
                 return
 
-    def search_and_go_last_page_2nd_method():
+    def search_and_go_last_page_3rd_method():
         """Détecte le bouton Prev/Previous sur l'écran et clique dessus"""
         
         for image_path in Constante.imagesPrevButton:
