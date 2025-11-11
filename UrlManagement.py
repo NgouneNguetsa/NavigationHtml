@@ -1,7 +1,8 @@
-from Constants import re, pyperclip, pyautogui, time, requests, BeautifulSoup
-from Constants import Constante
+from constants import re, pyperclip, pyautogui, time, requests, BeautifulSoup
+from constants import Constante
 
 class Url:
+    
     # --- Mapping des fonctions par direction ---
     methods = {
     "next": [
@@ -19,7 +20,7 @@ class Url:
     mapping = {}
     patterns = []
 
-    def InitVal():
+    def InitVar():
         for i, tl_group_list in enumerate(Constante.tl_group):
             for tl in tl_group_list:
                 Url.patterns.append(re.escape(tl))
@@ -397,3 +398,10 @@ class Url:
         soup = BeautifulSoup(response.text, "html.parser")
 
         Url.go_to_page(url,soup,"last")
+
+    def __str__():
+        return f"Methods:\n{Url.methods}\n\nMapping:\n{Url.mapping}\n\nPatterns:\n{Url.patterns}\n\nRegular Expression:\n{Url.global_regex}"
+
+
+if __name__ == "__main__":
+    print(Url())

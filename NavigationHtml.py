@@ -1,14 +1,14 @@
-from Constants import pyautogui, keyboard, time
+from constants import pyautogui, keyboard, time
 from DisplayManagement import Display
 from UrlManagement import Url
-from Constants import Constante
+from constants import Constante
 
 class Navigation:
 
     def __init__(self):
-        Constante.InitVal()
-        Url.InitVal()
-        Display.InitDisplay()
+        Constante.InitVar()
+        Url.InitVar()
+        Display.InitVar()
 
     def Run(self):
         Display.start_message()
@@ -40,19 +40,15 @@ class Navigation:
                     last_action = time.time()
 
             elif keyboard.is_pressed("esc"):
+                Display.stop_message()
+                pyautogui.hotkey('alt','tab',interval=0.1)
                 break
 
             if not Constante.VERSION_REACTIVE:
                 if time.time() - last_action > DELAI_INACTIVITE:
                     time.sleep(1)
 
-    def __del__(self):
-        Display.stop_message()
-        pyautogui.hotkey('alt','tab',interval=0.1)
-
-
 if __name__ == "__main__":
 
     prog = Navigation()
     prog.Run()
-    del prog

@@ -24,7 +24,7 @@ class Constante:
             ["botitranslation","zkytl"] # Third research method
         ]
 
-    def InitVal():
+    def InitVar():
         subdirectory = [sub for sub in Constante.folder.iterdir() if sub.is_dir() and "git" not in str(sub)]
 
         Constante.imagesPrevButton = [

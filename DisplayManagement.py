@@ -1,9 +1,10 @@
-from Constants import ctypes, gw, keyboard, time, pyautogui
-from Constants import Constante
+from __future__ import annotations
+from constants import ctypes, gw, keyboard, time, pyautogui
+from constants import Constante
 
 class Display:
 
-    def InitDisplay():
+    def InitVar():
         Display.console = Display.get_active_window_info()
     
     def get_window_info(window):
