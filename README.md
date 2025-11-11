@@ -7,8 +7,8 @@ Ce programme permet simplement de se déplacer d'une page web à une autre de 2 
 **2ème méthode**
 - Le programme cherche simplement où se trouve le bouton du précédent/prochain chapitre
 
-# Pré requis
-Ce programme ne fonctionne qu'avec Windows (*Cela pourrait changer en fonction de ma motivation à continuer*)
+# Pré-requis
+Ce programme ne fonctionne qu'avec Windows (*Cela pourrait changer en fonction de ma motivation à continuer*)\
 Pour que ce programme fonctionne, il faut lancer la commande suivante :
 ```bash
 py -m pip install requests bs4 pyautogui pygetwindow keyboard pyperclip
