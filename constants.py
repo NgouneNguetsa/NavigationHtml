@@ -21,7 +21,7 @@ class Constante:
     tl_group = [
             ["nobadnovel","shanghaifantasy","shinningnoveltranslations"], # First research method
             ["brightnovels","otakutl"], # Second research method
-            ["botitranslation"] # Third research method
+            ["botitranslation","zkytl"] # Third research method
         ]
 
     def InitVal():
