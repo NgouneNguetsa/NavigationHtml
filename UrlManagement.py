@@ -201,7 +201,6 @@ class Url:
         if len(links) < 2:
             pyautogui.alert("Pas de nouveau chapitre disponible")
             time.sleep(1.5)
-            exit()
         else:
             pyperclip.copy(links[1])
             Url.copy_paste(True)
@@ -247,17 +246,20 @@ class Url:
         """Détecte le bouton Next sur l'écran et clique dessus"""
         
         for image_path in Constante.imagesNextButton:
-            bouton = pyautogui.locateOnScreen(image_path,confidence=0.8)
-            if bouton != None:
-                # Calcule le centre du bouton
-                x, y = pyautogui.center(bouton)
-                
-                # Clique dessus
-                pyautogui.click(x, y)
-                time.sleep(1)
-                pyautogui.leftClick()
-                pyautogui.moveTo(Constante.screenWidth,y)
-                break
+            try:
+                bouton = pyautogui.locateOnScreen(image_path,confidence=0.8)
+                if bouton != None:
+                    # Calcule le centre du bouton
+                    x, y = pyautogui.center(bouton)
+                    
+                    # Clique dessus
+                    pyautogui.click(x, y)
+                    time.sleep(1)
+                    pyautogui.leftClick()
+                    pyautogui.moveTo(Constante.screenWidth,y)
+                    break
+            except pyautogui.ImageNotFoundException:
+                continue
 
     def search_and_go_last_page_1st_method(url,soup):
         """Cherche le précédent lien html présent dans la page html du lien actuel"""
@@ -321,17 +323,20 @@ class Url:
         """Détecte le bouton Prev/Previous sur l'écran et clique dessus"""
         
         for image_path in Constante.imagesPrevButton:
-            bouton = pyautogui.locateOnScreen(image_path,confidence=0.8)
-            if bouton != None:
-                # Calcule le centre du bouton
-                x, y = pyautogui.center(bouton)
-                
-                # Clique dessus
-                pyautogui.click(x, y)
-                time.sleep(1)
-                pyautogui.leftClick()
-                pyautogui.moveTo(Constante.screenWidth,y)
-                break
+            try:
+                bouton = pyautogui.locateOnScreen(image_path,confidence=0.8)
+                if bouton != None:
+                    # Calcule le centre du bouton
+                    x, y = pyautogui.center(bouton)
+                    
+                    # Clique dessus
+                    pyautogui.click(x, y)
+                    time.sleep(1)
+                    pyautogui.leftClick()
+                    pyautogui.moveTo(Constante.screenWidth,y)
+                    break
+            except pyautogui.ImageNotFoundException:
+                pass
 
     def copy_paste(copy_or_paste = False):
         """"Copier-coller automatique + vidange de la clipboard"""
@@ -351,7 +356,6 @@ class Url:
         if not match:
             pyautogui.alert(f"{url}\nLien invalide ou groupe de traduction non présent dans la database")
             time.sleep(1.5)
-            exit()
 
         tl_found = match.group(0)
         i = Url.mapping[tl_found]

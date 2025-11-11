@@ -1,4 +1,4 @@
-from Constants import ctypes, gw, keyboard, time
+from Constants import ctypes, gw, keyboard, time, pyautogui
 from Constants import Constante
 
 class Display:
@@ -39,7 +39,7 @@ class Display:
             return False
         
     def start_message():
-        print(f"Bienvenue dans le programme NavigationHtml.")
+        print("Bienvenue dans le programme NavigationHtml.")
         print("Ce programme vous permet de vous déplacer d'une page html à une autre à l'aide de vos flèches directionnelles")
         print("Maintenez <- jusqu'à ce que le lien soit surligné en bleu afin d'aller à la page précédente.")
         print("Maintenez -> jusqu'à ce que le lien soit surligné en bleu afin d'aller à la page suivante.")
@@ -59,6 +59,12 @@ class Display:
 
     def stop_message():
         Display.focus_window(Display.console["handle"])
-        print(f"\nMerci d'avoir utilisé le programme NavigationHtml.")
+        print("\nMerci d'avoir utilisé le programme NavigationHtml.")
         print("J'espère qu'il vous a été utile.")
         time.sleep(3)
+
+    def show_error_message(error_message : str):
+        Display.focus_window(Display.console["handle"])
+        print(f"{error_message}")
+        time.sleep(2)
+        pyautogui.hotkey('alt','tab',interval=0.1)
