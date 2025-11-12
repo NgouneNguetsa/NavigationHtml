@@ -10,7 +10,13 @@ from pathlib import Path
 import re
 import ctypes
 from urllib.parse import urljoin
+import win32api
+import win32con
 
+def on_suspend():
+    exit(0)
+
+win32api.SetConsoleCtrlHandler(on_suspend, True)
 
 class Constante:
 
