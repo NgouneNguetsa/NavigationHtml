@@ -9,8 +9,6 @@ class Display:
     
     def get_window_info(window):
         """Retourne un dict avec titre, handle et pid."""
-        if not window:
-            return None
         try:
             hwnd = window._hWnd
             pid = ctypes.c_ulong()
@@ -33,11 +31,10 @@ class Display:
     def focus_window(hwnd):
         """Met la fenêtre correspondant au handle hwnd au premier plan."""
         try:
-            Constante.user32.ShowWindow(hwnd, 9)  # 9 = SW_RESTORE (si elle est minimisée)
+            Constante.user32.ShowWindow(hwnd, 3)  # 3 = SW_SHOWMAXIMIZED (si elle est minimisée)
             Constante.user32.SetForegroundWindow(hwnd)
-            return True
         except Exception:
-            return False
+            pass
         
     def start_message():
         print("Bienvenue dans le programme NavigationHtml.")
@@ -65,7 +62,5 @@ class Display:
         time.sleep(3)
 
     def show_error_message(error_message : str):
-        Display.focus_window(Display.console["handle"])
-        print(f"{error_message}")
-        time.sleep(2)
-        pyautogui.hotkey('alt','tab',interval=0.1)
+        pyautogui.alert(f"{error_message}")
+        time.sleep(1)

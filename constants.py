@@ -9,6 +9,7 @@ import os
 from pathlib import Path
 import re
 import ctypes
+from urllib.parse import urljoin
 
 
 class Constante:
@@ -19,8 +20,8 @@ class Constante:
     VERSION_REACTIVE = False
 
     tl_group = [
-            ["nobadnovel","shanghaifantasy","shinningnoveltranslations"], # First research method
-            ["brightnovels","otakutl"], # Second research method
+            ["nobadnovel","shanghaifantasy","shinningnoveltranslations"], # First research method - First case
+            ["brightnovels","otakutl"], # First research method - Second case
             ["botitranslation","zkytl"] # Third research method
         ]
 
