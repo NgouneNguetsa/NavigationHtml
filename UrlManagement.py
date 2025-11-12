@@ -30,7 +30,7 @@ class Url:
 
     def get_last_segment(url):
         """Retourne la dernière partie de l'URL après le dernier /"""
-        return url.rstrip("/").split("/")[-1]
+        return url.split("/")[-1]
 
     def modify_chapter_number(segment, prefix, chapter_number, suffix, extension, direction):
         """Modifie le numéro selon la direction (next/last) et reconstruit le segment"""

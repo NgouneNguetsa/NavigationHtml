@@ -13,11 +13,6 @@ from urllib.parse import urljoin
 import win32api
 import win32con
 
-def on_suspend():
-    exit(0)
-
-win32api.SetConsoleCtrlHandler(on_suspend, True)
-
 class Constante:
 
     user32 = ctypes.windll.user32
