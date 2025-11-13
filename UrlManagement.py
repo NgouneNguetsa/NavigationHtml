@@ -208,7 +208,7 @@ class Url:
                 while Url.tentatives < 5:
                     response = requests.get(new_url)
                     soup = BeautifulSoup(response.text,"html.parser")
-                    if soup.text < Constante.BLOG_TEXT_THRESHOLD:
+                    if len(soup.text) < Constante.BLOG_TEXT_THRESHOLD:
                         new_url = Url.test_url_disponibility(new_url,direction)
                     else:
                         break
@@ -216,6 +216,8 @@ class Url:
             
             if Url.tentatives > 4:
                 Display.show_error_message("Il n'existe pas de nouveau chapitre") if direction == "next" else Display.show_error_message("Il n'y a pas d'ancien chapitre")
+                Url.tentatives = 0
+                return
             Url.tentatives = 0
 
             # On copie l'URL générée
