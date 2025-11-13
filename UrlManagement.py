@@ -96,53 +96,50 @@ class Url:
             if ele.isnumeric():
                 date_parser.append(ele)
 
-        if date_parser:
-            if len(date_parser) == 2:
-                date_parser[1] = str(int(date_parser[1]) + 1) if direction == "next" else str(int(date_parser[1]) - 1)
-                date_parser[1] = '0'+ date_parser[1] if int(date_parser[1]) < 10 else date_parser[1]
-                if int(date_parser[1]) > 12:
-                    date_parser[1] = '01'
-                    date_parser[0] = str(int(date_parser[0]) + 1)
-                elif int(date_parser[1]) < 1:
-                    date_parser[1] = '12'
-                    date_parser[0] = str(int(date_parser[0]) - 1)
+        if len(date_parser) == 2:
+            date_parser[1] = str(int(date_parser[1]) + 1) if direction == "next" else str(int(date_parser[1]) - 1)
+            date_parser[1] = '0'+ date_parser[1] if int(date_parser[1]) < 10 else date_parser[1]
+            if int(date_parser[1]) > 12:
+                date_parser[1] = '01'
+                date_parser[0] = str(int(date_parser[0]) + 1)
+            elif int(date_parser[1]) < 1:
+                date_parser[1] = '12'
+                date_parser[0] = str(int(date_parser[0]) - 1)
 
-                date_parser.insert(1,'/')
-                date_parser.append('/')
-                
-            elif len(date_parser) == 3:
-                date_string = ""
-                for d in date_parser:
-                    date_string += d
-
-                day = timedelta(days=1)
-
-                date_object = date.fromisoformat(date_string)
-                date_object = date_object + day if direction == "next" else date_object - day
-                date_parser = date_object.isoformat().split("-")
-
-                date_parser.insert(1,'/')
-                date_parser.insert(-1,'/')
-                date_parser.append('/')
-
-            base = ""
-            for i in range(len(url_parser)):
-                if url_parser[i].isnumeric():
-                    break
-                else:
-                    if url_parser[i] != "":
-                        base += url_parser[i]
-                    else:
-                        base += "//" 
-
+            date_parser.insert(1,'/')
+            date_parser.append('/')
+            
+        elif len(date_parser) == 3:
             date_string = ""
             for d in date_parser:
                 date_string += d
 
-            suffixe= url_parser[-1]
-            return urljoin(urljoin(base,date_string),suffixe) 
-        else:
-            return url
+            day = timedelta(days=1)
+
+            date_object = date.fromisoformat(date_string)
+            date_object = date_object + day if direction == "next" else date_object - day
+            date_parser = date_object.isoformat().split("-")
+
+            date_parser.insert(1,'/')
+            date_parser.insert(-1,'/')
+            date_parser.append('/')
+
+        base = ""
+        for i in range(len(url_parser)):
+            if url_parser[i].isnumeric():
+                break
+            else:
+                if url_parser[i] != "":
+                    base += url_parser[i]
+                else:
+                    base += "//" 
+
+        date_string = ""
+        for d in date_parser:
+            date_string += d
+
+        suffixe= url_parser[-1]
+        return urljoin(urljoin(base,date_string),suffixe)
     
     def auto_select_method(url, direction):
         """
