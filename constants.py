@@ -24,7 +24,7 @@ class Constante:
 
     tl_group = [
             ["nobadnovel","shanghaifantasy","shinningnoveltranslations"], # First research method - First case
-            ["brightnovels","otakutl","zkytl"], # First research method - Second case
+            ["brightnovels","otakutl","zkytl","breaknovel"], # First research method - Second case
             ["botitranslation"] # Third research method
         ]
 
