@@ -95,53 +95,54 @@ class Url:
         for ele in url_parser:
             if ele.isnumeric():
                 date_parser.append(ele)
-            else:
-                return url
 
-        if len(date_parser) == 2:
-            date_parser[1] = str(int(date_parser[1]) + 1) if direction == "next" else str(int(date_parser[1]) - 1)
-            date_parser[1] = '0'+ date_parser[1] if int(date_parser[1]) < 10 else date_parser[1]
-            if int(date_parser[1]) > 12:
-                date_parser[1] = '01'
-                date_parser[0] = str(int(date_parser[0]) + 1)
-            elif int(date_parser[1]) < 1:
-                date_parser[1] = '12'
-                date_parser[0] = str(int(date_parser[0]) - 1)
+        if date_parser:
+            if len(date_parser) == 2:
+                date_parser[1] = str(int(date_parser[1]) + 1) if direction == "next" else str(int(date_parser[1]) - 1)
+                date_parser[1] = '0'+ date_parser[1] if int(date_parser[1]) < 10 else date_parser[1]
+                if int(date_parser[1]) > 12:
+                    date_parser[1] = '01'
+                    date_parser[0] = str(int(date_parser[0]) + 1)
+                elif int(date_parser[1]) < 1:
+                    date_parser[1] = '12'
+                    date_parser[0] = str(int(date_parser[0]) - 1)
 
-            date_parser.insert(1,'/')
-            date_parser.append('/')
-            
-        elif len(date_parser) == 3:
+                date_parser.insert(1,'/')
+                date_parser.append('/')
+                
+            elif len(date_parser) == 3:
+                date_string = ""
+                for d in date_parser:
+                    date_string += d
+
+                day = timedelta(days=1)
+
+                date_object = date.fromisoformat(date_string)
+                date_object = date_object + day if direction == "next" else date_object - day
+                date_parser = date_object.isoformat().split("-")
+
+                date_parser.insert(1,'/')
+                date_parser.insert(-1,'/')
+                date_parser.append('/')
+
+            base = ""
+            for i in range(len(url_parser)):
+                if url_parser[i].isnumeric():
+                    break
+                else:
+                    if url_parser[i] != "":
+                        base += url_parser[i]
+                    else:
+                        base += "//" 
+
             date_string = ""
             for d in date_parser:
                 date_string += d
 
-            day = timedelta(days=1)
-
-            date_object = date.fromisoformat(date_string)
-            date_object = date_object + day if direction == "next" else date_object - day
-            date_parser = date_object.isoformat().split("-")
-
-            date_parser.insert(1,'/')
-            date_parser.insert(-1,'/')
-            date_parser.append('/')
-
-        base = ""
-        for i in range(len(url_parser)):
-            if url_parser[i].isnumeric():
-                break
-            else:
-                if url_parser[i] != "":
-                    base += url_parser[i]
-                else:
-                    base += "//" 
-
-        date_string = ""
-        for d in date_parser:
-            date_string += d
-
-        suffixe= url_parser[-1]
-        return urljoin(urljoin(base,date_string),suffixe) 
+            suffixe= url_parser[-1]
+            return urljoin(urljoin(base,date_string),suffixe) 
+        else:
+            return url
     
     def auto_select_method(url, direction):
         """
@@ -197,16 +198,25 @@ class Url:
                 Display.show_error_message("Le chapitre 0 n'existe pas") if direction == "last" else Display.show_error_message("Je ne sais pas comment tu es rentré ici, mais je te félicite")
                 return
 
-            response = requests.get(new_url)
-            soup = BeautifulSoup(response.text,"html.parser")
-
+            toCheck = False
             for c in new_url.split("/"):
                 if c.isnumeric():
-                    while soup.get_text() < Constante.BLOG_TEXT_THRESHOLD or Url.tentatives < 5:
+                    toCheck = True
+                    break
+
+            if toCheck:    
+                while Url.tentatives < 5:
+                    response = requests.get(new_url)
+                    soup = BeautifulSoup(response.text,"html.parser")
+                    if soup.text < Constante.BLOG_TEXT_THRESHOLD:
                         new_url = Url.test_url_disponibility(new_url,direction)
-                        Url.tentatives += 1
-                    if Url.tentatives > 4:
-                        Display.show_error_message("Il n'existe pas de nouveaux chapitres")
+                    else:
+                        break
+                    Url.tentatives += 1
+            
+            if Url.tentatives > 4:
+                Display.show_error_message("Il n'existe pas de nouveau chapitre") if direction == "next" else Display.show_error_message("Il n'y a pas d'ancien chapitre")
+            Url.tentatives = 0
 
             # On copie l'URL générée
             pyperclip.copy(new_url)
