@@ -147,13 +147,15 @@ class Url:
         """
         # Liste des patterns pour détecter chaque type d'URL
         patterns = [
-            (r"([a-zA-Z]*)(\d+)([-\w]*)(\.\w+)$", Url.handle_prefix_number_suffix_extension),  # Préfixe + numéro + suffixe + extension
-            (r"([a-zA-Z]*)(\d+)([-\w]+)$", Url.handle_prefix_number_suffix),                   # Préfixe + numéro + suffixe
-            (r"([a-zA-Z]*)(\d+)(\.\w+)$", Url.handle_prefix_number_extension),                 # Préfixe + numéro + extension
             (r"([a-zA-Z]*)(\d+)$", Url.handle_prefix_number),                                  # Préfixe + numéro
-            (r"(\d+)([-\w]+)(\.\w+)$", Url.handle_number_suffix_extension),                    # Numéro + suffixe + extension
             (r"(\d+)([-\w]+)$", Url.handle_number_suffix),                                     # Numéro + suffixe
             (r"(\d+)(\.\w+)$", Url.handle_number_extension),                                   # Numéro + extension
+
+            (r"([a-zA-Z]*)(\d+)([-\w]+)$", Url.handle_prefix_number_suffix),                   # Préfixe + numéro + suffixe
+            (r"([a-zA-Z]*)(\d+)(\.\w+)$", Url.handle_prefix_number_extension),                 # Préfixe + numéro + extension
+            (r"(\d+)([-\w]+)(\.\w+)$", Url.handle_number_suffix_extension),                    # Numéro + suffixe + extension
+
+            (r"([a-zA-Z]*)(\d+)([-\w]*)(\.\w+)$", Url.handle_prefix_number_suffix_extension),  # Préfixe + numéro + suffixe + extension
             (r"(\d+)$", Url.handle_number_only)                                                # Numéro uniquement
         ]
 
@@ -199,10 +201,9 @@ class Url:
             for c in new_url.split("/"):
                 if c.isnumeric():
                     toCheck = True
-                    break
-
-            if toCheck:    
-                while Url.tentatives < 5:
+                    
+            if toCheck:
+                while Url.tentatives < 31:
                     response = requests.get(new_url)
                     soup = BeautifulSoup(response.text,"html.parser")
                     if len(soup.text) < Constante.BLOG_TEXT_THRESHOLD:
@@ -211,10 +212,11 @@ class Url:
                         break
                     Url.tentatives += 1
             
-            if Url.tentatives > 4:
+            if Url.tentatives > 30:
                 Display.show_error_message("Il n'existe pas de nouveau chapitre") if direction == "next" else Display.show_error_message("Il n'y a pas d'ancien chapitre")
                 Url.tentatives = 0
                 return
+                    
             Url.tentatives = 0
 
             # On copie l'URL générée

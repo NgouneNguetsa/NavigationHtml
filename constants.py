@@ -20,12 +20,12 @@ class Constante:
     folder = Path(__file__).parent
     screenWidth, screenHeight = pyautogui.size()
     VERSION_REACTIVE = False
-    BLOG_TEXT_THRESHOLD = 1000 # Regarde si le blog a plus de 1000 caracteres avant de copier le lien
+    BLOG_TEXT_THRESHOLD = 2500 # Regarde si le blog a plus de 1000 caracteres avant de copier le lien
 
     tl_group = [
             ["nobadnovel","shanghaifantasy","shinningnoveltranslations"], # First research method - First case
-            ["brightnovels","otakutl"], # First research method - Second case
-            ["botitranslation","zkytl"] # Third research method
+            ["brightnovels","otakutl","zkytl"], # First research method - Second case
+            ["botitranslation"] # Third research method
         ]
 
     def InitVar():
