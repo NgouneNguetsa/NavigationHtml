@@ -5,16 +5,10 @@ from DisplayManagement import Display
 class Url:
     
     # --- Mapping des fonctions par direction ---
-    methods = {
-    "next": [
+    methods = [
         lambda url, soup, index, direction: Url.search_and_go_to_page(url, soup, index, direction),
         lambda direction: Url.search_and_go_to_page_2nd_method(direction)
-    ],
-    "last": [
-        lambda url, soup, index, direction: Url.search_and_go_to_page(url, soup, index, direction),
-        lambda direction: Url.search_and_go_to_page_2nd_method(direction)
-    ],
-    }
+    ]
 
     mapping = {}
     patterns = []
@@ -284,7 +278,7 @@ class Url:
 
         tl_found = match.group(0)
         i = Url.mapping[tl_found]
-        func = Url.methods[direction][0] if i < 2 else Url.methods[direction][1]
+        func = Url.methods[0] if i < 2 else Url.methods[1]
 
         # Appel de la fonction correspondante
         if func.__code__.co_argcount == 4:
