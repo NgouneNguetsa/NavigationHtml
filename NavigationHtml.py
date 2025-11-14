@@ -1,4 +1,4 @@
-from constants import pyautogui, keyboard, time, win32api, win32con
+from constants import pyautogui, keyboard, time
 from DisplayManagement import Display
 from UrlManagement import Url
 from constants import Constante
@@ -48,11 +48,7 @@ class Navigation:
                 if time.time() - last_action > DELAI_INACTIVITE:
                     time.sleep(1)
 
-    def on_suspend():
-        exit(0)
-
 if __name__ == "__main__":
 
     prog = Navigation()
-    win32api.SetConsoleCtrlHandler(prog.on_suspend, True)
     prog.Run()

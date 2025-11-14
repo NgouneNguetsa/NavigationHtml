@@ -10,8 +10,6 @@ from pathlib import Path
 import re
 import ctypes
 from urllib.parse import urljoin
-import win32api
-import win32con
 from datetime import date, timedelta
 
 class Constante:
