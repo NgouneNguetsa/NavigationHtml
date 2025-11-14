@@ -261,7 +261,7 @@ class Url:
             pyautogui.leftClick()
             pyautogui.moveTo(Constante.screenWidth,y)
         else:
-            Display.show_error_message("Comment es-tu arrivé là ?")
+            Display.show_error_message("Il n'y a pas de nouveau chapitre") if direction == "next" else Display.show_error_message("Il n'y a pas d'ancien chapitre")
         
     def copy_paste(copy_or_paste = False):
         """"Copier-coller automatique + vidange de la clipboard"""
