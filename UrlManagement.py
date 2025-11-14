@@ -31,7 +31,7 @@ class Url:
 
     def get_last_segment(url):
         """Retourne la dernière partie de l'URL après le dernier /"""
-        return url.split("/")[-1]
+        return url.rstrip("/").split("/")[-1]
 
     def modify_chapter_number(segment, prefix, chapter_number, suffix, extension, direction):
         """Modifie le numéro selon la direction (next/last) et reconstruit le segment"""
@@ -89,7 +89,7 @@ class Url:
         return Url.apply_regex_and_modify(url, r"(\d+)$", ["number"], direction)
 
     def test_url_disponibility(url,direction):
-        url_parser = url.split("/")
+        url_parser = url.rstrip("/").split("/")
         date_parser = []
 
         for ele in url_parser:
@@ -138,7 +138,7 @@ class Url:
         for d in date_parser:
             date_string += d
 
-        suffixe= url_parser[-1]
+        suffixe = url_parser[-1]
         return urljoin(urljoin(base,date_string),suffixe)
     
     def auto_select_method(url, direction):
@@ -178,8 +178,8 @@ class Url:
 
         if index == 0:
             start_url = Url.handle_prefix_number(url,direction)
-            next_page_link = ""
-            for a in soup.find_all("a", href=True):
+
+            for a in soup.find_all("a",href=True):
                 if start_url in a["href"]:
                     next_page_link = a["href"]
                     break
@@ -226,6 +226,7 @@ class Url:
     def search_and_go_to_page_2nd_method(direction : str):
         """Cherche le bouton Previous/Next sur l'écran et clique dessus"""
         
+        bouton = None
         if direction == "next":
             for image_path in Constante.imagesNextButton:
                 try:
@@ -235,7 +236,7 @@ class Url:
                         
                 except pyautogui.ImageNotFoundException:
                     continue
-        else:
+        elif direction == "last":
             for image_path in Constante.imagesPrevButton:
                 try:
                     bouton = pyautogui.locateOnScreen(image_path,confidence=0.8)
@@ -245,19 +246,22 @@ class Url:
                 except pyautogui.ImageNotFoundException:
                     pass
         
-        # Calcule le centre du bouton
-        x, y = pyautogui.center(bouton)
-        
-        # Clique dessus
-        pyautogui.click(x, y)
-        time.sleep(1)
+        if bouton:
+            # Calcule le centre du bouton
+            x, y = pyautogui.center(bouton)
+            
+            # Clique dessus
+            pyautogui.click(x, y)
+            time.sleep(1)
 
-        if y < Constante.screenHeight / 2:
-            yDiff = (Constante.screenHeight / 2) - y
-            pyautogui.moveTo(x,Constante.screenHeight - 2*yDiff)
-        
-        pyautogui.leftClick()
-        pyautogui.moveTo(Constante.screenWidth,y)
+            if y < Constante.screenHeight / 2:
+                yDiff = (Constante.screenHeight / 2) - y
+                pyautogui.moveTo(x,Constante.screenHeight - 2*yDiff)
+            
+            pyautogui.leftClick()
+            pyautogui.moveTo(Constante.screenWidth,y)
+        else:
+            Display.show_error_message("Comment es-tu arrivé là ?")
         
     def copy_paste(copy_or_paste = False):
         """"Copier-coller automatique + vidange de la clipboard"""
