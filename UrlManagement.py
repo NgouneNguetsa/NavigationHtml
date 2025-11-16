@@ -192,7 +192,7 @@ class Url:
                 return
 
             toCheck = False
-            for c in new_url.split("/"):
+            for c in new_url.split("/")[:-1]:
                 if c.isnumeric():
                     toCheck = True
                     
