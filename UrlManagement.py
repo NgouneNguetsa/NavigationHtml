@@ -286,25 +286,16 @@ class Url:
         else:
             func(direction)
 
-    def search_and_go_next_page():
-        """Fonction qui recherche la page html suivante en fonction de la page actuelle"""
+    def search_and_go_to_page(direction):
+        """Fonction qui recherche la page html précédente/suivante en fonction de la page actuelle"""
         
         Url.copy_paste()
         url = pyperclip.paste()
-        response = requests.get(url)
-        soup = BeautifulSoup(response.text, "html.parser")
+        if url:
+            response = requests.get(url)
+            soup = BeautifulSoup(response.text, "html.parser")
 
-        Url.go_to_page(url,soup,"next")
-
-    def search_and_go_last_page():
-        """Fonction qui recherche la page html précédente en fonction de la page actuelle"""
-        
-        Url.copy_paste()
-        url = pyperclip.paste()
-        response = requests.get(url)
-        soup = BeautifulSoup(response.text, "html.parser")
-
-        Url.go_to_page(url,soup,"last")
+            Url.go_to_page(url,soup,direction)
 
     def __str__():
         return f"Methods:\n{Url.methods}\n\nMapping:\n{Url.mapping}\n\nPatterns:\n{Url.patterns}\n\nRegular Expression:\n{Url.global_regex}"

@@ -22,7 +22,7 @@ class Navigation:
             if keyboard.is_pressed("right"):
                 keyboard.block_key("right")
 
-                Url.search_and_go_next_page()
+                Url.search_and_go_to_page("next")
 
                 keyboard.unblock_key("right")
 
@@ -32,7 +32,7 @@ class Navigation:
             elif keyboard.is_pressed("left"):
                 keyboard.block_key("left")
 
-                Url.search_and_go_last_page()
+                Url.search_and_go_to_page("last")
 
                 keyboard.unblock_key("left")
 
