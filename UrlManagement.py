@@ -286,7 +286,7 @@ class Url:
         else:
             func(direction)
 
-    def search_and_go_to_page(direction):
+    def search_page(direction):
         """Fonction qui recherche la page html précédente/suivante en fonction de la page actuelle"""
         
         Url.copy_paste()
