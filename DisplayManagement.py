@@ -66,7 +66,6 @@ class Display:
     def show_minor_error_message(error_message : str):
         pyautogui.alert(f"{error_message}")
         time.sleep(1)
-        pyautogui.hotkey('alt','tab',interval=0.1)
 
     def show_major_error_message():
         Display.focus_window(Display.console["handle"])

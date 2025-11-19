@@ -201,9 +201,10 @@ class Url:
                     response = None
                     while not isinstance(response,requests.Response):
                         try:
-                            response = requests.get(url)
+                            response = requests.get(new_url)
                         except requests.exceptions.RequestException:
                             Display.show_major_error_message()
+
                     soup = BeautifulSoup(response.text,"html.parser")
                     if len(soup.text) < Constante.BLOG_TEXT_THRESHOLD:
                         new_url = Url.test_url_disponibility(new_url,direction)
