@@ -195,6 +195,7 @@ class Url:
             for c in new_url.split("/")[:-1]:
                 if c.isnumeric():
                     toCheck = True
+                    break
                     
             if toCheck:
                 while Url.tentatives < 31:
