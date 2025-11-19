@@ -199,7 +199,7 @@ class Url:
             if toCheck:
                 while Url.tentatives < 31:
                     response = None
-                    while not isinstance(requests.Response,response):
+                    while not isinstance(response,requests.Response):
                         try:
                             response = requests.get(url)
                         except requests.exceptions.RequestException:
@@ -280,6 +280,7 @@ class Url:
         if not match:
             pyautogui.alert(f"{url}\nLien invalide ou groupe de traduction non présent dans la database")
             time.sleep(1.5)
+            return
 
         tl_found = match.group(0)
         i = Url.mapping[tl_found]
@@ -298,7 +299,7 @@ class Url:
         url = pyperclip.paste()
         if url:
             response = None
-            while not isinstance(requests.Response,response):
+            while not isinstance(response,requests.Response):
                 try:
                     response = requests.get(url)
                 except requests.exceptions.RequestException:

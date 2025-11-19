@@ -61,6 +61,7 @@ class Display:
         print("\nMerci d'avoir utilisé le programme NavigationHtml.")
         print("J'espère qu'il vous a été utile.")
         time.sleep(3)
+        pyautogui.hotkey('alt','tab',interval=0.1)
 
     def show_minor_error_message(error_message : str):
         pyautogui.alert(f"{error_message}")

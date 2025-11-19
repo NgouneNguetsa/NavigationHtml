@@ -39,7 +39,6 @@ class Navigation:
 
             elif keyboard.is_pressed("esc"):
                 Display.stop_message()
-                exit(0)
 
             if not Constante.VERSION_REACTIVE:
                 if time.time() - last_action > DELAI_INACTIVITE:
