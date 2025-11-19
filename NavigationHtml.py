@@ -9,11 +9,9 @@ class Navigation:
         Constante.InitVar()
         Url.InitVar()
         Display.InitVar()
+        Display.start_message()
 
     def Run(self):
-        Display.start_message()
-        pyautogui.hotkey('alt','tab',interval=0.1)
-
         if not Constante.VERSION_REACTIVE:
             last_action = time.time()
             DELAI_INACTIVITE = 2  # secondes
@@ -41,8 +39,7 @@ class Navigation:
 
             elif keyboard.is_pressed("esc"):
                 Display.stop_message()
-                pyautogui.hotkey('alt','tab',interval=0.1)
-                break
+                exit(0)
 
             if not Constante.VERSION_REACTIVE:
                 if time.time() - last_action > DELAI_INACTIVITE:
@@ -51,4 +48,12 @@ class Navigation:
 if __name__ == "__main__":
 
     prog = Navigation()
-    prog.Run()
+
+    while True:
+        try:
+            prog.Run()
+        except Exception:
+            Display.show_major_error_message()
+        finally:
+            prog.Run()
+    

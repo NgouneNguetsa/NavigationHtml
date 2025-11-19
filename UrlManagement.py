@@ -182,13 +182,13 @@ class Url:
                 pyperclip.copy(next_page_link)
                 Url.copy_paste(True)
             else:
-                Display.show_error_message("Il n'y a pas de nouveau chapitre") if direction == "next" else Display.show_error_message("Le chapitre 0 n'existe pas")
+                Display.show_minor_error_message("Il n'y a pas de nouveau chapitre") if direction == "next" else Display.show_minor_error_message("Le chapitre 0 n'existe pas")
         else:
 
             # On génère la nouvelle URL en fonction de la méthode détectée
             new_url = Url.auto_select_method(url, direction)
             if not new_url:
-                Display.show_error_message("Le chapitre 0 n'existe pas") if direction == "last" else Display.show_error_message("Je ne sais pas comment tu es rentré ici, mais je te félicite")
+                Display.show_minor_error_message("Le chapitre 0 n'existe pas") if direction == "last" else Display.show_minor_error_message("Je ne sais pas comment tu es rentré ici, mais je te félicite")
                 return
 
             toCheck = False
@@ -207,7 +207,7 @@ class Url:
                     Url.tentatives += 1
             
             if Url.tentatives > 30:
-                Display.show_error_message("Il n'existe pas de nouveau chapitre") if direction == "next" else Display.show_error_message("Il n'y a pas d'ancien chapitre")
+                Display.show_minor_error_message("Il n'existe pas de nouveau chapitre") if direction == "next" else Display.show_minor_error_message("Il n'y a pas d'ancien chapitre")
                 Url.tentatives = 0
                 return
                     
@@ -255,7 +255,7 @@ class Url:
             pyautogui.leftClick()
             pyautogui.moveTo(Constante.screenWidth,y)
         else:
-            Display.show_error_message("Il n'y a pas de nouveau chapitre") if direction == "next" else Display.show_error_message("Il n'y a pas d'ancien chapitre")
+            Display.show_minor_error_message("Il n'y a pas de nouveau chapitre") if direction == "next" else Display.show_minor_error_message("Il n'y a pas d'ancien chapitre")
         
     def copy_paste(copy_or_paste = False):
         """"Copier-coller automatique + vidange de la clipboard"""
