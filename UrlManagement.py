@@ -142,14 +142,14 @@ class Url:
         # Liste des patterns pour détecter chaque type d'URL
         patterns = [
             (r"([a-zA-Z]*)(\d+)$", Url.handle_prefix_number),                                  # Préfixe + numéro
-            (r"(\d+)([-\w]+)$", Url.handle_number_suffix),                                     # Numéro + suffixe
-            (r"(\d+)(\.\w+)$", Url.handle_number_extension),                                   # Numéro + extension
-
             (r"([a-zA-Z]*)(\d+)([-\w]+)$", Url.handle_prefix_number_suffix),                   # Préfixe + numéro + suffixe
             (r"([a-zA-Z]*)(\d+)(\.\w+)$", Url.handle_prefix_number_extension),                 # Préfixe + numéro + extension
+            (r"([a-zA-Z]*)(\d+)([-\w]*)(\.\w+)$", Url.handle_prefix_number_suffix_extension),  # Préfixe + numéro + suffixe + extension
+            
+            (r"(\d+)([-\w]+)$", Url.handle_number_suffix),                                     # Numéro + suffixe
+            (r"(\d+)(\.\w+)$", Url.handle_number_extension),                                   # Numéro + extension
             (r"(\d+)([-\w]+)(\.\w+)$", Url.handle_number_suffix_extension),                    # Numéro + suffixe + extension
 
-            (r"([a-zA-Z]*)(\d+)([-\w]*)(\.\w+)$", Url.handle_prefix_number_suffix_extension),  # Préfixe + numéro + suffixe + extension
             (r"(\d+)$", Url.handle_number_only)                                                # Numéro uniquement
         ]
 
