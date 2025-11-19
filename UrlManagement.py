@@ -198,7 +198,12 @@ class Url:
                     
             if toCheck:
                 while Url.tentatives < 31:
-                    response = requests.get(new_url)
+                    response = None
+                    while not isinstance(requests.Response,response):
+                        try:
+                            response = requests.get(url)
+                        except requests.exceptions.RequestException:
+                            Display.show_major_error_message()
                     soup = BeautifulSoup(response.text,"html.parser")
                     if len(soup.text) < Constante.BLOG_TEXT_THRESHOLD:
                         new_url = Url.test_url_disponibility(new_url,direction)
@@ -292,7 +297,13 @@ class Url:
         Url.copy_paste()
         url = pyperclip.paste()
         if url:
-            response = requests.get(url)
+            response = None
+            while not isinstance(requests.Response,response):
+                try:
+                    response = requests.get(url)
+                except requests.exceptions.RequestException:
+                    Display.show_major_error_message()
+            
             soup = BeautifulSoup(response.text, "html.parser")
 
             Url.go_to_page(url,soup,direction)

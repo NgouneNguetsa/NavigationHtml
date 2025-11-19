@@ -1,4 +1,4 @@
-from constants import pyautogui, keyboard, time
+from constants import keyboard, time
 from DisplayManagement import Display
 from UrlManagement import Url
 from constants import Constante
@@ -48,12 +48,5 @@ class Navigation:
 if __name__ == "__main__":
 
     prog = Navigation()
-
-    while True:
-        try:
-            prog.Run()
-        except Exception:
-            Display.show_major_error_message()
-        finally:
-            prog.Run()
+    prog.Run()
     
