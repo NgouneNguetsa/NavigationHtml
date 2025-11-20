@@ -69,7 +69,8 @@ class Display:
 
     def show_major_error_message():
         Display.focus_window(Display.console["handle"])
-        time.sleep(10)
+        print("Il y a eu une erreur de connexion (Internet ou retentatives max atteintes)")
+        time.sleep(5)
         for i in range(3):
             print(f"Le programme va reprendre son cours dans {3-i} s")
             time.sleep(1)
