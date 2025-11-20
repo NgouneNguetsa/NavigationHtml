@@ -173,6 +173,7 @@ class Url:
         if index == 0:
             start_url = Url.handle_prefix_number(url,direction)
 
+            next_page_link = "" 
             for a in soup.find_all("a",href=True):
                 if start_url in a["href"]:
                     next_page_link = a["href"]
