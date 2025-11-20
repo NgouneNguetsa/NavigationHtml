@@ -1,5 +1,4 @@
-from __future__ import annotations
-from constants import ctypes, gw, keyboard, time, pyautogui
+from constants import ctypes, gw, keyboard, time, pyautogui, os
 from constants import Constante
 
 class Display:
@@ -37,6 +36,7 @@ class Display:
             pass
         
     def start_message():
+        os.system("cls")
         print("Bienvenue dans le programme NavigationHtml.")
         print("Ce programme vous permet de vous déplacer d'une page html à une autre à l'aide de vos flèches directionnelles")
         print("Maintenez <- jusqu'à ce que le lien soit surligné en bleu afin d'aller à la page précédente.")
