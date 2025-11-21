@@ -263,7 +263,8 @@ class Url:
             pyautogui.leftClick()
             pyautogui.moveTo(Constante.screenWidth,y)
         else:
-            Display.show_minor_error_message("Il n'y a pas de nouveau chapitre") if direction == "next" else Display.show_minor_error_message("Il n'y a pas d'ancien chapitre")
+            Display.show_minor_error_message("L'image n'existe pas ou il n'y a pas de nouveau chapitre") if direction == "next" \
+            else Display.show_minor_error_message("L'image n'existe pas ou il n'y a pas d'ancien chapitre")
         
     def copy_paste(copy_or_paste = False):
         """"Copier-coller automatique + vidange de la clipboard"""
@@ -300,7 +301,7 @@ class Url:
         
         Url.copy_paste()
         url = pyperclip.paste()
-        if url:
+        if url.startswith("https") or url.startswith("http") or url.startswith("www"):
             response = None
             while not isinstance(response,requests.Response):
                 try:
@@ -311,6 +312,8 @@ class Url:
             soup = BeautifulSoup(response.text, "html.parser")
 
             Url.go_to_page(url,soup,direction)
+        else:
+            Url.search_and_go_to_page_2nd_method(direction)
 
     def __str__():
         return f"Methods:\n{Url.methods}\n\nMapping:\n{Url.mapping}\n\nPatterns:\n{Url.patterns}\n\nRegular Expression:\n{Url.global_regex}"

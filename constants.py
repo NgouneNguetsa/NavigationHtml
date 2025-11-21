@@ -23,7 +23,7 @@ class Constante:
     tl_group = [
             ["nobadnovel","shanghaifantasy","shinningnoveltranslations"], # First research method - First case
             ["brightnovels","otakutl","zkytl","breaknovel"], # First research method - Second case
-            ["botitranslation","dasuitl"] # Third research method
+            ["botitranslation","dasuitl","foxaholic"] # Third research method
         ]
 
     def InitVar():
