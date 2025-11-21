@@ -232,7 +232,7 @@ class Url:
         if direction == "next":
             for image_path in Constante.imagesNextButton:
                 try:
-                    bouton = pyautogui.locateOnScreen(image_path,confidence=0.8)
+                    bouton = pyautogui.locateOnScreen(image_path,confidence=0.9)
                     if bouton != None:
                         break
                         
@@ -241,7 +241,7 @@ class Url:
         elif direction == "last":
             for image_path in Constante.imagesPrevButton:
                 try:
-                    bouton = pyautogui.locateOnScreen(image_path,confidence=0.8)
+                    bouton = pyautogui.locateOnScreen(image_path,confidence=0.9)
                     if bouton != None:
                         break
 
