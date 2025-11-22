@@ -269,7 +269,7 @@ class Url:
     def copy_paste(copy_or_paste = False):
         """"Copier-coller automatique + vidange de la clipboard"""
         if not copy_or_paste:
-            pyautogui.hotkey('ctrl', 'e',interval=0.1)
+            pyautogui.hotkey('ctrl', 'l',interval=0.1)
             pyautogui.hotkey('ctrl', 'c',interval=0.1)
             pyautogui.press('esc')
         else:
