@@ -11,17 +11,19 @@ import re
 import ctypes
 from urllib.parse import urljoin
 from datetime import date, timedelta
+import threading
+from pynput.keyboard import Key, Listener
 
 class Constante:
 
     user32 = ctypes.windll.user32
     folder = Path(__file__).parent
     screenWidth, screenHeight = pyautogui.size()
-    VERSION_REACTIVE = False
     BLOG_TEXT_THRESHOLD = 2500 # Regarde si le blog a plus de 2500 caracteres avant de copier le lien
+    listener_enabled = True
 
     tl_group = [
-            ["nobadnovel","shanghaifantasy","shinningnoveltranslations"], # First research method - First case
+            ["nobadnovel","shanghaifantasy","shiningnoveltranslations"], # First research method - First case
             ["brightnovels","otakutl","zkytl","breaknovel"], # First research method - Second case
             ["botitranslation","dasuitl","foxaholic","readrift"] # Third research method
         ]

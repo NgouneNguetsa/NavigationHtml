@@ -1,9 +1,11 @@
-from constants import keyboard, time
+from constants import keyboard, Key, Listener, threading
 from DisplayManagement import Display
 from UrlManagement import Url
 from constants import Constante
 
 class Navigation:
+
+    threads = []
 
     def __init__(self):
         Constante.InitVar()
@@ -11,39 +13,27 @@ class Navigation:
         Display.InitVar()
         Display.start_message()
 
+    def on_press(self,key):
+        if not Constante.listener_enabled:
+            return
+        
+        if key == Key.esc:
+            Display.stop_message()
+            return False
+        
+        elif key == Key.right:
+            keyboard.block_key("right")
+            Constante.listener_enabled = False
+            threading.Thread(target=Url.search_page, args=("next",), daemon=True).start()
+
+        elif key == Key.left:
+            keyboard.block_key("left")
+            Constante.listener_enabled = False
+            threading.Thread(target=Url.search_page, args=("last",), daemon=True).start()
+
     def Run(self):
-        if not Constante.VERSION_REACTIVE:
-            last_action = time.time()
-            DELAI_INACTIVITE = 2  # secondes
-
-        while True:
-            if keyboard.is_pressed("right"):
-                keyboard.block_key("right")
-
-                Url.search_page("next")
-
-                keyboard.unblock_key("right")
-
-                if not Constante.VERSION_REACTIVE:
-                    last_action = time.time()
-            
-            elif keyboard.is_pressed("left"):
-                keyboard.block_key("left")
-
-                Url.search_page("last")
-
-                keyboard.unblock_key("left")
-
-                if not Constante.VERSION_REACTIVE:
-                    last_action = time.time()
-
-            elif keyboard.is_pressed("esc"):
-                Display.stop_message()
-                break
-
-            if not Constante.VERSION_REACTIVE:
-                if time.time() - last_action > DELAI_INACTIVITE:
-                    time.sleep(1)
+        with Listener(on_press=self.on_press) as listener:
+            listener.join()
 
 if __name__ == "__main__":
 

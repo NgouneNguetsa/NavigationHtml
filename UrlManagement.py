@@ -1,4 +1,5 @@
-from constants import re, pyperclip, pyautogui, time, requests, BeautifulSoup, date, timedelta, urljoin
+from constants import re, pyperclip, pyautogui, time, requests, BeautifulSoup, date, timedelta, threading, keyboard
+from constants import urljoin
 from constants import Constante
 from DisplayManagement import Display
 
@@ -12,7 +13,11 @@ class Url:
 
     mapping = {}
     patterns = []
-    tentatives = 0
+    tentatives = 31
+
+    common_list = []
+    thread_list = []
+    list_lock = threading.Lock()
 
     def InitVar():
         for i, tl_group_list in enumerate(Constante.tl_group):
@@ -82,7 +87,7 @@ class Url:
     def handle_number_only(url, direction):
         return Url.apply_regex_and_modify(url, r"(\d+)$", ["number"], direction)
 
-    def test_url_disponibility(url,direction):
+    def create_new_url(url,direction):
         url_parser = url.rstrip("/").split("/")
         date_parser = []
 
@@ -199,31 +204,54 @@ class Url:
                     break
                     
             if toCheck:
-                while Url.tentatives < 31:
-                    response = None
-                    while not isinstance(response,requests.Response):
-                        try:
-                            response = requests.get(new_url)
-                        except requests.exceptions.RequestException:
-                            Display.show_major_error_message()
+                response = None
+                while not isinstance(response,requests.Response):
+                    try:
+                        response = requests.get(new_url)
+                    except requests.exceptions.RequestException:
+                        Display.show_major_error_message()
 
-                    soup = BeautifulSoup(response.text,"html.parser")
-                    if len(soup.text) < Constante.BLOG_TEXT_THRESHOLD:
-                        new_url = Url.test_url_disponibility(new_url,direction)
-                    else:
-                        break
-                    Url.tentatives += 1
-            
-            if Url.tentatives > 30:
-                Display.show_minor_error_message("Il n'existe pas de nouveau chapitre") if direction == "next" else Display.show_minor_error_message("Il n'y a pas d'ancien chapitre")
-                Url.tentatives = 0
-                return
+                soup = BeautifulSoup(response.text,"html.parser")
+                if len(soup.text) < Constante.BLOG_TEXT_THRESHOLD:
+                    for _ in range(Url.tentatives):
+                        new_url = Url.create_new_url(new_url,direction)
+                        thread = threading.Thread(target=Url.search_in_multithread,args=(new_url,))
+                        Url.thread_list.append(thread)
+                        thread.start()
                     
-            Url.tentatives = 0
+                    for thread in Url.thread_list:
+                        thread.join()
+
+                    for link, check in Url.common_list:
+                        if check:
+                            pyperclip.copy(link)
+                            Url.copy_paste(True)
+                            Url.reset_lists()
+                            return
+                    
+                    Display.show_minor_error_message("Il n'existe pas de nouveau chapitre") if direction == "next" else Display.show_minor_error_message("Il n'y a pas d'ancien chapitre")
+                    return
 
             # On copie l'URL générée
             pyperclip.copy(new_url)
             Url.copy_paste(True)
+
+    def search_in_multithread(url):
+        response = None
+        while not isinstance(response,requests.Response):
+            try:
+                response = requests.get(url)
+            except requests.exceptions.RequestException:
+                Display.show_major_error_message()
+
+        soup = BeautifulSoup(response.text,"html.parser")
+        if len(soup.text) < Constante.BLOG_TEXT_THRESHOLD:
+            with Url.list_lock:
+                Url.common_list.append((url,False))
+        else:
+            with Url.list_lock:
+                Url.common_list.append((url,True))
+
 
     def search_and_go_to_page_2nd_method(direction : str):
         """Cherche le bouton Previous/Next sur l'écran et clique dessus"""
@@ -231,23 +259,35 @@ class Url:
         bouton = None
         if direction == "next":
             for image_path in Constante.imagesNextButton:
-                try:
-                    bouton = pyautogui.locateOnScreen(image_path,confidence=0.9)
-                    if bouton != None:
-                        break
-                        
-                except pyautogui.ImageNotFoundException:
-                    continue
+                thread = threading.Thread(target=Url.search_in_multithread_2nd_method,args=(image_path,))
+                Url.thread_list.append(thread)
+                thread.start()
+
         elif direction == "last":
             for image_path in Constante.imagesPrevButton:
-                try:
-                    bouton = pyautogui.locateOnScreen(image_path,confidence=0.9)
-                    if bouton != None:
-                        break
-
-                except pyautogui.ImageNotFoundException:
-                    pass
+                thread = threading.Thread(target=Url.search_in_multithread_2nd_method,args=(image_path,))
+                Url.thread_list.append(thread)
+                thread.start()
         
+        for thread in Url.thread_list:
+            thread.join()
+
+        for check in Url.common_list:
+            if check:
+                Url.reset_lists()
+                return
+            
+        Display.show_minor_error_message("L'image n'existe pas ou il n'y a pas de nouveau chapitre") if direction == "next" \
+        else Display.show_minor_error_message("L'image n'existe pas ou il n'y a pas d'ancien chapitre")
+        
+        Url.reset_lists()
+        
+    def search_in_multithread_2nd_method(image_path):
+        try:
+            bouton = pyautogui.locateOnScreen(image_path,confidence=0.9)
+        except pyautogui.ImageNotFoundException:
+            pass
+
         if bouton:
             # Calcule le centre du bouton
             x, y = pyautogui.center(bouton)
@@ -262,10 +302,12 @@ class Url:
             
             pyautogui.leftClick()
             pyautogui.moveTo(Constante.screenWidth,y)
+            with Url.list_lock:
+                Url.common_list.append(True)
         else:
-            Display.show_minor_error_message("L'image n'existe pas ou il n'y a pas de nouveau chapitre") if direction == "next" \
-            else Display.show_minor_error_message("L'image n'existe pas ou il n'y a pas d'ancien chapitre")
-        
+            with Url.list_lock:
+                Url.common_list.append(False)
+
     def copy_paste(copy_or_paste = False):
         """"Copier-coller automatique + vidange de la clipboard"""
         if not copy_or_paste:
@@ -277,6 +319,10 @@ class Url:
             pyautogui.hotkey('ctrl','v',interval=0.1)
             pyautogui.press('enter')
             pyperclip.copy('')
+
+    def reset_lists():
+        Url.common_list = []
+        Url.thread_list = []
 
     def go_to_page(url, soup, direction):
         """"Cherche si le groupe de traduction existe et exécute la fonction correspondante"""
@@ -314,6 +360,9 @@ class Url:
             Url.go_to_page(url,soup,direction)
         else:
             Url.search_and_go_to_page_2nd_method(direction)
+
+        keyboard.unblock_key("right") if direction == "next" else keyboard.unblock_key("left")
+        Constante.listener_enabled = True
 
     def __str__():
         return f"Methods:\n{Url.methods}\n\nMapping:\n{Url.mapping}\n\nPatterns:\n{Url.patterns}\n\nRegular Expression:\n{Url.global_regex}"

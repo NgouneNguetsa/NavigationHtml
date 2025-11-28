@@ -42,16 +42,6 @@ class Display:
         print("Maintenez <- jusqu'à ce que le lien soit surligné en bleu afin d'aller à la page précédente.")
         print("Maintenez -> jusqu'à ce que le lien soit surligné en bleu afin d'aller à la page suivante.")
         print("Maintenez ECHAP/ESC pour que le programme se ferme.")
-        user_input = input("\nVoulez-vous la version réactive ou la version économe ? (Tapez r ou e) : ").lower()
-        if user_input == "r":
-            print("Version réactive activée")
-            Constante.VERSION_REACTIVE = True
-        elif user_input == "e":
-            print("Version économe activée")
-            Constante.VERSION_REACTIVE = False
-        else:
-            print("Version économe activée par défaut")
-            Constante.VERSION_REACTIVE = False
         print("\nBonne utilisation.\n(Appuyer sur ENTRÉE pour commencer le programme)")
         keyboard.wait("enter")
         pyautogui.hotkey('alt','tab',interval=0.1)
