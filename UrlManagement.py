@@ -15,7 +15,7 @@ class Url:
     patterns = []
     tentatives = 31
 
-    common_set = []
+    common_set = {}
     thread_list = []
     set_lock = threading.Lock()
 
