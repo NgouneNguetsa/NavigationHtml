@@ -13,9 +13,9 @@ class Url:
 
     mapping = {}
     patterns = []
-    tentatives = 31
+    tentatives = 15
 
-    common_set = {}
+    common_set = set()
     thread_list = []
     set_lock = threading.Lock()
 
@@ -89,11 +89,7 @@ class Url:
 
     def create_new_url(url,direction):
         url_parser = url.rstrip("/").split("/")
-        date_parser = []
-
-        for ele in url_parser:
-            if ele.isnumeric():
-                date_parser.append(ele)
+        date_parser = [ele for ele in url_parser if ele.isdigit()]
 
         if len(date_parser) == 2:
             date_parser[1] = str(int(date_parser[1]) + 1) if direction == "next" else str(int(date_parser[1]) - 1)
@@ -105,13 +101,10 @@ class Url:
                 date_parser[1] = '12'
                 date_parser[0] = str(int(date_parser[0]) - 1)
 
-            date_parser.insert(1,'/')
             date_parser.append('/')
             
         elif len(date_parser) == 3:
-            date_string = ""
-            for d in date_parser:
-                date_string += d
+            date_string = "".join(date_parser)
 
             day = timedelta(days=1)
 
@@ -119,23 +112,13 @@ class Url:
             date_object = date_object + day if direction == "next" else date_object - day
             date_parser = date_object.isoformat().split("-")
 
-            date_parser.insert(1,'/')
-            date_parser.insert(-1,'/')
             date_parser.append('/')
 
-        base = ""
-        for i in range(len(url_parser)):
-            if url_parser[i].isnumeric():
-                break
-            else:
-                if url_parser[i] != "":
-                    base += url_parser[i]
-                else:
-                    base += "//" 
+        index = next((i for i,v in enumerate(url_parser) if v.isdigit()),None)
 
-        date_string = ""
-        for d in date_parser:
-            date_string += d
+        base = "/".join(url_parser[:index+1])
+
+        date_string = "/".join(date_parser)
 
         suffixe = url_parser[-1]
         return urljoin(urljoin(base,date_string),suffixe)
@@ -197,11 +180,7 @@ class Url:
                 Display.show_minor_error_message("Le chapitre 0 n'existe pas") if direction == "last" else Display.show_minor_error_message("Je ne sais pas comment tu es rentré ici, mais je te félicite")
                 return
 
-            toCheck = False
-            for c in new_url.split("/")[:-1]:
-                if c.isnumeric():
-                    toCheck = True
-                    break
+            toCheck = any(s.isdigit for s in new_url.split("/")[:-1])
                     
             if toCheck:
                 response = None
@@ -318,7 +297,7 @@ class Url:
             pyperclip.copy('')
 
     def reset_arrays():
-        Url.common_set = {}
+        Url.common_set = set()
         Url.thread_list = []
 
     def go_to_page(url, soup, direction):
