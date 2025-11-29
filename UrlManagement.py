@@ -13,11 +13,13 @@ class Url:
 
     mapping = {}
     patterns = []
-    tentatives = 15
+    tentatives = 31
 
     common_set = set()
     thread_list = []
     set_lock = threading.Lock()
+    url_found = False
+    image_found = False
 
     def InitVar():
         for i, tl_group_list in enumerate(Constante.tl_group):
@@ -161,11 +163,7 @@ class Url:
         if index == 0:
             start_url = Url.handle_prefix_number(url,direction)
 
-            next_page_link = "" 
-            for a in soup.find_all("a",href=True):
-                if start_url in a["href"]:
-                    next_page_link = a["href"]
-                    break
+            next_page_link = next((a["href"] for a in soup.find_all("a",href=True) if start_url in a["href"]),"")
 
             if next_page_link != "":
                 pyperclip.copy(next_page_link)
@@ -197,16 +195,20 @@ class Url:
                         thread = threading.Thread(target=Url.search_in_multithread,args=(new_url,))
                         Url.thread_list.append(thread)
                         thread.start()
-                    
+
+                        if Url.url_found:
+                            break
+
                     for thread in Url.thread_list:
                         thread.join()
 
-                    if True in Url.common_set:
-                        Url.reset_arrays()
+                    if Url.url_found:
+                        Url.url_found = False
+                        Url.reset_thread_list()
                         return
                     
                     Display.show_minor_error_message("Il n'existe pas de nouveau chapitre") if direction == "next" else Display.show_minor_error_message("Il n'y a pas d'ancien chapitre")
-                    Url.reset_arrays()
+                    Url.reset_thread_list()
                     return
 
             # On copie l'URL générée
@@ -223,14 +225,11 @@ class Url:
 
         soup = BeautifulSoup(response.text,"html.parser")
         if len(soup.text) < Constante.BLOG_TEXT_THRESHOLD:
-            with Url.set_lock:
-                Url.common_set.add(False)
+            pass
         else:
+            Url.url_found = True
             pyperclip.copy(url)
             Url.copy_paste(True)
-            with Url.set_lock:
-                Url.common_set.add(True)
-
 
     def search_and_go_to_page_2nd_method(direction : str):
         """Cherche le bouton Previous/Next sur l'écran et clique dessus"""
@@ -241,32 +240,37 @@ class Url:
                 Url.thread_list.append(thread)
                 thread.start()
 
+                if Url.image_found:
+                    break
+
         elif direction == "last":
             for image_path in Constante.imagesPrevButton:
                 thread = threading.Thread(target=Url.search_in_multithread_2nd_method,args=(image_path,))
                 Url.thread_list.append(thread)
                 thread.start()
         
+                if Url.image_found:
+                    break
+
         for thread in Url.thread_list:
             thread.join()
-
-        if True in Url.common_set:
-            Url.reset_arrays()
-            return
             
+        if Url.image_found:
+            Url.image_found = False
+            Url.reset_thread_list()
+            return
+        
         Display.show_minor_error_message("L'image n'existe pas ou il n'y a pas de nouveau chapitre") if direction == "next" \
         else Display.show_minor_error_message("L'image n'existe pas ou il n'y a pas d'ancien chapitre")
-        
-        Url.reset_arrays()
         
     def search_in_multithread_2nd_method(image_path):
         try:
             bouton = pyautogui.locateOnScreen(image_path,confidence=0.9)
         except pyautogui.ImageNotFoundException:
-            with Url.set_lock:
-                Url.common_set.add(False)
+            pass
 
         if bouton:
+            Url.image_found = True
             # Calcule le centre du bouton
             x, y = pyautogui.center(bouton)
             
@@ -280,9 +284,6 @@ class Url:
             
             pyautogui.leftClick()
             pyautogui.moveTo(Constante.screenWidth,y)
-            with Url.set_lock:
-                Url.common_set.add(True)
-
 
     def copy_paste(copy_or_paste = False):
         """"Copier-coller automatique + vidange de la clipboard"""
@@ -296,8 +297,7 @@ class Url:
             pyautogui.press('enter')
             pyperclip.copy('')
 
-    def reset_arrays():
-        Url.common_set = set()
+    def reset_thread_list():
         Url.thread_list = []
 
     def go_to_page(url, soup, direction):
