@@ -1,4 +1,4 @@
-from constants import re, pyperclip, pyautogui, time, requests, BeautifulSoup, date, timedelta, threading, keyboard
+from constants import re, pyperclip, pyautogui, time, requests, BeautifulSoup, date, timedelta, threading, keyboard, Listener, Key
 from constants import urljoin
 from constants import Constante
 from DisplayManagement import Display
@@ -18,8 +18,8 @@ class Url:
     common_set = set()
     thread_list = []
     set_lock = threading.Lock()
-    url_found = False
-    image_found = False
+    url_found = threading.Event()
+    image_found = threading.Event()
 
     def InitVar():
         for i, tl_group_list in enumerate(Constante.tl_group):
@@ -196,14 +196,14 @@ class Url:
                         Url.thread_list.append(thread)
                         thread.start()
 
-                        if Url.url_found:
+                        if Url.url_found.is_set():
                             break
 
                     for thread in Url.thread_list:
                         thread.join()
 
-                    if Url.url_found:
-                        Url.url_found = False
+                    if Url.url_found.is_set():
+                        Url.url_found.clear()
                         Url.reset_thread_list()
                         return
                     
@@ -227,20 +227,19 @@ class Url:
         if len(soup.text) < Constante.BLOG_TEXT_THRESHOLD:
             pass
         else:
-            Url.url_found = True
+            Url.url_found.set()
             pyperclip.copy(url)
             Url.copy_paste(True)
 
     def search_and_go_to_page_2nd_method(direction : str):
         """Cherche le bouton Previous/Next sur l'écran et clique dessus"""
-        
         if direction == "next":
             for image_path in Constante.imagesNextButton:
                 thread = threading.Thread(target=Url.search_in_multithread_2nd_method,args=(image_path,))
                 Url.thread_list.append(thread)
                 thread.start()
 
-                if Url.image_found:
+                if Url.image_found.is_set():
                     break
 
         elif direction == "last":
@@ -248,29 +247,32 @@ class Url:
                 thread = threading.Thread(target=Url.search_in_multithread_2nd_method,args=(image_path,))
                 Url.thread_list.append(thread)
                 thread.start()
-        
-                if Url.image_found:
+
+                if Url.image_found.is_set():
                     break
 
         for thread in Url.thread_list:
             thread.join()
-            
-        if Url.image_found:
-            Url.image_found = False
+
+        if Url.image_found.is_set():
+            Url.image_found.clear()
             Url.reset_thread_list()
             return
         
         Display.show_minor_error_message("L'image n'existe pas ou il n'y a pas de nouveau chapitre") if direction == "next" \
         else Display.show_minor_error_message("L'image n'existe pas ou il n'y a pas d'ancien chapitre")
+
+        Url.reset_thread_list()
         
     def search_in_multithread_2nd_method(image_path):
+        bouton = None
         try:
-            bouton = pyautogui.locateOnScreen(image_path,confidence=0.9)
+            bouton = pyautogui.locateOnScreen(image_path,confidence=0.831)
         except pyautogui.ImageNotFoundException:
             pass
 
         if bouton:
-            Url.image_found = True
+            Url.image_found.set()
             # Calcule le centre du bouton
             x, y = pyautogui.center(bouton)
             
@@ -318,9 +320,12 @@ class Url:
         else:
             func(direction)
 
+
     def search_page(direction):
         """Fonction qui recherche la page html précédente/suivante en fonction de la page actuelle"""
-        
+        # interrupt_listener = Listener()
+        # interrupt_listener.start()
+
         Url.copy_paste()
         url = pyperclip.paste()
         if url.startswith("https") or url.startswith("http") or url.startswith("www"):
@@ -337,12 +342,7 @@ class Url:
         else:
             Url.search_and_go_to_page_2nd_method(direction)
 
+        # interrupt_listener.join()
+
         keyboard.unblock_key("right") if direction == "next" else keyboard.unblock_key("left")
         Constante.listener_enabled = True
-
-    def __str__():
-        return f"Methods:\n{Url.methods}\n\nMapping:\n{Url.mapping}\n\nPatterns:\n{Url.patterns}\n\nRegular Expression:\n{Url.global_regex}"
-
-
-if __name__ == "__main__":
-    print(Url())
