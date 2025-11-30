@@ -30,6 +30,9 @@ class Url:
         # Compile une seule regex globale
         Url.global_regex = re.compile("|".join(Url.patterns))
 
+    def reset_thread_list():
+        Url.thread_list.clear()
+
     def get_last_segment(url):
         """Retourne la dernière partie de l'URL après le dernier /"""
         return url.rstrip("/").split("/")[-1]
@@ -298,9 +301,6 @@ class Url:
             pyautogui.hotkey('ctrl','v',interval=0.1)
             pyautogui.press('enter')
             pyperclip.copy('')
-
-    def reset_thread_list():
-        Url.thread_list = []
 
     def go_to_page(url, soup, direction):
         """"Cherche si le groupe de traduction existe et exécute la fonction correspondante"""
