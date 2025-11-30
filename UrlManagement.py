@@ -162,15 +162,17 @@ class Url:
         if index == 0:
             start_url = Url.handle_prefix_number(url,direction)
 
-            if start_url:
-                next_page_link = next((a["href"] for a in soup.find_all("a",href=True) if start_url in a["href"]),"")
+            if not start_url:
+                Display.show_minor_error_message("Le chapitre 0 n'existe pas") if direction == "last" else Display.show_minor_error_message("Je ne sais pas comment tu es rentré ici, mais je te félicite")
+                return
+            
+            next_page_link = next((a["href"] for a in soup.find_all("a",href=True) if start_url in a["href"]),"")
 
-                if next_page_link != "":
-                    pyperclip.copy(next_page_link)
-                    Url.copy_paste(True)
-                    return
-                
-            Display.show_minor_error_message("Il n'y a pas de nouveau chapitre") if direction == "next" else Display.show_minor_error_message("Le chapitre 0 n'existe pas")
+            if next_page_link != "":
+                pyperclip.copy(next_page_link)
+                Url.copy_paste(True)
+            else:
+                Display.show_minor_error_message("Il y a eu un problème lors de la récupération de la page HTML")
         else:
 
             # On génère la nouvelle URL en fonction de la méthode détectée
@@ -189,7 +191,7 @@ class Url:
                     except requests.exceptions.RequestException:
                         Display.show_major_error_message()
 
-                soup = BeautifulSoup(response.text,"lxml-xml")
+                soup = BeautifulSoup(response.text,"lxml")
                 if len(soup.text) < Constante.BLOG_TEXT_THRESHOLD:
                     for _ in range(Url.tentatives):
                         new_url = Url.create_new_url(new_url,direction)
@@ -227,7 +229,7 @@ class Url:
                 else:
                     Display.show_major_error_message()
 
-        soup = BeautifulSoup(response.text,"lxml-xml")
+        soup = BeautifulSoup(response.text,"lxml")
         if len(soup.text) < Constante.BLOG_TEXT_THRESHOLD:
             return
         
@@ -324,8 +326,6 @@ class Url:
 
     def search_page(direction):
         """Fonction qui recherche la page html précédente/suivante en fonction de la page actuelle"""
-        # interrupt_listener = Listener()
-        # interrupt_listener.start()
 
         Url.copy_paste()
         url = pyperclip.paste()
@@ -337,13 +337,11 @@ class Url:
                 except requests.exceptions.RequestException:
                     Display.show_major_error_message()
             
-            soup = BeautifulSoup(response.text, "lxml-xml")
+            soup = BeautifulSoup(response.text, "lxml")
 
             Url.go_to_page(url,soup,direction)
         else:
             Url.search_and_go_to_page_2nd_method(direction)
-
-        # interrupt_listener.join()
 
         keyboard.unblock_key("right") if direction == "next" else keyboard.unblock_key("left")
         Constante.listener_enabled = True
