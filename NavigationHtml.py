@@ -5,8 +5,6 @@ from constants import Constante
 
 class Navigation:
 
-    threads = []
-
     def __init__(self):
         Constante.InitVar()
         Url.InitVar()

@@ -15,11 +15,10 @@ class Url:
     patterns = []
     tentatives = 31
 
-    common_set = set()
     thread_list = []
     set_lock = threading.Lock()
     url_found = threading.Event()
-    image_found = threading.Event()
+    img_found = threading.Event()
 
     def InitVar():
         for i, tl_group_list in enumerate(Constante.tl_group):
@@ -237,28 +236,28 @@ class Url:
     def search_and_go_to_page_2nd_method(direction : str):
         """Cherche le bouton Previous/Next sur l'écran et clique dessus"""
         if direction == "next":
-            for image_path in Constante.imagesNextButton:
-                thread = threading.Thread(target=Url.search_in_multithread_2nd_method,args=(image_path,))
+            for img_path in Constante.imagesNextButton:
+                thread = threading.Thread(target=Url.search_in_multithread_2nd_method,args=(img_path,))
                 Url.thread_list.append(thread)
                 thread.start()
 
-                if Url.image_found.is_set():
+                if Url.img_found.is_set():
                     break
 
         elif direction == "last":
-            for image_path in Constante.imagesPrevButton:
-                thread = threading.Thread(target=Url.search_in_multithread_2nd_method,args=(image_path,))
+            for img_path in Constante.imagesPrevButton:
+                thread = threading.Thread(target=Url.search_in_multithread_2nd_method,args=(img_path,))
                 Url.thread_list.append(thread)
                 thread.start()
 
-                if Url.image_found.is_set():
+                if Url.img_found.is_set():
                     break
 
         for thread in Url.thread_list:
             thread.join()
 
-        if Url.image_found.is_set():
-            Url.image_found.clear()
+        if Url.img_found.is_set():
+            Url.img_found.clear()
             Url.reset_thread_list()
             return
         
@@ -267,15 +266,15 @@ class Url:
 
         Url.reset_thread_list()
         
-    def search_in_multithread_2nd_method(image_path):
+    def search_in_multithread_2nd_method(img_path):
         bouton = None
         try:
-            bouton = pyautogui.locateOnScreen(image_path,confidence=0.831)
+            bouton = pyautogui.locateOnScreen(img_path,confidence=0.831)
         except pyautogui.ImageNotFoundException:
             pass
 
         if bouton:
-            Url.image_found.set()
+            Url.img_found.set()
             # Calcule le centre du bouton
             x, y = pyautogui.center(bouton)
             
@@ -293,12 +292,12 @@ class Url:
     def copy_paste(copy_or_paste = False):
         """"Copier-coller automatique + vidange de la clipboard"""
         if not copy_or_paste:
-            pyautogui.hotkey('ctrl', 'l',interval=0.1)
-            pyautogui.hotkey('ctrl', 'c',interval=0.1)
+            pyautogui.hotkey('ctrl', 'l')
+            pyautogui.hotkey('ctrl', 'c')
             pyautogui.press('esc')
         else:
-            pyautogui.hotkey('ctrl', 'e',interval=0.1)
-            pyautogui.hotkey('ctrl','v',interval=0.1)
+            pyautogui.hotkey('ctrl', 'e')
+            pyautogui.hotkey('ctrl','v')
             pyautogui.press('enter')
             pyperclip.copy('')
 
