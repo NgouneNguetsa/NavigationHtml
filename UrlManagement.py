@@ -162,13 +162,15 @@ class Url:
         if index == 0:
             start_url = Url.handle_prefix_number(url,direction)
 
-            next_page_link = next((a["href"] for a in soup.find_all("a",href=True) if start_url in a["href"]),"")
+            if start_url:
+                next_page_link = next((a["href"] for a in soup.find_all("a",href=True) if start_url in a["href"]),"")
 
-            if next_page_link != "":
-                pyperclip.copy(next_page_link)
-                Url.copy_paste(True)
-            else:
-                Display.show_minor_error_message("Il n'y a pas de nouveau chapitre") if direction == "next" else Display.show_minor_error_message("Le chapitre 0 n'existe pas")
+                if next_page_link != "":
+                    pyperclip.copy(next_page_link)
+                    Url.copy_paste(True)
+                    return
+                
+            Display.show_minor_error_message("Il n'y a pas de nouveau chapitre") if direction == "next" else Display.show_minor_error_message("Le chapitre 0 n'existe pas")
         else:
 
             # On génère la nouvelle URL en fonction de la méthode détectée
