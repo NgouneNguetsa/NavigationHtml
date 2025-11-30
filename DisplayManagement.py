@@ -62,11 +62,12 @@ class Display:
     def show_major_error_message():
         Display.focus_window(Display.console["handle"])
         print("Il y a eu une erreur de connexion (Internet ou retentatives max atteintes)")
-        time.sleep(5)
+        time.sleep(3)
         for i in range(3):
             print(f"Le programme va reprendre son cours dans {3-i} s")
             time.sleep(1)
         pyautogui.hotkey('alt','tab')
+        time.sleep(3)
 
     def show_interrupt_message():
         Display.focus_window(Display.console["handle"])
