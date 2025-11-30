@@ -177,7 +177,7 @@ class Url:
                 Display.show_minor_error_message("Le chapitre 0 n'existe pas") if direction == "last" else Display.show_minor_error_message("Je ne sais pas comment tu es rentré ici, mais je te félicite")
                 return
 
-            toCheck = any(s.isdigit for s in new_url.split("/")[:-1])
+            toCheck = any(s.isdigit() for s in new_url.split("/")[:-1])
                     
             if toCheck:
                 response = None
