@@ -2,12 +2,12 @@ from constants import ctypes, gw, keyboard, time, pyautogui, os
 from constants import Constante
 
 class Display:
-
     def InitVar():
         Display.console = Display.get_active_window_info()
     
     def get_window_info(window):
         """Retourne un dict avec titre, handle et pid."""
+        
         try:
             hwnd = window._hWnd
             pid = ctypes.c_ulong()
@@ -22,6 +22,7 @@ class Display:
 
     def get_active_window_info():
         """Retourne les infos de la fenêtre actuellement active."""
+        
         try:
             return Display.get_window_info(gw.getActiveWindow())
         except Exception:
@@ -29,6 +30,7 @@ class Display:
 
     def focus_window(hwnd):
         """Met la fenêtre correspondant au handle hwnd au premier plan."""
+        
         try:
             Constante.user32.ShowWindow(hwnd, 3)  # 3 = SW_SHOWMAXIMIZED (si elle est minimisée)
             Constante.user32.SetForegroundWindow(hwnd)
@@ -44,14 +46,14 @@ class Display:
         print("Maintenez ECHAP/ESC pour que le programme se ferme.")
         print("\nBonne utilisation.\n(Appuyer sur ENTRÉE pour commencer le programme)")
         keyboard.wait("enter")
-        pyautogui.hotkey('alt','tab',interval=0.1)
+        pyautogui.hotkey('alt','tab')
 
     def stop_message():
         Display.focus_window(Display.console["handle"])
         print("\nMerci d'avoir utilisé le programme NavigationHtml.")
         print("J'espère qu'il vous a été utile.")
         time.sleep(3)
-        pyautogui.hotkey('alt','tab',interval=0.1)
+        pyautogui.hotkey('alt','tab')
 
     def show_minor_error_message(error_message : str):
         pyautogui.alert(f"{error_message}")
@@ -64,4 +66,8 @@ class Display:
         for i in range(3):
             print(f"Le programme va reprendre son cours dans {3-i} s")
             time.sleep(1)
-        pyautogui.hotkey('alt','tab',interval=0.1)
+        pyautogui.hotkey('alt','tab')
+
+    def show_interrupt_message():
+        Display.focus_window(Display.console["handle"])
+        print("Le programme s'est fini en avance par interruption clavier")

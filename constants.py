@@ -13,6 +13,7 @@ from urllib.parse import urljoin
 from datetime import date, timedelta
 import threading
 from pynput.keyboard import Key, Listener
+import signal
 
 class Constante:
 
@@ -21,6 +22,7 @@ class Constante:
     screenWidth, screenHeight = pyautogui.size()
     BLOG_TEXT_THRESHOLD = 2500 # Regarde si le blog a plus de 2500 caracteres avant de copier le lien
     listener_enabled = True
+    interrupt_handler = threading.Event()
 
     tl_group = [
             ["nobadnovel","shanghaifantasy","shiningnoveltranslations"], # First research method - First case
@@ -28,7 +30,22 @@ class Constante:
             ["botitranslation","dasuitl","foxaholic","readrift"] # Third research method
         ]
 
+    def ThreadInterrupt(self,sig,frame):
+        try:
+            keyboard.unblock_key("left")
+        except KeyError:
+            pass
+        
+        try:
+            keyboard.unblock_key("right")
+        except KeyError:
+            pass
+
+        os._exit(0)
+
     def InitVar():
+        signal.signal(signal.SIGINT,Constante.ThreadInterrupt)
+
         subdirectory = next((sub for sub in Constante.folder.iterdir() if sub.is_dir() and "imgs" in str(sub)),None)
 
         if subdirectory:

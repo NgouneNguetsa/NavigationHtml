@@ -1,20 +1,17 @@
-from constants import re, pyperclip, pyautogui, time, requests, BeautifulSoup, date, timedelta, threading, keyboard, Listener, Key
+from constants import re, pyperclip, pyautogui, time, requests, BeautifulSoup, date, timedelta, threading, keyboard
 from constants import urljoin
 from constants import Constante
 from DisplayManagement import Display
 
 class Url:
-    
-    # --- Mapping des fonctions par direction ---
     methods = [
         lambda url, soup, index, direction: Url.search_and_go_to_page(url, soup, index, direction),
         lambda direction: Url.search_and_go_to_page_2nd_method(direction)
     ]
-
     mapping = {}
     patterns = []
-    tentatives = 31
 
+    tentatives = 31
     thread_list = []
     set_lock = threading.Lock()
     url_found = threading.Event()
@@ -38,7 +35,6 @@ class Url:
 
     def modify_chapter_number(segment, prefix, chapter_number, suffix, extension, direction):
         """Modifie le numéro selon la direction (next/last) et reconstruit le segment"""
-        
         # En fonction de la direction, on incrémente ou décrémente
         new_number = chapter_number + 1 if direction == "next" else chapter_number - 1
 
@@ -51,6 +47,7 @@ class Url:
 
     def apply_regex_and_modify(url, pattern, groups, direction):
         """Applique un pattern à la fin de l'URL et retourne la nouvelle URL (incrémentée ou décrémentée)"""
+        
         segment = Url.get_last_segment(url)
         match = re.search(pattern, segment)
         if not match:
@@ -223,15 +220,18 @@ class Url:
             try:
                 response = requests.get(url)
             except requests.exceptions.RequestException:
-                Display.show_major_error_message()
+                if Constante.interrupt_handler.is_set():
+                    return
+                else:
+                    Display.show_major_error_message()
 
         soup = BeautifulSoup(response.text,"html.parser")
         if len(soup.text) < Constante.BLOG_TEXT_THRESHOLD:
-            pass
-        else:
-            Url.url_found.set()
-            pyperclip.copy(url)
-            Url.copy_paste(True)
+            return
+        
+        Url.url_found.set()
+        pyperclip.copy(url)
+        Url.copy_paste(True)
 
     def search_and_go_to_page_2nd_method(direction : str):
         """Cherche le bouton Previous/Next sur l'écran et clique dessus"""
@@ -271,7 +271,7 @@ class Url:
         try:
             bouton = pyautogui.locateOnScreen(img_path,confidence=0.831)
         except pyautogui.ImageNotFoundException:
-            pass
+            return
 
         if bouton:
             Url.img_found.set()

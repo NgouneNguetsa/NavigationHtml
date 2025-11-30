@@ -4,7 +4,6 @@ from UrlManagement import Url
 from constants import Constante
 
 class Navigation:
-
     def __init__(self):
         Constante.InitVar()
         Url.InitVar()
@@ -12,9 +11,13 @@ class Navigation:
         Display.start_message()
 
     def on_press(self,key):
-        if not Constante.listener_enabled:
-            return
+        if Constante.interrupt_handler.is_set():
+            Display.show_interrupt_message()
+            return False
         
+        elif not Constante.listener_enabled:
+            return
+
         if key == Key.esc:
             Display.stop_message()
             return False
@@ -29,12 +32,16 @@ class Navigation:
             Constante.listener_enabled = False
             threading.Thread(target=Url.search_page, args=("last",), daemon=True).start()
 
+    def KeyboardInterrupt(self):
+        keyboard.add_hotkey('ctrl+c', lambda: Constante.interrupt_handler.set())
+
     def Run(self):
-        with Listener(on_press=self.on_press) as listener:
-            listener.join()
+        listener = Listener(on_press=self.on_press)
+        listener.start()
+        self.KeyboardInterrupt()
+        listener.join()
 
 if __name__ == "__main__":
-
     prog = Navigation()
     prog.Run()
     
