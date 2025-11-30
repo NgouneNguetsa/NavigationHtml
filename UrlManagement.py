@@ -187,7 +187,7 @@ class Url:
                     except requests.exceptions.RequestException:
                         Display.show_major_error_message()
 
-                soup = BeautifulSoup(response.text,"html.parser")
+                soup = BeautifulSoup(response.text,"lxml-xml")
                 if len(soup.text) < Constante.BLOG_TEXT_THRESHOLD:
                     for _ in range(Url.tentatives):
                         new_url = Url.create_new_url(new_url,direction)
@@ -225,7 +225,7 @@ class Url:
                 else:
                     Display.show_major_error_message()
 
-        soup = BeautifulSoup(response.text,"html.parser")
+        soup = BeautifulSoup(response.text,"lxml-xml")
         if len(soup.text) < Constante.BLOG_TEXT_THRESHOLD:
             return
         
@@ -335,7 +335,7 @@ class Url:
                 except requests.exceptions.RequestException:
                     Display.show_major_error_message()
             
-            soup = BeautifulSoup(response.text, "html.parser")
+            soup = BeautifulSoup(response.text, "lxml-xml")
 
             Url.go_to_page(url,soup,direction)
         else:
