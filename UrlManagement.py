@@ -166,13 +166,13 @@ class Url:
                 Display.show_minor_error_message("Le chapitre 0 n'existe pas") if direction == "last" else Display.show_minor_error_message("Je ne sais pas comment tu es rentré ici, mais je te félicite")
                 return
             
-            next_page_link = next((a["href"] for a in soup.find_all("a",href=True) if start_url in a["href"]),"")
+            new_page_link = next((a["href"] for a in soup.find_all("a",href=True) if start_url in a["href"]),"")
 
-            if next_page_link != "":
-                pyperclip.copy(next_page_link)
+            if new_page_link != "":
+                pyperclip.copy(new_page_link)
                 Url.copy_paste(True)
             else:
-                Display.show_minor_error_message("Il y a eu un problème lors de la récupération de la page HTML")
+                Display.show_minor_error_message("Il n'y a pas de lien présent dans la page ou il y a eu un problème lors de la récupération de la page web")
         else:
 
             # On génère la nouvelle URL en fonction de la méthode détectée
