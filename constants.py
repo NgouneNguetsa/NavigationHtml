@@ -21,7 +21,7 @@ class Constante:
     folder = Path(__file__).parent
     screenWidth, screenHeight = pyautogui.size()
     BLOG_TEXT_THRESHOLD = 2500 # Regarde si le blog a plus de 2500 caracteres avant de copier le lien
-    listener_enabled = True
+    listener_enabled = threading.Event()
     interrupt_handler = threading.Event()
 
     tl_group = [
@@ -30,6 +30,12 @@ class Constante:
             ["botitranslation","dasuitl","foxaholic","readrift"] # Third research method
         ]
 
+    def EnableListener():
+        Constante.listener_enabled.clear()
+
+    def DisableListener():
+        Constante.listener_enabled.set()
+        
     def ThreadInterrupt(self,sig,frame):
         try:
             keyboard.unblock_key("left")

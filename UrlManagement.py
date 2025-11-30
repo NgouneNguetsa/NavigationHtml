@@ -344,4 +344,4 @@ class Url:
             Url.search_and_go_to_page_2nd_method(direction)
 
         keyboard.unblock_key("right") if direction == "next" else keyboard.unblock_key("left")
-        Constante.listener_enabled = True
+        Constante.EnableListener()

@@ -15,7 +15,7 @@ class Navigation:
             Display.show_interrupt_message()
             return False
         
-        elif not Constante.listener_enabled:
+        elif Constante.listener_enabled.is_set():
             return
 
         if key == Key.esc:
@@ -24,12 +24,12 @@ class Navigation:
         
         elif key == Key.right:
             keyboard.block_key("right")
-            Constante.listener_enabled = False
+            Constante.DisableListener()
             threading.Thread(target=Url.search_page, args=("next",), daemon=True).start()
 
         elif key == Key.left:
             keyboard.block_key("left")
-            Constante.listener_enabled = False
+            Constante.DisableListener()
             threading.Thread(target=Url.search_page, args=("last",), daemon=True).start()
 
     def KeyboardInterrupt(self):
