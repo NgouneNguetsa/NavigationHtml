@@ -16,7 +16,8 @@ py -m pip install requests bs4 pyautogui pygetwindow keyboard pyperclip opencv-p
 Cela permet de récupérer les librairies nécessaires au bon fonctionnement du programme
 
 /!\ Ce programme python ne marche que pour les versions de Python 3.11 et moins.\
-    Cela est dû à la recherche sur l'écran avec pyscreeze qui n'a pas de version pour Python 3.12 et plus
+    Cela est dû à la recherche sur l'écran avec pyscreeze qui n'a pas de version pour Python 3.12 et plus\
+    J'ai désactivé le FAILSAFE présent dans pyautogui. Si vous voulez le gardez, commentez la ligne présente dans le fichier constants.py
 
 # Mot de remerciement
 Pour tout ceux qui utiliseront ce programme *autre que moi*, je vous remercie de l'attention portée à un petit projet tel que le mien et je vous souhaite une bonne journée.
