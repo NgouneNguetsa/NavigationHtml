@@ -172,7 +172,7 @@ class Url:
                 pyperclip.copy(new_page_link)
                 Url.copy_paste(True)
             else:
-                Display.show_minor_error_message("Il n'y a pas de lien présent dans la page ou il y a eu un problème lors de la récupération de la page web")
+                Display.show_minor_error_message("Il n'y a pas de lien présent dans la page")
         else:
 
             # On génère la nouvelle URL en fonction de la méthode détectée
