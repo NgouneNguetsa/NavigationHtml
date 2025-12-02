@@ -339,9 +339,15 @@ class Url:
             
             soup = BeautifulSoup(response.text, "lxml")
 
-            Url.go_to_page(url,soup,direction)
+            try:
+                Url.go_to_page(url,soup,direction)
+            except pyautogui.FailSafeException:
+                pyautogui.move(Constante.screenWidth / 2, Constante.screenHeight)
         else:
-            Url.search_and_go_to_page_2nd_method(direction)
+            try:
+                Url.search_and_go_to_page_2nd_method(direction)
+            except pyautogui.FailSafeException:
+                pyautogui.move(Constante.screenWidth / 2, Constante.screenHeight)
 
         keyboard.unblock_key("right") if direction == "next" else keyboard.unblock_key("left")
         Constante.EnableListener()

@@ -23,7 +23,6 @@ class Constante:
     BLOG_TEXT_THRESHOLD = 2500 # Regarde si le blog a plus de 2500 caracteres avant de copier le lien
     listener_enabled = threading.Event()
     interrupt_handler = threading.Event()
-    pyautogui.FAILSAFE = False
 
     tl_group = [
             ["nobadnovel","shanghaifantasy","shiningnoveltranslations"], # First research method - First case
