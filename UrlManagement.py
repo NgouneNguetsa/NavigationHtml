@@ -176,7 +176,6 @@ class Url:
         else:
 
             # On génère la nouvelle URL en fonction de la méthode détectée
-            print(url)
             new_url = Url.auto_select_method(url, direction)
             if not new_url:
                 Display.show_minor_error_message("Le chapitre 0 n'existe pas") if direction == "last" else Display.show_minor_error_message("Je ne sais pas comment tu es rentré ici, mais je te félicite")
