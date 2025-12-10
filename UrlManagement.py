@@ -5,7 +5,7 @@ from DisplayManagement import Display
 
 class Url:
     methods = [
-        lambda url, soup, index, direction: Url.search_and_go_to_page(url, soup, index, direction),
+        lambda url, index, direction: Url.search_and_go_to_page(url, index, direction),
         lambda direction: Url.search_and_go_to_page_2nd_method(direction)
     ]
     mapping = {}
@@ -150,7 +150,7 @@ class Url:
 
         return None
 
-    def search_and_go_to_page(url, soup, index, direction="next"):
+    def search_and_go_to_page(url, index, direction="next"):
         """
         Gère la navigation entre les pages :
         - url: L'url copié du clipboard
@@ -165,6 +165,15 @@ class Url:
             if not start_url:
                 Display.show_minor_error_message("Le chapitre 0 n'existe pas") if direction == "last" else Display.show_minor_error_message("Je ne sais pas comment tu es rentré ici, mais je te félicite")
                 return
+            
+            response = None
+            while not isinstance(response,requests.Response):
+                try:
+                    response = requests.get(url)
+                except requests.exceptions.RequestException:
+                    Display.show_major_error_message()
+            
+            soup = BeautifulSoup(response.text, "lxml")
             
             new_page_link = next((a["href"] for a in soup.find_all("a",href=True) if start_url in a["href"]),"")
 
@@ -305,12 +314,12 @@ class Url:
             pyautogui.press('enter')
             pyperclip.copy('')
 
-    def go_to_page(url, soup, direction):
+    def go_to_page(url, direction):
         """"Cherche si le groupe de traduction existe et exécute la fonction correspondante"""
         match = Url.global_regex.search(url)
         if not match:
             pyautogui.alert(f"{url}\nLien invalide ou groupe de traduction non présent dans la database")
-            time.sleep(1.5)
+            time.sleep(1)
             return
 
         tl_found = match.group(0)
@@ -318,8 +327,8 @@ class Url:
         func = Url.methods[0] if i < 2 else Url.methods[1]
 
         # Appel de la fonction correspondante
-        if func.__code__.co_argcount == 4:
-            func(url, soup, i, direction)
+        if func.__code__.co_argcount > 1:
+            func(url, i, direction)
         else:
             func(direction)
 
@@ -330,24 +339,15 @@ class Url:
         Url.copy_paste()
         url = pyperclip.paste()
         if url.startswith("https") or url.startswith("http") or url.startswith("www"):
-            response = None
-            while not isinstance(response,requests.Response):
-                try:
-                    response = requests.get(url)
-                except requests.exceptions.RequestException:
-                    Display.show_major_error_message()
-            
-            soup = BeautifulSoup(response.text, "lxml")
-
             try:
-                Url.go_to_page(url,soup,direction)
+                Url.go_to_page(url,direction)
             except pyautogui.FailSafeException:
-                pyautogui.move(Constante.screenWidth / 2, Constante.screenHeight)
+                pyautogui.move(Constante.screenWidth, Constante.screenHeight / 2)
         else:
             try:
                 Url.search_and_go_to_page_2nd_method(direction)
             except pyautogui.FailSafeException:
-                pyautogui.move(Constante.screenWidth / 2, Constante.screenHeight)
+                pyautogui.move(Constante.screenWidth, Constante.screenHeight / 2)
 
         keyboard.unblock_key("right") if direction == "next" else keyboard.unblock_key("left")
         Constante.EnableListener()

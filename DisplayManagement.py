@@ -52,7 +52,7 @@ class Display:
         Display.focus_window(Display.console["handle"])
         print("\nMerci d'avoir utilisé le programme NavigationHtml.")
         print("J'espère qu'il vous a été utile.")
-        time.sleep(3)
+        time.sleep(2)
         pyautogui.hotkey('alt','tab')
 
     def show_minor_error_message(error_message : str):
@@ -62,13 +62,14 @@ class Display:
     def show_major_error_message():
         Display.focus_window(Display.console["handle"])
         print("Il y a eu une erreur de connexion (Internet ou retentatives max atteintes)")
-        time.sleep(3)
+        time.sleep(2)
         for i in range(3):
             print(f"Le programme va reprendre son cours dans {3-i} s")
             time.sleep(1)
         pyautogui.hotkey('alt','tab')
-        time.sleep(3)
 
     def show_interrupt_message():
         Display.focus_window(Display.console["handle"])
         print("Le programme s'est fini en avance par interruption clavier")
+        time.sleep(2)
+        pyautogui.hotkey('alt','tab')
