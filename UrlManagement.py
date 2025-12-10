@@ -88,6 +88,16 @@ class Url:
     def handle_number_only(url, direction):
         return Url.apply_regex_and_modify(url, r"(\d+)(?:[(-|_)\w+#\w+_\w+]*)$", ["number"], direction)
 
+    def get_url(url):
+        response = None
+        try:
+            response = requests.get(url)
+        except requests.exceptions.RequestException:
+            Display.show_major_error_message()
+            return Url.get_url(url)
+
+        return response
+
     def create_new_url(url,direction):
         url_parser = url.rstrip("/").split("/")
         date_parser = [ele for ele in url_parser if ele.isdigit()]
@@ -166,12 +176,7 @@ class Url:
                 Display.show_minor_error_message("Le chapitre 0 n'existe pas") if direction == "last" else Display.show_minor_error_message("Je ne sais pas comment tu es rentré ici, mais je te félicite")
                 return
             
-            response = None
-            while not isinstance(response,requests.Response):
-                try:
-                    response = requests.get(url)
-                except requests.exceptions.RequestException:
-                    Display.show_major_error_message()
+            response = Url.get_url(url)
             
             soup = BeautifulSoup(response.text, "lxml")
             
@@ -193,12 +198,7 @@ class Url:
             toCheck = any(s.isdigit() for s in new_url.split("/")[:-1])
                     
             if toCheck:
-                response = None
-                while not isinstance(response,requests.Response):
-                    try:
-                        response = requests.get(new_url)
-                    except requests.exceptions.RequestException:
-                        Display.show_major_error_message()
+                response = Url.get_url(new_url)
 
                 soup = BeautifulSoup(response.text,"lxml")
                 if len(soup.text) < Constante.BLOG_TEXT_THRESHOLD:
@@ -228,15 +228,7 @@ class Url:
             Url.copy_paste(True)
 
     def search_in_multithread(url):
-        response = None
-        while not isinstance(response,requests.Response):
-            try:
-                response = requests.get(url)
-            except requests.exceptions.RequestException:
-                if Constante.interrupt_handler.is_set():
-                    return
-                else:
-                    Display.show_major_error_message()
+        response = Url.get_url(url)
 
         soup = BeautifulSoup(response.text,"lxml")
         if len(soup.text) < Constante.BLOG_TEXT_THRESHOLD:
