@@ -65,28 +65,28 @@ class Url:
 
     # --- Tous les handle_* appellent apply_regex_and_modify avec un pattern différent ---
     def handle_prefix_number_suffix_extension(url, direction):
-        return Url.apply_regex_and_modify(url, r"([a-zA-Z\-]*)(\d+)([-\w]*)(\.\w+)(?:[#\w+_\w+]*)$", ["prefix", "number", "suffix", "extension"], direction)
+        return Url.apply_regex_and_modify(url, r"([a-zA-Z\(-|_)]*)(\d+)([(-|_)\w]*)(\.\w+)(?:[#\w+_\w+]*)$", ["prefix", "number", "suffix", "extension"], direction)
 
     def handle_prefix_number_suffix(url, direction):
-        return Url.apply_regex_and_modify(url, r"([a-zA-Z\-]*)(\d+)([-\w]+)(?:[#\w+_\w+]*)$", ["prefix", "number", "suffix"], direction)
+        return Url.apply_regex_and_modify(url, r"([a-zA-Z\(-|_)]*)(\d+)([(-|_)\w]+)(?:[#\w+_\w+]*)$", ["prefix", "number", "suffix"], direction)
 
     def handle_prefix_number_extension(url, direction):
-        return Url.apply_regex_and_modify(url, r"([a-zA-Z\-]*)(\d+)(\.\w+)(?:[#\w+_\w+]*)$", ["prefix", "number", "extension"], direction)
+        return Url.apply_regex_and_modify(url, r"([a-zA-Z\(-|_)]*)(\d+)(\.\w+)(?:[#\w+_\w+]*)$", ["prefix", "number", "extension"], direction)
 
     def handle_prefix_number(url, direction):
-        return Url.apply_regex_and_modify(url, r"([a-zA-Z\-]*)(\d+)(?:[#\w+_\w+]*)$", ["prefix", "number"], direction)
+        return Url.apply_regex_and_modify(url, r"([a-zA-Z\(-|_)]*)(\d+)(?:[(-|_)\w+#\w+_\w+]*)$", ["prefix", "number"], direction)
 
     def handle_number_suffix_extension(url, direction):
-        return Url.apply_regex_and_modify(url, r"(\d+)([-\w]+)(\.\w+)(?:[#\w+_\w+]*)$", ["number", "suffix", "extension"], direction)
+        return Url.apply_regex_and_modify(url, r"(\d+)([(-|_)\w]+)(\.\w+)(?:[#\w+_\w+]*)$", ["number", "suffix", "extension"], direction)
 
     def handle_number_suffix(url, direction):
-        return Url.apply_regex_and_modify(url, r"(\d+)([-\w]+)(?:[#\w+_\w+]*)$", ["number", "suffix"], direction)
+        return Url.apply_regex_and_modify(url, r"(\d+)([(-|_)\w]+)(?:[#\w+_\w+]*)$", ["number", "suffix"], direction)
 
     def handle_number_extension(url, direction):
         return Url.apply_regex_and_modify(url, r"(\d+)(\.\w+)(?:[#\w+_\w+]*)$", ["number", "extension"], direction)
 
     def handle_number_only(url, direction):
-        return Url.apply_regex_and_modify(url, r"(\d+)(?:[#\w+_\w+]*)$", ["number"], direction)
+        return Url.apply_regex_and_modify(url, r"(\d+)(?:[(-|_)\w+#\w+_\w+]*)$", ["number"], direction)
 
     def create_new_url(url,direction):
         url_parser = url.rstrip("/").split("/")
