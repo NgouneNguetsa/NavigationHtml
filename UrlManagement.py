@@ -289,8 +289,7 @@ class Url:
 
             if y < Constante.screenHeight / 2:
                 yDiff = (Constante.screenHeight / 2) - y
-                pyautogui.moveTo(x,min(0.83*(Constante.screenHeight-1),Constante.screenHeight - 2*yDiff))
-            
+                pyautogui.moveTo(x,min(0.83*Constante.screenHeight,Constante.screenHeight - 2*yDiff))            
             pyautogui.leftClick()
             pyautogui.moveTo(Constante.screenWidth,y)
 
