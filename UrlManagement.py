@@ -55,7 +55,6 @@ class Url:
 
         # Extraire les différentes parties capturées
         parts = {name: match.group(i + 1) if i < len(groups) else "" for i, name in enumerate(groups)}
-        print(parts)
         new_segment = Url.modify_chapter_number(segment, parts.get("prefix", ""), int(parts.get("number", 1)), parts.get("suffix", ""), parts.get("extension", ""), direction)
         if not new_segment:
             return None
@@ -66,28 +65,25 @@ class Url:
 
     # --- Tous les handle_* appellent apply_regex_and_modify avec un pattern différent ---
     def handle_prefix_number_suffix_extension(url, direction):
-        return Url.apply_regex_and_modify(url, r"([a-zA-Z\(-|_)]*)(\d+)([(-|_)\w]*)(\.\w+)(?:[#\w+_\w+]*)$", ["prefix", "number", "suffix", "extension"], direction)
+        return Url.apply_regex_and_modify(url, r"([a-zA-Z\(-|_)]*)(\d+)([(-|_)\w]*)(\.\w+)(?:[#\w+_\w+]*)?$", ["prefix", "number", "suffix", "extension"], direction)
 
     def handle_prefix_number_suffix(url, direction):
-        return Url.apply_regex_and_modify(url, r"([a-zA-Z\(-|_)]*)(\d+)([(-|_)\w]+)(?:[#\w+_\w+]*)$", ["prefix", "number", "suffix"], direction)
+        return Url.apply_regex_and_modify(url, r"([a-zA-Z\(-|_)]*)(\d+)([(-|_)\w]+)(?:[#\w+_\w+]*)?$", ["prefix", "number", "suffix"], direction)
 
     def handle_prefix_number_extension(url, direction):
-        return Url.apply_regex_and_modify(url, r"([a-zA-Z\(-|_)]*)(\d+)(\.\w+)(?:[#\w+_\w+]*)$", ["prefix", "number", "extension"], direction)
+        return Url.apply_regex_and_modify(url, r"([a-zA-Z\(-|_)]*)(\d+)(\.\w+)(?:[#\w+_\w+]*)?$", ["prefix", "number", "extension"], direction)
 
     def handle_prefix_number(url, direction):
-        return Url.apply_regex_and_modify(url, r"^([a-zA-Z_-]*?)(\d+)(?=[^0-9])(.+)$", ["prefix", "number"], direction)
+        return Url.apply_regex_and_modify(url, r"^([a-zA-Z_-]*?)(\d+)(?=[^0-9]|$)(?:.+)?$", ["prefix", "number"], direction)
 
     def handle_number_suffix_extension(url, direction):
-        return Url.apply_regex_and_modify(url, r"(\d+)([(-|_)\w]+)(\.\w+)(?:[#\w+_\w+]*)$", ["number", "suffix", "extension"], direction)
+        return Url.apply_regex_and_modify(url, r"(\d+)([(-|_)\w]+)(\.\w+)(?:[#\w+_\w+]*)?$", ["number", "suffix", "extension"], direction)
 
     def handle_number_suffix(url, direction):
-        return Url.apply_regex_and_modify(url, r"(\d+)([(-|_)\w]+)(?:[#\w+_\w+]*)$", ["number", "suffix"], direction)
+        return Url.apply_regex_and_modify(url, r"(\d+)([(-|_)\w]+)(?:[#\w+_\w+]*)?$", ["number", "suffix"], direction)
 
     def handle_number_extension(url, direction):
-        return Url.apply_regex_and_modify(url, r"(\d+)(\.\w+)(?:[#\w+_\w+]*)$", ["number", "extension"], direction)
-
-    def handle_number_only(url, direction):
-        return Url.apply_regex_and_modify(url, r"(\d+)(?:[(-|_)\w+#\w+_\w+]*)$", ["number"], direction)
+        return Url.apply_regex_and_modify(url, r"(\d+)(\.\w+)(?:[#\w+_\w+]*)?$", ["number", "extension"], direction)
 
     def get_url(url):
         response = None
@@ -101,7 +97,7 @@ class Url:
 
     def create_new_url(url,direction):
         url_parser = url.rstrip("/").split("/")
-        date_parser = [ele for ele in url_parser if ele.isdigit()]
+        date_parser = [ele for ele in url_parser[:-1] if ele.isdigit()]
 
         if len(date_parser) == 2:
             date_parser[1] = str(int(date_parser[1]) + 1) if direction == "next" else str(int(date_parser[1]) - 1)
@@ -141,23 +137,21 @@ class Url:
         """
         # Liste des patterns pour détecter chaque type d'URL
         patterns = [
-            (r"([a-zA-Z]*)(\d+)(?:[#\w+_\w+]*)$", Url.handle_prefix_number),                                  # Préfixe + numéro
-            (r"([a-zA-Z]*)(\d+)([-\w]+)(?:[#\w+_\w+]*)$", Url.handle_prefix_number_suffix),                   # Préfixe + numéro + suffixe
-            (r"([a-zA-Z]*)(\d+)(\.\w+)(?:[#\w+_\w+]*)$", Url.handle_prefix_number_extension),                 # Préfixe + numéro + extension
-            (r"([a-zA-Z]*)(\d+)([-\w]*)(\.\w+)(?:[#\w+_\w+]*)$", Url.handle_prefix_number_suffix_extension),  # Préfixe + numéro + suffixe + extension
+            (r"^([a-zA-Z_-]*?)(\d+)(?=[^0-9]|$)(?:.+)?$", Url.handle_prefix_number),                                    # Préfixe + numéro
+            (r"([a-zA-Z]*)(\d+)(?=[^0-9])([-\w]+)(?:[#\w+_\w+])?$", Url.handle_prefix_number_suffix),                   # Préfixe + numéro + suffixe
+            (r"([a-zA-Z]*)(\d+)(?=[^0-9])(\.\w+)(?:[#\w+_\w+])?$", Url.handle_prefix_number_extension),                 # Préfixe + numéro + extension
+            (r"([a-zA-Z]*)(\d+)(?=[^0-9])([-\w]*)(\.\w+)(?:[#\w+_\w+])?$", Url.handle_prefix_number_suffix_extension),  # Préfixe + numéro + suffixe + extension
             
-            (r"(\d+)([-\w]+)(?:[#\w+_\w+]*)$", Url.handle_number_suffix),                                     # Numéro + suffixe
-            (r"(\d+)(\.\w+)(?:[#\w+_\w+]*)$", Url.handle_number_extension),                                   # Numéro + extension
-            (r"(\d+)([-\w]+)(\.\w+)(?:[#\w+_\w+]*)$", Url.handle_number_suffix_extension),                    # Numéro + suffixe + extension
-
-            (r"(\d+)(?:[#\w+_\w+]*)$", Url.handle_number_only)                                                # Numéro uniquement
+            (r"(\d+)(?=[^0-9])([-\w]+)(?:[#\w+_\w+])?$", Url.handle_number_suffix),                                     # Numéro + suffixe
+            (r"(\d+)(?=[^0-9])(\.\w+)(?:[#\w+_\w+])?$", Url.handle_number_extension),                                   # Numéro + extension
+            (r"(\d+)(?=[^0-9])([-\w]+)(\.\w+)(?:[#\w+_\w+])?$", Url.handle_number_suffix_extension),                    # Numéro + suffixe + extension
         ]
 
         # On applique chaque pattern pour détecter la méthode à utiliser
         for pattern, handler in patterns:
             match = re.search(pattern, Url.get_last_segment(url))
             if match:
-                return handler(url, direction)
+                return handler(url,direction)
 
         return None
 
