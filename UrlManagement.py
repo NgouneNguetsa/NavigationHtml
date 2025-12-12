@@ -55,6 +55,7 @@ class Url:
 
         # Extraire les différentes parties capturées
         parts = {name: match.group(i + 1) if i < len(groups) else "" for i, name in enumerate(groups)}
+        print(parts)
         new_segment = Url.modify_chapter_number(segment, parts.get("prefix", ""), int(parts.get("number", 1)), parts.get("suffix", ""), parts.get("extension", ""), direction)
         if not new_segment:
             return None
@@ -74,7 +75,7 @@ class Url:
         return Url.apply_regex_and_modify(url, r"([a-zA-Z\(-|_)]*)(\d+)(\.\w+)(?:[#\w+_\w+]*)$", ["prefix", "number", "extension"], direction)
 
     def handle_prefix_number(url, direction):
-        return Url.apply_regex_and_modify(url, r"([a-zA-Z\(-|_)]*)(\d+)(?:[(-|_)\w+#\w+_\w+]*)$", ["prefix", "number"], direction)
+        return Url.apply_regex_and_modify(url, r"^([a-zA-Z_-]*?)(\d+)(?=[^0-9])(.+)$", ["prefix", "number"], direction)
 
     def handle_number_suffix_extension(url, direction):
         return Url.apply_regex_and_modify(url, r"(\d+)([(-|_)\w]+)(\.\w+)(?:[#\w+_\w+]*)$", ["number", "suffix", "extension"], direction)
