@@ -55,7 +55,6 @@ class Url:
 
         # Extraire les différentes parties capturées
         parts = {name: match.group(i + 1) if i < len(groups) else "" for i, name in enumerate(groups)}
-        print(parts)
         new_segment = Url.modify_chapter_number(segment, parts.get("prefix", ""), int(parts.get("number", 1)), parts.get("suffix", ""), parts.get("extension", ""), direction)
         if not new_segment:
             return None
@@ -298,4 +297,7 @@ class Url:
                 pyautogui.move(Constante.screenWidth, Constante.screenHeight / 2)
 
         keyboard.unblock_key("right") if direction == "next" else keyboard.unblock_key("left")
-        Constante.EnableListener()
+        Constante.EnableGlobalListener()
+
+if __name__ == "__main__":
+    print("Ce programme doit être lancé avec le fichier NavigationHtml.py")

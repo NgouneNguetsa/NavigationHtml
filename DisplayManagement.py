@@ -41,9 +41,10 @@ class Display:
         os.system("cls")
         print("Bienvenue dans le programme NavigationHtml.")
         print("Ce programme vous permet de vous déplacer d'une page html à une autre à l'aide de vos flèches directionnelles")
-        print("Maintenez <- jusqu'à ce que le lien soit surligné en bleu afin d'aller à la page précédente.")
-        print("Maintenez -> jusqu'à ce que le lien soit surligné en bleu afin d'aller à la page suivante.")
-        print("Maintenez ECHAP/ESC pour que le programme se ferme.")
+        print("Appuyez <- jusqu'à ce que le lien soit surligné en bleu afin d'aller à la page précédente.")
+        print("Appuyez -> jusqu'à ce que le lien soit surligné en bleu afin d'aller à la page suivante.")
+        print("Appuyez sur F5 pour mettre en pause/résumer le programme.")
+        print("Appuyez sur ECHAP/ESC pour que le programme se ferme.")
         print("\nBonne utilisation.\n(Appuyer sur ENTRÉE pour commencer le programme)")
         keyboard.wait("enter")
         pyautogui.hotkey('alt','tab')
@@ -73,3 +74,6 @@ class Display:
         print("Le programme s'est fini en avance par interruption clavier")
         time.sleep(2)
         pyautogui.hotkey('alt','tab')
+
+if __name__ == "__main__":
+    print("Ce programme doit être lancé avec le fichier NavigationHtml.py")

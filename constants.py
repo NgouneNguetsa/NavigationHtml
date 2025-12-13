@@ -21,7 +21,7 @@ class Constante:
     folder = Path(__file__).parent
     screenWidth, screenHeight = pyautogui.size()
     BLOG_TEXT_THRESHOLD = 2500 # Regarde si le blog a plus de 2500 caracteres avant de copier le lien
-    listener_enabled = threading.Event()
+    globalListener_disabled = threading.Event()
     interrupt_handler = threading.Event()
 
     tl_group = [
@@ -30,11 +30,11 @@ class Constante:
             ["botitranslation","dasuitl","foxaholic","readrift"] # Third research method
         ]
 
-    def EnableListener():
-        Constante.listener_enabled.clear()
+    def EnableGlobalListener():
+        Constante.globalListener_disabled.clear()
 
-    def DisableListener():
-        Constante.listener_enabled.set()
+    def DisableGlobalListener():
+        Constante.globalListener_disabled.set()
         
     def ThreadInterrupt(self,sig,frame):
         try:
@@ -68,3 +68,6 @@ class Constante:
                             ]
         else:
             raise FileNotFoundError("Je n'ai pas l'air de trouver le dossier nécessaire")
+        
+if __name__ == "__main__":
+    print("Ce programme doit être lancé avec le fichier NavigationHtml.py")
