@@ -55,6 +55,7 @@ class Url:
 
         # Extraire les différentes parties capturées
         parts = {name: match.group(i + 1) if i < len(groups) else "" for i, name in enumerate(groups)}
+        print(parts)
         new_segment = Url.modify_chapter_number(segment, parts.get("prefix", ""), int(parts.get("number", 1)), parts.get("suffix", ""), parts.get("extension", ""), direction)
         if not new_segment:
             return None
@@ -65,25 +66,10 @@ class Url:
 
     # --- Tous les handle_* appellent apply_regex_and_modify avec un pattern différent ---
     def handle_prefix_number_suffix_extension(url, direction):
-        return Url.apply_regex_and_modify(url, r"([a-zA-Z\(-|_)]*)(\d+)([(-|_)\w]*)(\.\w+)(?:[#\w+_\w+]*)?$", ["prefix", "number", "suffix", "extension"], direction)
-
-    def handle_prefix_number_suffix(url, direction):
-        return Url.apply_regex_and_modify(url, r"([a-zA-Z\(-|_)]*)(\d+)([(-|_)\w]+)(?:[#\w+_\w+]*)?$", ["prefix", "number", "suffix"], direction)
-
-    def handle_prefix_number_extension(url, direction):
-        return Url.apply_regex_and_modify(url, r"([a-zA-Z\(-|_)]*)(\d+)(\.\w+)(?:[#\w+_\w+]*)?$", ["prefix", "number", "extension"], direction)
+        return Url.apply_regex_and_modify(url, r"^([a-zA-Z_-]*?)(\d+)(?=-|_[^-]*|)([a-zA-Z0-9_-]*)?(\.\w*)?(?:[#a-zA-Z_-]*)$", ["prefix", "number", "suffix", "extension"], direction)
 
     def handle_prefix_number(url, direction):
-        return Url.apply_regex_and_modify(url, r"^([a-zA-Z_-]*?)(\d+)(?=[^0-9]|$)(?:.+)?$", ["prefix", "number"], direction)
-
-    def handle_number_suffix_extension(url, direction):
-        return Url.apply_regex_and_modify(url, r"(\d+)([(-|_)\w]+)(\.\w+)(?:[#\w+_\w+]*)?$", ["number", "suffix", "extension"], direction)
-
-    def handle_number_suffix(url, direction):
-        return Url.apply_regex_and_modify(url, r"(\d+)([(-|_)\w]+)(?:[#\w+_\w+]*)?$", ["number", "suffix"], direction)
-
-    def handle_number_extension(url, direction):
-        return Url.apply_regex_and_modify(url, r"(\d+)(\.\w+)(?:[#\w+_\w+]*)?$", ["number", "extension"], direction)
+        return Url.apply_regex_and_modify(url, r"^([a-zA-Z_-]*?)(\d+)(?=[^0-9]|$)(?:.*)$", ["prefix", "number"], direction)
 
     def get_url(url):
         response = None
@@ -130,30 +116,6 @@ class Url:
 
         suffixe = url_parser[-1]
         return urljoin(urljoin(base,date_string),suffixe)
-    
-    def auto_select_method(url, direction):
-        """
-        Détecte automatiquement la structure de l'URL et applique la méthode correspondante
-        """
-        # Liste des patterns pour détecter chaque type d'URL
-        patterns = [
-            (r"^([a-zA-Z_-]*?)(\d+)(?=[^0-9]|$)(?:.+)?$", Url.handle_prefix_number),                                    # Préfixe + numéro
-            (r"([a-zA-Z]*)(\d+)(?=[^0-9])([-\w]+)(?:[#\w+_\w+])?$", Url.handle_prefix_number_suffix),                   # Préfixe + numéro + suffixe
-            (r"([a-zA-Z]*)(\d+)(?=[^0-9])(\.\w+)(?:[#\w+_\w+])?$", Url.handle_prefix_number_extension),                 # Préfixe + numéro + extension
-            (r"([a-zA-Z]*)(\d+)(?=[^0-9])([-\w]*)(\.\w+)(?:[#\w+_\w+])?$", Url.handle_prefix_number_suffix_extension),  # Préfixe + numéro + suffixe + extension
-            
-            (r"(\d+)(?=[^0-9])([-\w]+)(?:[#\w+_\w+])?$", Url.handle_number_suffix),                                     # Numéro + suffixe
-            (r"(\d+)(?=[^0-9])(\.\w+)(?:[#\w+_\w+])?$", Url.handle_number_extension),                                   # Numéro + extension
-            (r"(\d+)(?=[^0-9])([-\w]+)(\.\w+)(?:[#\w+_\w+])?$", Url.handle_number_suffix_extension),                    # Numéro + suffixe + extension
-        ]
-
-        # On applique chaque pattern pour détecter la méthode à utiliser
-        for pattern, handler in patterns:
-            match = re.search(pattern, Url.get_last_segment(url))
-            if match:
-                return handler(url,direction)
-
-        return None
 
     def search_and_go_to_page(url, index, direction="next"):
         """
@@ -168,7 +130,7 @@ class Url:
             start_url = Url.handle_prefix_number(url,direction)
 
             if not start_url:
-                Display.show_minor_error_message("Le chapitre 0 n'existe pas") if direction == "last" else Display.show_minor_error_message("Je ne sais pas comment tu es rentré ici, mais je te félicite")
+                Display.show_minor_error_message("Le chapitre 0 n'existe pas") if direction == "last" else Display.show_minor_error_message("Si tu es rentré là, une erreur est survenue dans le code")
                 return
             
             response = Url.get_url(url)
@@ -184,10 +146,10 @@ class Url:
                 Display.show_minor_error_message("Il n'y a pas de lien présent dans la page")
         else:
 
-            # On génère la nouvelle URL en fonction de la méthode détectée
-            new_url = Url.auto_select_method(url, direction)
+            # On génère la nouvelle URL
+            new_url = Url.handle_prefix_number_suffix_extension(url, direction)
             if not new_url:
-                Display.show_minor_error_message("Le chapitre 0 n'existe pas") if direction == "last" else Display.show_minor_error_message("Je ne sais pas comment tu es rentré ici, mais je te félicite")
+                Display.show_minor_error_message("Le chapitre 0 n'existe pas") if direction == "last" else Display.show_minor_error_message("Si tu es rentré là, une erreur est survenue dans le code")
                 return
 
             toCheck = any(s.isdigit() for s in new_url.split("/")[:-1])
