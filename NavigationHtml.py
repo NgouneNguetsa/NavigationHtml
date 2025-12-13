@@ -1,4 +1,4 @@
-from constants import keyboard, Key, Listener, threading
+from constants import keyboard, Key, KeyCode, Listener, threading
 from DisplayManagement import Display
 from UrlManagement import Url
 from constants import Constante
@@ -42,7 +42,7 @@ class Navigation:
         if Constante.interrupt_handler.is_set() or self.stopEvent.is_set():
             return False
         
-        if key == Key.f3 and not self.pauseHandler.is_set():
+        if key == KeyCode.from_char("*") and not self.pauseHandler.is_set():
             Display.show_status_message("Programme en pause")
             Display.pause_state_message()
             self.pauseHandler.set()
@@ -52,7 +52,7 @@ class Navigation:
             except KeyError:
                 pass
 
-        elif key == Key.f3 and self.pauseHandler.is_set():
+        elif key == KeyCode.from_char("*") and self.pauseHandler.is_set():
             Display.show_status_message("Reprise du programme")
             Display.state_message()
             self.pauseHandler.clear()

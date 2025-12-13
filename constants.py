@@ -12,7 +12,7 @@ import ctypes
 from urllib.parse import urljoin
 from datetime import date, timedelta
 import threading
-from pynput.keyboard import Key, Listener
+from pynput.keyboard import Key, KeyCode, Listener
 import signal
 
 class Constante:
