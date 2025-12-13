@@ -36,8 +36,8 @@ class Display:
             Constante.user32.SetForegroundWindow(hwnd)
         except Exception:
             pass
-        
-    def start_message():
+
+    def state_message():
         os.system("cls")
         print("Bienvenue dans le programme NavigationHtml.")
         print("Ce programme vous permet de vous déplacer d'une page html à une autre à l'aide de vos flèches directionnelles")
@@ -45,9 +45,16 @@ class Display:
         print("Appuyez -> jusqu'à ce que le lien soit surligné en bleu afin d'aller à la page suivante.")
         print("Appuyez sur F3 pour mettre en pause/résumer le programme.")
         print("Appuyez sur ECHAP/ESC pour que le programme se ferme.")
+        
+    def start_message():
+        Display.state_message()
         print("\nBonne utilisation.\n(Appuyer sur ENTRÉE pour commencer le programme)")
         keyboard.wait("enter")
         pyautogui.hotkey('alt','tab')
+
+    def pause_state_message():
+        Display.state_message()
+        print("\nLe programme est en pause")
 
     def stop_message():
         Display.focus_window(Display.console["handle"])
