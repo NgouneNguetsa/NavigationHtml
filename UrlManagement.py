@@ -129,7 +129,7 @@ class Url:
             start_url = Url.handle_prefix_number(url,direction)
 
             if not start_url:
-                Display.show_minor_error_message("Le chapitre 0 n'existe pas") if direction == "last" else Display.show_minor_error_message("Si tu es rentré là, une erreur est survenue dans le code")
+                Display.show_status_message("Le chapitre 0 n'existe pas") if direction == "last" else Display.show_status_message("Si tu es rentré là, une erreur est survenue dans le code")
                 return
             
             response = Url.get_url(url)
@@ -142,13 +142,13 @@ class Url:
                 pyperclip.copy(new_page_link)
                 Url.copy_paste(True)
             else:
-                Display.show_minor_error_message("Il n'y a pas de lien présent dans la page")
+                Display.show_status_message("Il n'y a pas de lien présent dans la page")
         else:
 
             # On génère la nouvelle URL
             new_url = Url.handle_prefix_number_suffix_extension(url, direction)
             if not new_url:
-                Display.show_minor_error_message("Le chapitre 0 n'existe pas") if direction == "last" else Display.show_minor_error_message("Si tu es rentré là, une erreur est survenue dans le code")
+                Display.show_status_message("Le chapitre 0 n'existe pas") if direction == "last" else Display.show_status_message("Si tu es rentré là, une erreur est survenue dans le code")
                 return
 
             toCheck = any(s.isdigit() for s in new_url.split("/")[:-1])
@@ -175,7 +175,7 @@ class Url:
                         Url.reset_thread_list()
                         return
                     
-                    Display.show_minor_error_message("Il n'existe pas de nouveau chapitre") if direction == "next" else Display.show_minor_error_message("Il n'y a pas d'ancien chapitre")
+                    Display.show_status_message("Il n'existe pas de nouveau chapitre") if direction == "next" else Display.show_status_message("Il n'y a pas d'ancien chapitre")
                     Url.reset_thread_list()
                     return
 
@@ -222,8 +222,8 @@ class Url:
             Url.reset_thread_list()
             return
         
-        Display.show_minor_error_message("L'image n'existe pas ou il n'y a pas de nouveau chapitre") if direction == "next" \
-        else Display.show_minor_error_message("L'image n'existe pas ou il n'y a pas d'ancien chapitre")
+        Display.show_status_message("L'image n'existe pas ou il n'y a pas de nouveau chapitre") if direction == "next" \
+        else Display.show_status_message("L'image n'existe pas ou il n'y a pas d'ancien chapitre")
 
         Url.reset_thread_list()
         

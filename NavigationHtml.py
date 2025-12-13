@@ -40,7 +40,7 @@ class Navigation:
             return False
 
         if key == Key.f5 and not self.pauseHandler.is_set():
-            print("Programme en pause")
+            Display.show_status_message("Programme en pause")
             self.pauseHandler.set()
             Constante.DisableGlobalListener()
             try:
@@ -49,7 +49,7 @@ class Navigation:
                 pass
 
         elif key == Key.f5 and self.pauseHandler.is_set():
-            print("Reprise du programme")
+            Display.show_status_message("Reprise du programme")
             self.pauseHandler.clear()
             Constante.EnableGlobalListener()
             self.KeyboardInterrupt()
