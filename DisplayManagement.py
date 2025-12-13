@@ -43,7 +43,7 @@ class Display:
         print("Ce programme vous permet de vous déplacer d'une page html à une autre à l'aide de vos flèches directionnelles")
         print("Appuyez <- jusqu'à ce que le lien soit surligné en bleu afin d'aller à la page précédente.")
         print("Appuyez -> jusqu'à ce que le lien soit surligné en bleu afin d'aller à la page suivante.")
-        print("Appuyez sur F5 pour mettre en pause/résumer le programme.")
+        print("Appuyez sur F3 pour mettre en pause/résumer le programme.")
         print("Appuyez sur ECHAP/ESC pour que le programme se ferme.")
         print("\nBonne utilisation.\n(Appuyer sur ENTRÉE pour commencer le programme)")
         keyboard.wait("enter")

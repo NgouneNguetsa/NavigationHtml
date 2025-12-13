@@ -39,7 +39,7 @@ class Navigation:
         if Constante.interrupt_handler.is_set():
             return False
 
-        if key == Key.f5 and not self.pauseHandler.is_set():
+        if key == Key.f3 and not self.pauseHandler.is_set():
             Display.show_status_message("Programme en pause")
             self.pauseHandler.set()
             Constante.DisableGlobalListener()
@@ -48,7 +48,7 @@ class Navigation:
             except KeyError:
                 pass
 
-        elif key == Key.f5 and self.pauseHandler.is_set():
+        elif key == Key.f3 and self.pauseHandler.is_set():
             Display.show_status_message("Reprise du programme")
             self.pauseHandler.clear()
             Constante.EnableGlobalListener()
