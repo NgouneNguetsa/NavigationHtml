@@ -10,11 +10,13 @@ class Navigation:
         Display.InitVar()
         Display.start_message()
         self.pauseHandler = threading.Event()
+        self.stopEvent = threading.Event()
 
     # La fonction est responsable de toute les actions du thread d'écoute globale
     def GL_on_press(self,key):
         if Constante.interrupt_handler.is_set():
             Display.show_interrupt_message()
+            Display.stop_message()
             return False
         
         elif Constante.globalListener_disabled.is_set():
@@ -22,6 +24,7 @@ class Navigation:
 
         if key == Key.esc:
             Display.stop_message()
+            self.stopEvent.set()
             return False
         
         elif key == Key.right:
@@ -36,12 +39,7 @@ class Navigation:
 
     # La fonction est responsable de la pause/remise en marche du programme
     def PR_on_press(self,key):
-        if Constante.interrupt_handler.is_set():
-            return False
-
-        if key == Key.esc:
-            Constante.EnableGlobalListener()
-            keyboard.send("esc")
+        if Constante.interrupt_handler.is_set() or self.stopEvent.is_set():
             return False
         
         if key == Key.f3 and not self.pauseHandler.is_set():
