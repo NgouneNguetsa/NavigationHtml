@@ -42,7 +42,7 @@ class Url:
         if new_number < 1:
             return None  # On ne traite pas ce cas si le numéro devient invalide
 
-        new_segment = f"{prefix}{new_number}{suffix}{extension}" if prefix else f"{new_number}{suffix}{extension}"
+        new_segment = f"{prefix}{new_number}{suffix}{extension}"
         return new_segment
 
     def apply_regex_and_modify(url, pattern, groups, direction):
@@ -55,6 +55,9 @@ class Url:
 
         # Extraire les différentes parties capturées
         parts = {name: match.group(i + 1) if i < len(groups) else "" for i, name in enumerate(groups)}
+        if "extension" in parts:
+            parts["extension"] = "" if parts["extension"] == None else parts["extension"]
+
         new_segment = Url.modify_chapter_number(segment, parts.get("prefix", ""), int(parts.get("number", 1)), parts.get("suffix", ""), parts.get("extension", ""), direction)
         if not new_segment:
             return None
@@ -65,7 +68,7 @@ class Url:
 
     # --- Tous les handle_* appellent apply_regex_and_modify avec un pattern différent ---
     def handle_prefix_number_suffix_extension(url, direction):
-        return Url.apply_regex_and_modify(url, r"^([a-zA-Z_-]*?)(\d+)(?=-|_[^-]*|)([a-zA-Z0-9_-]*)?(\.\w*)?(?:[#a-zA-Z_-]*)$", ["prefix", "number", "suffix", "extension"], direction)
+        return Url.apply_regex_and_modify(url, r"^([a-zA-Z_-]*?)(\d+)(?=-|_[^-]*|)([a-zA-Z0-9_-]*)?(\.\w*)?(?:[#a-zA-Z_-]*)?$", ["prefix", "number", "suffix", "extension"], direction)
 
     def handle_prefix_number(url, direction):
         return Url.apply_regex_and_modify(url, r"^([a-zA-Z_-]*?)(\d+)(?=[^0-9]|$)(?:.*)$", ["prefix", "number"], direction)
