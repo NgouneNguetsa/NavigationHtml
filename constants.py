@@ -25,7 +25,7 @@ class Constante:
     interrupt_handler = threading.Event()
 
     tl_group = [
-            ["nobadnovel","shanghaifantasy","shiningnoveltranslations"], # First research method - First case
+            ["nobadnovel","shanghaifantasy","shiningnoveltranslations","mainichitl"], # First research method - First case
             ["brightnovels","otakutl","zkytl","breaknovel"], # First research method - Second case
             ["botitranslation","dasuitl","foxaholic","readrift"] # Third research method
         ]
