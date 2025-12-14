@@ -65,7 +65,7 @@ class Display:
 
     def show_status_message(status_message : str):
         pyautogui.alert(f"{status_message}")
-        time.sleep(1)
+        time.sleep(0.1)
 
     def show_major_error_message():
         Display.focus_window(Display.console["handle"])
