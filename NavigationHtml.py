@@ -16,7 +16,6 @@ class Navigation:
     def GL_on_press(self,key):
         if Constante.interrupt_handler.is_set():
             Display.show_interrupt_message()
-            Display.stop_message()
             return False
         
         elif Constante.globalListener_disabled.is_set():

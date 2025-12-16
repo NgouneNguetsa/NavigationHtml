@@ -26,6 +26,19 @@ class Url:
         # Compile une seule regex globale
         Url.global_regex = re.compile("|".join(Url.patterns))
 
+    def test_screen_corners(function):
+        def inner(*args,**kwargs):
+            try:
+                function(*args,*kwargs)
+            except pyautogui.FailSafeException:
+                pyautogui.FAILSAFE = False
+                pyautogui.move(Constante.screenWidth, Constante.screenHeight / 2)
+                pyautogui.FAILSAFE = True
+            finally:
+                function(*args,*kwargs)
+
+        return inner
+
     def reset_thread_list():
         Url.thread_list.clear()
 
@@ -227,6 +240,7 @@ class Url:
 
         Url.reset_thread_list()
         
+    @test_screen_corners
     def search_in_multithread_2nd_method(img_path):
         bouton = None
         try:
@@ -249,6 +263,7 @@ class Url:
             pyautogui.leftClick()
             pyautogui.moveTo(Constante.screenWidth,y)
 
+    @test_screen_corners
     def copy_paste(copy_or_paste = False):
         """"Copier-coller automatique + vidange de la clipboard"""
         if not copy_or_paste:
@@ -279,22 +294,15 @@ class Url:
         else:
             func(direction)
 
-
     def search_page(direction):
         """Fonction qui recherche la page html précédente/suivante en fonction de la page actuelle"""
 
         Url.copy_paste()
         url = pyperclip.paste()
         if url.startswith("https") or url.startswith("http") or url.startswith("www"):
-            try:
-                Url.go_to_page(url,direction)
-            except pyautogui.FailSafeException:
-                pyautogui.move(Constante.screenWidth, Constante.screenHeight / 2)
+            Url.go_to_page(url,direction)
         else:
-            try:
-                Url.search_and_go_to_page_2nd_method(direction)
-            except pyautogui.FailSafeException:
-                pyautogui.move(Constante.screenWidth, Constante.screenHeight / 2)
+            Url.search_and_go_to_page_2nd_method(direction)
 
         keyboard.unblock_key("right") if direction == "next" else keyboard.unblock_key("left")
         Constante.EnableGlobalListener()

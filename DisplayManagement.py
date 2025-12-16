@@ -79,8 +79,7 @@ class Display:
     def show_interrupt_message():
         Display.focus_window(Display.console["handle"])
         print("Le programme s'est fini en avance par interruption clavier")
-        time.sleep(2)
-        pyautogui.hotkey('alt','tab')
+        Display.stop_message()
 
 if __name__ == "__main__":
     print("Ce programme doit être lancé avec le fichier NavigationHtml.py")
