@@ -23,12 +23,7 @@ class Constante:
     BLOG_TEXT_THRESHOLD = 2500 # Regarde si le blog a plus de 2500 caracteres avant de copier le lien
     globalListener_disabled = threading.Event()
     interrupt_handler = threading.Event()
-
-    tl_group = [
-            ["nobadnovel","shanghaifantasy","shiningnoveltranslations","mainichitl"], # First research method - First case
-            ["brightnovels","otakutl","zkytl","breaknovel","hostednovel","tinytranslation"], # First research method - Second case
-            ["botitranslation","dasuitl","foxaholic","readrift"] # Third research method
-        ]
+    tl_group = []
 
     def EnableGlobalListener():
         Constante.globalListener_disabled.clear()
@@ -53,6 +48,15 @@ class Constante:
     def InitVar():
         signal.signal(signal.SIGINT,Constante.ThreadInterrupt)
 
+        with open(fr"{Constante.folder}/translationgroups.txt","r") as f:
+            for s in f:
+                s = s.strip().rstrip(',')
+                
+                if s.startswith("#") or s == '':
+                    continue
+                else:
+                    Constante.tl_group.append(s.split(","))
+
         subdirectory = next((sub for sub in Constante.folder.iterdir() if sub.is_dir() and "imgs" in str(sub)),None)
 
         if subdirectory:
@@ -71,4 +75,6 @@ class Constante:
             raise FileNotFoundError("Je n'ai pas l'air de trouver le dossier nécessaire")
         
 if __name__ == "__main__":
-    print("Ce programme doit être lancé avec le fichier NavigationHtml.py")
+    # print("Ce programme doit être lancé avec le fichier NavigationHtml.py")
+    Constante.InitVar()
+    print(Constante.tl_group)
