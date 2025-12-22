@@ -75,6 +75,4 @@ class Constante:
             raise FileNotFoundError("Je n'ai pas l'air de trouver le dossier nécessaire")
         
 if __name__ == "__main__":
-    # print("Ce programme doit être lancé avec le fichier NavigationHtml.py")
-    Constante.InitVar()
-    print(Constante.tl_group)
+    print("Ce programme doit être lancé avec le fichier NavigationHtml.py")
