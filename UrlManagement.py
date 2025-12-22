@@ -302,7 +302,7 @@ class Url:
 
         Url.copy_paste()
         url = pyperclip.paste()
-        if url.startswith("https") or url.startswith("http") or url.startswith("www"):
+        if url.startswith("http") or url.startswith("www"):
             Url.go_to_page(url,direction)
         else:
             Url.search_and_go_to_page_2nd_method(direction)
