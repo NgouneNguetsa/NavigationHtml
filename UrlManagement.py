@@ -34,9 +34,7 @@ class Url:
                 pyautogui.FAILSAFE = False
                 pyautogui.move(Constante.screenWidth, Constante.screenHeight / 2)
                 pyautogui.FAILSAFE = True
-            finally:
                 function(*args,*kwargs)
-
         return inner
 
     def reset_thread_list():
@@ -51,8 +49,8 @@ class Url:
         # En fonction de la direction, on incrémente ou décrémente
         new_number = chapter_number + 1 if direction == "next" else chapter_number - 1
 
-        # Vérification : on évite un numéro de chapitre inférieur à 1
-        if new_number < 1:
+        # Vérification : on évite un numéro de chapitre inférieur à 0
+        if new_number < 0:
             return None  # On ne traite pas ce cas si le numéro devient invalide
 
         new_segment = f"{prefix}{new_number}{suffix}{extension}"
@@ -82,6 +80,17 @@ class Url:
 
     def handle_prefix_number(url, direction):
         return Url.apply_regex_and_modify(url, r"^([a-zA-Z_-]*?)(\d+)(?=[^0-9]|$)(?:.*)$", ["prefix", "number"], direction)
+
+    @test_screen_corners
+    def mouse_move(x,y):
+        pyautogui.click(x, y)
+        time.sleep(2)
+
+        yDiff = (Constante.screenHeight / 2) - y if y < (Constante.screenHeight / 2) else 0
+        pyautogui.moveTo(0.989*Constante.screenWidth,min(0.83*Constante.screenHeight,Constante.screenHeight - 2*yDiff))            
+        
+        pyautogui.leftClick()
+        pyautogui.moveTo(Constante.screenWidth,y)
 
     def get_url(url):
         response = None
@@ -142,7 +151,7 @@ class Url:
             start_url = Url.handle_prefix_number(url,direction)
 
             if not start_url:
-                Display.show_status_message("Le chapitre 0 n'existe pas") if direction == "last" else Display.show_status_message("Si tu es rentré là, une erreur est survenue dans le code")
+                Display.show_status_message("Le chapitre -1 n'existe pas") if direction == "last" else Display.show_status_message("Si tu es rentré là, une erreur est survenue dans le code")
                 return
             
             response = Url.get_url(url)
@@ -161,7 +170,7 @@ class Url:
             # On génère la nouvelle URL
             new_url = Url.handle_prefix_number_suffix_extension(url, direction)
             if not new_url:
-                Display.show_status_message("Le chapitre 0 n'existe pas") if direction == "last" else Display.show_status_message("Si tu es rentré là, une erreur est survenue dans le code")
+                Display.show_status_message("Le chapitre -1 n'existe pas") if direction == "last" else Display.show_status_message("Si tu es rentré là, une erreur est survenue dans le code")
                 return
 
             toCheck = any(s.isdigit() for s in new_url.split("/")[:-1])
@@ -195,6 +204,10 @@ class Url:
             # On copie l'URL générée
             pyperclip.copy(new_url)
             Url.copy_paste(True)
+            if ".com" not in new_url:
+                _,y = pyautogui.position()
+                x = 0.989*Constante.screenWidth
+                Url.mouse_move(x,y)
 
     def search_in_multithread(url):
         response = Url.get_url(url)
@@ -240,7 +253,6 @@ class Url:
 
         Url.reset_thread_list()
         
-    @test_screen_corners
     def search_in_multithread_2nd_method(img_path):
         bouton = None
         try:
@@ -252,16 +264,7 @@ class Url:
             Url.img_found.set()
             # Calcule le centre du bouton
             x, y = pyautogui.center(bouton)
-            
-            # Clique dessus
-            pyautogui.click(x, y)
-            time.sleep(1)
-
-            if y < Constante.screenHeight / 2:
-                yDiff = (Constante.screenHeight / 2) - y
-                pyautogui.moveTo(0.989*Constante.screenWidth,min(0.83*Constante.screenHeight,Constante.screenHeight - 2*yDiff))            
-            pyautogui.leftClick()
-            pyautogui.moveTo(Constante.screenWidth,y)
+            Url.mouse_move(x,y)
 
     @test_screen_corners
     def copy_paste(copy_or_paste = False):
