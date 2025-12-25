@@ -8,23 +8,18 @@ class Url:
         lambda url, index, direction: Url.search_and_go_to_page(url, index, direction),
         lambda direction: Url.search_and_go_to_page_2nd_method(direction)
     ]
+
     mapping = {}
     patterns = []
 
     tentatives = 31
     thread_list = []
-    set_lock = threading.Lock()
     url_found = threading.Event()
     img_found = threading.Event()
+    bool_test_url = False
 
     def InitVar():
-        for i, tl_group_list in enumerate(Constante.tl_group):
-            for tl in tl_group_list:
-                Url.patterns.append(re.escape(tl))
-                Url.mapping[tl] = i  # Associe chaque texte au bon index
-
-        # Compile une seule regex globale
-        Url.global_regex = re.compile("|".join(Url.patterns))
+        Url.update_regex()
 
     def test_screen_corners(function):
         def inner(*args,**kwargs):
@@ -39,6 +34,18 @@ class Url:
 
     def reset_thread_list():
         Url.thread_list.clear()
+
+    def update_regex():
+        Url.mapping.clear()
+        Url.patterns.clear()
+
+        for i, tl_group_list in enumerate(Constante.tl_group):
+            for tl in tl_group_list:
+                Url.patterns.append(re.escape(tl))
+                Url.mapping[tl] = i  # Associe chaque texte au bon index
+
+        # Compile une seule regex globale
+        Url.global_regex = re.compile("|".join(Url.patterns))
 
     def get_last_segment(url):
         """Retourne la dernière partie de l'URL après le dernier /"""
@@ -101,6 +108,12 @@ class Url:
             return Url.get_url(url)
 
         return response
+    
+    def test_url(url):
+        tl_group = "dummy"
+        index = 0
+        Constante.update_tl_group(tl_group,index)
+        Url.update_regex()
 
     def create_new_url(url,direction):
         url_parser = url.rstrip("/").split("/")
@@ -283,8 +296,8 @@ class Url:
         """"Cherche si le groupe de traduction existe et exécute la fonction correspondante"""
         match = Url.global_regex.search(url)
         if not match:
-            pyautogui.alert(f"{url}\nLien invalide ou groupe de traduction non présent dans la database")
-            time.sleep(1)
+            # Url.test_url(url)
+            Display.show_status_message(f"{url}\nLien invalide ou groupe de traduction non présent dans la database")
             return
 
         tl_found = match.group(0)

@@ -24,6 +24,7 @@ class Constante:
     globalListener_disabled = threading.Event()
     interrupt_handler = threading.Event()
     tl_group = []
+    tl_group_index = []
 
     def EnableGlobalListener():
         Constante.globalListener_disabled.clear()
@@ -48,14 +49,13 @@ class Constante:
     def InitVar():
         signal.signal(signal.SIGINT,Constante.ThreadInterrupt)
 
-        with open(fr"{Constante.folder}/translationgroups.txt","r") as f:
+        with open(fr"{Constante.folder}/translationgroups.txt","rb") as f:
             for s in f:
-                s = s.strip().rstrip(',')
-                
-                if s.startswith("#") or s == '':
-                    continue
-                else:
-                    Constante.tl_group.append(s.split(","))
+                s = s.decode().strip()
+                if not s.startswith("#") and s != "":
+                    ind = f.tell()
+                    Constante.tl_group_index.append(ind)
+                    Constante.tl_group.append(s.rstrip(",").split(","))
 
         subdirectory = next((sub for sub in Constante.folder.iterdir() if sub.is_dir() and "imgs" in str(sub)),None)
 
@@ -74,5 +74,30 @@ class Constante:
         else:
             raise FileNotFoundError("Je n'ai pas l'air de trouver le dossier nécessaire")
         
+    def update_tl_group(tl_group,index):
+        Constante.tl_group_index.clear()
+        Constante.tl_group.clear()
+
+        buffer = open(fr"{Path(__file__).parent}/translationgroups.txt",'r').read()
+
+        if index == 0:
+            new_file = buffer[:index[2]-3] + f"{tl_group}," + buffer[index[2]-3:]
+        elif index == 1:
+            new_file = buffer[:index[2]-6] + f"{tl_group}," + buffer[index[2]-6:]
+        elif index == 2:
+            new_file = buffer[:index[2]-2] + f"{tl_group},"
+        else:
+            pyautogui.alert("Il y a eu un problème dans le code")
+
+        open(fr"{Path(__file__).parent}/translationgroups.txt",'w').write(new_file)
+        
+        with open(fr"{Constante.folder}/translationgroups.txt","rb") as f:
+            for s in f:
+                s = s.decode().strip()
+                if not s.startswith("#") and s != "":
+                    ind = f.tell()
+                    Constante.tl_group_index.append(ind)
+                    Constante.tl_group.append(s.rstrip(",").split(","))
+
 if __name__ == "__main__":
     print("Ce programme doit être lancé avec le fichier NavigationHtml.py")
