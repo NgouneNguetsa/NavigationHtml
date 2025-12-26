@@ -125,6 +125,8 @@ class Url:
         Constante.update_tl_group(tl_group,index)
         Url.update_regex()
 
+        Url.url_to_test = False
+
     def create_new_url(url,direction):
         url_parser = url.rstrip("/").split("/")
         date_parser = [ele for ele in url_parser[:-1] if ele.isdigit()]
@@ -186,7 +188,8 @@ class Url:
             if new_page_link != "":
                 pyperclip.copy(new_page_link)
                 Url.copy_paste(True)
-                return False
+                if Url.url_to_test:
+                    return False
             else:
                 if Url.url_to_test:
                     return True
