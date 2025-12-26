@@ -91,7 +91,7 @@ class Url:
     @test_screen_corners
     def mouse_move(x,y):
         pyautogui.click(x, y)
-        time.sleep(2)
+        time.sleep(1.5)
 
         yDiff = abs((Constante.screenHeight / 2) - y) if y < (Constante.screenHeight / 2) else 0
         pyautogui.moveTo(0.989*Constante.screenWidth,min(0.83*Constante.screenHeight,Constante.screenHeight - yDiff))            
