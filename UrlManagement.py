@@ -16,8 +16,8 @@ class Url:
     thread_list = []
     url_found = threading.Event()
     img_found = threading.Event()
-    bool_test_url = False
-
+    url_to_test = False
+    
     def InitVar():
         Url.update_regex()
 
@@ -109,9 +109,19 @@ class Url:
 
         return response
     
-    def test_url(url):
-        tl_group = "dummy"
+    def test_url(url,direction):
+        Url.url_to_test = True
+
+        ind_first_point = url.index(".")
+        ind_second_point = url.index(".",ind_first_point+1)
+        tl_group = url[ind_first_point+1:ind_second_point]
         index = 0
+
+        Url.url_to_test = Url.search_and_go_to_page(url,index,direction)
+        if Url.url_to_test:
+            index = 1
+            Url.search_and_go_to_page(url,index,direction)
+
         Constante.update_tl_group(tl_group,index)
         Url.update_regex()
 
@@ -176,7 +186,10 @@ class Url:
             if new_page_link != "":
                 pyperclip.copy(new_page_link)
                 Url.copy_paste(True)
+                return False
             else:
+                if Url.url_to_test:
+                    return True
                 Display.show_status_message("Il n'y a pas de lien présent dans la page")
         else:
 
@@ -296,8 +309,8 @@ class Url:
         """"Cherche si le groupe de traduction existe et exécute la fonction correspondante"""
         match = Url.global_regex.search(url)
         if not match:
-            # Url.test_url(url)
-            Display.show_status_message(f"{url}\nLien invalide ou groupe de traduction non présent dans la database")
+            Url.test_url(url,direction)
+            # Display.show_status_message(f"{url}\nLien invalide ou groupe de traduction non présent dans la database")
             return
 
         tl_found = match.group(0)
@@ -315,7 +328,7 @@ class Url:
 
         Url.copy_paste()
         url = pyperclip.paste()
-        if url.startswith("http") or url.startswith("www"):
+        if url.startswith("http"):
             Url.go_to_page(url,direction)
         else:
             Url.search_and_go_to_page_2nd_method(direction)
