@@ -193,7 +193,7 @@ class Url:
             else:
                 if Url.url_to_test:
                     return True
-                Display.show_status_message("Il n'y a pas de lien présent dans la page")
+                Display.show_status_message("Il n'y a pas de lien présent dans la page") if response.ok else Display.show_status_message(f"Error code :\n{response.status_code}")
                 pyperclip.copy("")
         else:
 
