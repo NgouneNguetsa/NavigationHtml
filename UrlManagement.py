@@ -303,7 +303,7 @@ class Url:
             pyautogui.hotkey('ctrl', 'c')
             pyautogui.press('esc')
         else:
-            pyautogui.hotkey('ctrl', 'e')
+            pyautogui.hotkey('ctrl', 'l')
             pyautogui.hotkey('ctrl','v')
             pyautogui.press('enter')
             pyperclip.copy('')
@@ -329,6 +329,7 @@ class Url:
     def search_page(direction):
         """Fonction qui recherche la page html précédente/suivante en fonction de la page actuelle"""
 
+        pyperclip.copy("")
         Url.copy_paste()
         url = pyperclip.paste()
         if url.startswith("http"):
