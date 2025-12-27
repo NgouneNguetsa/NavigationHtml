@@ -312,8 +312,8 @@ class Url:
         """"Cherche si le groupe de traduction existe et exécute la fonction correspondante"""
         match = Url.global_regex.search(url)
         if not match:
-            Url.test_url(url,direction)
-            # Display.show_status_message(f"{url}\nLien invalide ou groupe de traduction non présent dans la database")
+            # Url.test_url(url,direction)
+            Display.show_status_message(f"{url}\nLien invalide ou groupe de traduction non présent dans la database")
             return
 
         tl_found = match.group(0)
