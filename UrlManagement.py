@@ -194,6 +194,7 @@ class Url:
                 if Url.url_to_test:
                     return True
                 Display.show_status_message("Il n'y a pas de lien présent dans la page")
+                pyperclip.copy("")
         else:
 
             # On génère la nouvelle URL
@@ -329,7 +330,6 @@ class Url:
     def search_page(direction):
         """Fonction qui recherche la page html précédente/suivante en fonction de la page actuelle"""
 
-        pyperclip.copy("")
         Url.copy_paste()
         url = pyperclip.paste()
         if url.startswith("http"):
