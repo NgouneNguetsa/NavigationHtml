@@ -170,6 +170,7 @@ class Url:
         - soup: La page web téléchargée
         - index: L'index du groupe de traduction dans la database
         - direction: "next" ou "last"
+        TODO: Regardez tous les codes et faire un affichage spécialisée
         """
 
         if index == 0:
