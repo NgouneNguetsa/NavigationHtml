@@ -229,7 +229,7 @@ class Url:
                         Url.reset_thread_list()
                         return
                     
-                    Display.show_status_message("Il n'existe pas de nouveau chapitre ou il y a un problème dans le blog") if direction == "next" else Display.show_status_message("Il n'y a pas d'ancien chapitre ou il y a un problème dans le blog")
+                    Display.show_status_message("Il n'existe pas de nouveau chapitre\nou\nil y a un problème dans le blog") if direction == "next" else Display.show_status_message("Il n'y a pas d'ancien chapitre\nou\nil y a un problème dans le blog")
                     Url.reset_thread_list()
                     return
 
