@@ -178,13 +178,51 @@ class Url:
         return urljoin(urljoin(base,date_string),suffixe)
     
     def test_direct(url,direction):
+        """Le test est effectué à l'aide de la logique interne au programme"""
         url1 = Url.handle_prefix_number(url,direction)
         url2 = Url.handle_prefix_number_test(url,direction)
 
         if url1 != url2:
             Display.show_status_message("BIP BIP")
 
+        toCheck = any(s.isdigit() for s in url1.split("/")[:-1])
+                
+        if toCheck:
+            response = Url.get_url(url1)
+
+            soup = BeautifulSoup(response.text,"lxml")
+            if len(soup.text) < Constante.BLOG_TEXT_THRESHOLD:
+                for _ in range(Url.tentatives):
+                    url1 = Url.create_new_url(url1,direction)
+                    thread = threading.Thread(target=Url.search_in_multithread,args=(url1,))
+                    Url.thread_list.append(thread)
+                    thread.start()
+
+                    if Url.url_found.is_set():
+                        Url.url_to_test = False
+                        break
+
+                for thread in Url.thread_list:
+                    thread.join()
+
+                if Url.url_found.is_set():
+                    Url.url_found.clear()
+                    Url.reset_thread_list()
+                    return
+                
+                Url.reset_thread_list()
+                return
+
+        # On copie l'URL générée
+        pyperclip.copy(url1)
+        Url.copy_paste(True)
+        if ".com" not in url1:
+            _,y = pyautogui.position()
+            x = 0.989*Constante.screenWidth
+            Url.mouse_move(x,y)
+
     def test_indirect(url,direction):
+        """Le test est effectué à l'aide du lien url généré"""
         url1 = Url.handle_prefix_number_suffix_extension(url,direction)
         url2 = Url.handle_prefix_number_suffix_extension_test(url,direction)
 
@@ -199,7 +237,8 @@ class Url:
 
         if new_page_link != "":
             Url.url_to_test = False
-            
+            pyperclip.copy(new_page_link)
+            Url.copy_paste(True)
 
     def search_and_go_to_page(url, index, direction="next"):
         """
@@ -228,11 +267,7 @@ class Url:
             if new_page_link != "":
                 pyperclip.copy(new_page_link)
                 Url.copy_paste(True)
-                if Url.url_to_test:
-                    return False
             else:
-                if Url.url_to_test:
-                    return True
                 Display.show_status_message("Il n'y a pas de lien présent dans la page") if response.ok else Display.show_status_message(f"Error code :\n{response.status_code}")
                 pyperclip.copy("")
         else:
