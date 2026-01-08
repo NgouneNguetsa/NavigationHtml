@@ -178,10 +178,28 @@ class Url:
         return urljoin(urljoin(base,date_string),suffixe)
     
     def test_direct(url,direction):
-        pass
+        url1 = Url.handle_prefix_number(url,direction)
+        url2 = Url.handle_prefix_number_test(url,direction)
+
+        if url1 != url2:
+            Display.show_status_message("BIP BIP")
 
     def test_indirect(url,direction):
-        pass
+        url1 = Url.handle_prefix_number_suffix_extension(url,direction)
+        url2 = Url.handle_prefix_number_suffix_extension_test(url,direction)
+
+        if url1 != url2:
+            Display.show_status_message("BIP BIP")
+
+        response = Url.get_url(url1)
+        
+        soup = BeautifulSoup(response.text, "lxml")
+        
+        new_page_link = next((a["href"] for a in soup.find_all("a",href=True) if url1 in a["href"]),"")
+
+        if new_page_link != "":
+            Url.url_to_test = False
+            
 
     def search_and_go_to_page(url, index, direction="next"):
         """

@@ -4,7 +4,7 @@ nobadnovel,shanghaifantasy,shiningnoveltranslations,mainichitl,
 # First research method - Second case
 brightnovels,otakutl,zkytl,breaknovel,hostednovel,tinytranslation,
 
-# Third research method
+# Second research method
 botitranslation,dasuitl,foxaholic,readrift,
 
 # To skip
