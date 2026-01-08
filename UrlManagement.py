@@ -123,6 +123,7 @@ class Url:
         tl_group = url[ind_first_point+1:ind_second_point]
         index = 0
 
+        time.sleep(1.5)
         new_url = Url.copy_paste()
 
         if new_url != url:
@@ -183,7 +184,7 @@ class Url:
         url2 = Url.handle_prefix_number_test(url,direction)
 
         if url1 != url2:
-            Display.show_status_message("BIP BIP")
+            Display.show_status_message("BIP BLIP")
 
         toCheck = any(s.isdigit() for s in url1.split("/")[:-1])
                 
@@ -213,7 +214,6 @@ class Url:
                 Url.reset_thread_list()
                 return
 
-        # On copie l'URL générée
         pyperclip.copy(url1)
         Url.copy_paste(True)
         if ".com" not in url1:
