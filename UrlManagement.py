@@ -132,10 +132,10 @@ class Url:
             Url.url_to_test = Url.test_indirect(url,direction)
             if Url.url_to_test:
                 Url.test_direct(url,direction)
-            # Url.url_to_test = Url.search_and_go_to_page(url,index,direction)
-            # if Url.url_to_test:
-            #     index = 1
-            #     Url.search_and_go_to_page(url,index,direction)
+                if Url.url_to_test:
+                    index = 2
+                    Display.show_status_message("Image a rajoutée")
+                    return
 
         Constante.update_tl_group(tl_group,index)
         Url.update_regex()
