@@ -87,6 +87,12 @@ class Url:
 
     def handle_prefix_number(url, direction):
         return Url.apply_regex_and_modify(url, r"^([a-zA-Z_-]*?)(\d+)(?=[^0-9]|$)(?:.*)$", ["prefix", "number"], direction)
+    
+    def handle_prefix_number_suffix_extension_test(url, direction):
+        return Url.apply_regex_and_modify(url, r"^([a-zA-Z_-]*?)(\d+)([a-zA-Z0-9_-]*)?([.a-zA-Z]*)?(?:[#a-zA-Z_-]*)?$", ["prefix", "number", "suffix", "extension"], direction)
+
+    def handle_prefix_number_test(url, direction):
+        return Url.apply_regex_and_modify(url, r"^([a-zA-Z_-]*?)(\d+)(?:.*)$", ["prefix", "number"], direction)
 
     @test_screen_corners
     def mouse_move(x,y):
@@ -117,10 +123,18 @@ class Url:
         tl_group = url[ind_first_point+1:ind_second_point]
         index = 0
 
-        Url.url_to_test = Url.search_and_go_to_page(url,index,direction)
-        if Url.url_to_test:
-            index = 1
-            Url.search_and_go_to_page(url,index,direction)
+        new_url = Url.copy_paste()
+
+        if new_url != url:
+            index = len(Constante.tl_group) - 1
+        else:
+            Url.url_to_test = Url.test_indirect(url,direction)
+            if Url.url_to_test:
+                Url.test_direct(url,direction)
+            # Url.url_to_test = Url.search_and_go_to_page(url,index,direction)
+            # if Url.url_to_test:
+            #     index = 1
+            #     Url.search_and_go_to_page(url,index,direction)
 
         Constante.update_tl_group(tl_group,index)
         Url.update_regex()
@@ -162,6 +176,12 @@ class Url:
 
         suffixe = url_parser[-1]
         return urljoin(urljoin(base,date_string),suffixe)
+    
+    def test_direct(url,direction):
+        pass
+
+    def test_indirect(url,direction):
+        pass
 
     def search_and_go_to_page(url, index, direction="next"):
         """
@@ -321,6 +341,10 @@ class Url:
 
         tl_found = match.group(0)
         i = Url.mapping[tl_found]
+
+        if i == len(Constante.tl_group) - 1:
+            return
+
         func = Url.methods[0] if i < 2 else Url.methods[1]
 
         # Appel de la fonction correspondante

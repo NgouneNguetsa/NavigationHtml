@@ -81,11 +81,13 @@ class Constante:
         buffer = open(fr"{Path(__file__).parent}/translationgroups.txt",'r').read()
 
         if index == 0:
-            new_file = buffer[:index[2]-3] + f"{tl_group}," + buffer[index[2]-3:]
+            new_file = buffer[:Constante.tl_group_index[0]-3] + f"{tl_group}," + buffer[Constante.tl_group_index[0]-3:]
         elif index == 1:
-            new_file = buffer[:index[2]-6] + f"{tl_group}," + buffer[index[2]-6:]
+            new_file = buffer[:Constante.tl_group_index[1]-6] + f"{tl_group}," + buffer[Constante.tl_group_index[1]-6:]
         elif index == 2:
-            new_file = buffer[:index[2]-2] + f"{tl_group},"
+            new_file = buffer[:Constante.tl_group_index[2]-9] + f"{tl_group}," + buffer[Constante.tl_group_index[2]-9:]
+        elif index == len(Constante.tl_group) - 1:
+            new_file = buffer[:Constante.tl_group_index[index]-2] + f"{tl_group},"
         else:
             pyautogui.alert("Il y a eu un problème dans le code")
 

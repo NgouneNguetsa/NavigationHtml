@@ -6,3 +6,6 @@ brightnovels,otakutl,zkytl,breaknovel,hostednovel,tinytranslation,
 
 # Third research method
 botitranslation,dasuitl,foxaholic,readrift,
+
+# To skip
+dragonholic,
