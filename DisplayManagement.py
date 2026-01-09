@@ -81,5 +81,14 @@ class Display:
         print("Le programme s'est fini en avance par interruption clavier")
         Display.stop_message()
 
+    def show_test_message():
+        Display.focus_window(Display.console["handle"])
+        for i in range(3):
+            print(f"Commencement du test de l'url dans {3-i} s")
+            time.sleep(1)
+        pyautogui.hotkey('alt',"tab")
+        time.sleep(0.5)
+        Display.state_message()
+
 if __name__ == "__main__":
     print("Ce programme doit être lancé avec le fichier NavigationHtml.py")

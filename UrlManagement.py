@@ -75,8 +75,9 @@ class Url:
 
         # Extraire les différentes parties capturées
         parts = {name: match.group(i + 1) if i < len(groups) else "" for i, name in enumerate(groups)}
+
         new_segment = Url.modify_chapter_number(segment, parts.get("prefix", ""), int(parts.get("number", 1)), parts.get("suffix", ""), parts.get("extension", ""), direction)
-        if not new_segment:
+        if (not new_segment) or (int(parts["number"]) > Constante.ARBITRARY_LARGEST_CHAPTER):
             return ""
 
         # Recomposer l'URL complète
@@ -131,7 +132,7 @@ class Url:
             tl_group = url.split("/")[2]
             tl_group = tl_group[:tl_group.index(".")]
 
-        time.sleep(1.5)
+        Display.show_test_message()
         Url.copy_paste()
         new_url = pyperclip.paste()
 
@@ -189,6 +190,9 @@ class Url:
         """Le test est effectué à l'aide de la logique interne au programme"""
         url1 = Url.handle_prefix_number(url,direction)
         url2 = Url.handle_prefix_number_test(url,direction)
+
+        if not url1:
+            return True
 
         if url1 != url2:
             Display.show_status_message("BIP BLIP")

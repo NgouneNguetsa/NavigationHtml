@@ -2,10 +2,10 @@
 nobadnovel,shanghaifantasy,shiningnoveltranslations,mainichitl,readhive,
 
 # First research method - Second case
-brightnovels,otakutl,zkytl,breaknovel,hostednovel,tinytranslation,
+brightnovels,otakutl,zkytl,breaknovel,hostednovel,tinytranslation,dragonholictranslations,
 
 # Second research method
 botitranslation,dasuitl,foxaholic,readrift,
 
 # To skip
-dragonholic,
+f-w-o,

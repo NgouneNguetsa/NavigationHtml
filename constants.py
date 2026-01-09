@@ -21,6 +21,7 @@ class Constante:
     folder = Path(__file__).parent
     screenWidth, screenHeight = pyautogui.size()
     BLOG_TEXT_THRESHOLD = 2500 # Regarde si le blog a plus de 2500 caracteres avant de copier le lien
+    ARBITRARY_LARGEST_CHAPTER = 2000 # Quand le programme test les liens, regarde si la valeur n'est pas supérieure à 2000 chapitres
     globalListener_disabled = threading.Event()
     interrupt_handler = threading.Event()
     tl_group = []
