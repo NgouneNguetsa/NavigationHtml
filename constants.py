@@ -56,7 +56,7 @@ class Constante:
                 if not s.startswith("#") and s != "":
                     ind = f.tell()
                     Constante.tl_group_index.append(ind)
-                    Constante.tl_group.append(s.rstrip(",").split(","))
+                    Constante.tl_group.append(s.split(","))
 
         subdirectory = next((sub for sub in Constante.folder.iterdir() if sub.is_dir() and "imgs" in str(sub)),None)
 
@@ -84,9 +84,9 @@ class Constante:
 
         new_file = ""
         if index < len(Constante.tl_group) - 1:
-            new_file = buffer[:Constante.tl_group_index[index]-(3*(index+1))] + f"{tl_group}," + buffer[Constante.tl_group_index[index]-(3*(index+1)):]
+            new_file = buffer[:Constante.tl_group_index[index]-(3*(index+1))] + f",{tl_group}" + buffer[Constante.tl_group_index[index]-(3*(index+1)):]
         elif index == len(Constante.tl_group) - 1:
-            new_file = buffer[:Constante.tl_group_index[index]-2] + f"{tl_group},"
+            new_file = buffer[:Constante.tl_group_index[index]-2] + f",{tl_group}"
         else:
             pyautogui.alert("Il y a eu un problème dans le code")
 
@@ -100,7 +100,7 @@ class Constante:
                 if not s.startswith("#") and s != "":
                     ind = f.tell()
                     Constante.tl_group_index.append(ind)
-                    Constante.tl_group.append(s.rstrip(",").split(","))
+                    Constante.tl_group.append(s.split(","))
 
 if __name__ == "__main__":
     print("Ce programme doit être lancé avec le fichier NavigationHtml.py")

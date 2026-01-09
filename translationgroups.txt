@@ -1,11 +1,11 @@
 # First research method - First case
-nobadnovel,shanghaifantasy,shiningnoveltranslations,mainichitl,readhive,
+nobadnovel,shanghaifantasy,shiningnoveltranslations,mainichitl,readhive
 
 # First research method - Second case
-brightnovels,otakutl,zkytl,breaknovel,hostednovel,tinytranslation,dragonholictranslations,
+brightnovels,otakutl,zkytl,breaknovel,hostednovel,tinytranslation,dragonholictranslations
 
 # Second research method
-botitranslation,dasuitl,foxaholic,readrift,
+botitranslation,dasuitl,foxaholic,readrift,bayabuscotranslation
 
 # To skip
-f-w-o,patreon,
+f-w-o,patreon
