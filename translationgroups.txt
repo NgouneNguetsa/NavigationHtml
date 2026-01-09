@@ -1,5 +1,5 @@
 # First research method - First case
-nobadnovel,shanghaifantasy,shiningnoveltranslations,mainichitl,
+nobadnovel,shanghaifantasy,shiningnoveltranslations,mainichitl,readhive,
 
 # First research method - Second case
 brightnovels,otakutl,zkytl,breaknovel,hostednovel,tinytranslation,

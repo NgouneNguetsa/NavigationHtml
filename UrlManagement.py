@@ -16,7 +16,6 @@ class Url:
     thread_list = []
     url_found = threading.Event()
     img_found = threading.Event()
-    url_to_test = False
     
     def InitVar():
         Url.update_regex()
@@ -116,31 +115,37 @@ class Url:
         return response
     
     def test_url(url,direction):
-        Url.url_to_test = True
-
-        ind_first_point = url.index(".")
-        ind_second_point = url.index(".",ind_first_point+1)
-        tl_group = url[ind_first_point+1:ind_second_point]
+        url_to_test = True
+        
+        tl_group = ""
         index = 0
 
+        if url.count(".") > 1:
+            ind_first_point = url.index(".")
+            ind_second_point = url.index(".",ind_first_point+1)
+            tl_group = url[ind_first_point+1:ind_second_point]
+        else:
+            tl_group = url.split("/")[2]
+            tl_group = tl_group[:tl_group.index(".")]
+
         time.sleep(1.5)
-        new_url = Url.copy_paste()
+        Url.copy_paste()
+        new_url = pyperclip.paste()
 
         if new_url != url:
             index = len(Constante.tl_group) - 1
         else:
-            Url.url_to_test = Url.test_indirect(url,direction)
-            if Url.url_to_test:
-                Url.test_direct(url,direction)
-                if Url.url_to_test:
+            url_to_test = Url.test_indirect(url,direction)
+            if url_to_test:
+                url_to_test = Url.test_direct(url,direction)
+                if url_to_test:
                     index = 2
                     Display.show_status_message("Image a rajoutée")
                     return
 
-        Constante.update_tl_group(tl_group,index)
-        Url.update_regex()
-
-        Url.url_to_test = False
+        if not url_to_test:
+            Constante.update_tl_group(tl_group,index)
+            Url.update_regex()
 
     def create_new_url(url,direction):
         url_parser = url.rstrip("/").split("/")
@@ -200,7 +205,6 @@ class Url:
                     thread.start()
 
                     if Url.url_found.is_set():
-                        Url.url_to_test = False
                         break
 
                 for thread in Url.thread_list:
@@ -209,10 +213,10 @@ class Url:
                 if Url.url_found.is_set():
                     Url.url_found.clear()
                     Url.reset_thread_list()
-                    return
+                    return False
                 
                 Url.reset_thread_list()
-                return
+                return True
 
         pyperclip.copy(url1)
         Url.copy_paste(True)
@@ -220,6 +224,8 @@ class Url:
             _,y = pyautogui.position()
             x = 0.989*Constante.screenWidth
             Url.mouse_move(x,y)
+
+        return False
 
     def test_indirect(url,direction):
         """Le test est effectué à l'aide du lien url généré"""
@@ -236,9 +242,11 @@ class Url:
         new_page_link = next((a["href"] for a in soup.find_all("a",href=True) if url1 in a["href"]),"")
 
         if new_page_link != "":
-            Url.url_to_test = False
             pyperclip.copy(new_page_link)
             Url.copy_paste(True)
+            return False
+        
+        return True
 
     def search_and_go_to_page(url, index, direction="next"):
         """

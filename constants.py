@@ -74,12 +74,13 @@ class Constante:
         else:
             raise FileNotFoundError("Je n'ai pas l'air de trouver le dossier nécessaire")
         
+        print(Constante.tl_group_index)
+        
     def update_tl_group(tl_group,index):
-        Constante.tl_group_index.clear()
-        Constante.tl_group.clear()
 
         buffer = open(fr"{Path(__file__).parent}/translationgroups.txt",'r').read()
 
+        new_file = ""
         if index == 0:
             new_file = buffer[:Constante.tl_group_index[0]-3] + f"{tl_group}," + buffer[Constante.tl_group_index[0]-3:]
         elif index == 1:
@@ -93,6 +94,8 @@ class Constante:
 
         open(fr"{Path(__file__).parent}/translationgroups.txt",'w').write(new_file)
         
+        Constante.tl_group_index.clear()
+        Constante.tl_group.clear()
         with open(fr"{Constante.folder}/translationgroups.txt","rb") as f:
             for s in f:
                 s = s.decode().strip()
