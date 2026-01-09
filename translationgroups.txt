@@ -5,7 +5,7 @@ nobadnovel,shanghaifantasy,shiningnoveltranslations,mainichitl,readhive
 brightnovels,otakutl,zkytl,breaknovel,hostednovel,tinytranslation,dragonholictranslations
 
 # Second research method
-botitranslation,dasuitl,foxaholic,readrift,bayabuscotranslation
+botitranslation,dasuitl,foxaholic,readrift,bayabuscotranslation,weebsread
 
 # To skip
 f-w-o,patreon
