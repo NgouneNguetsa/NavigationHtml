@@ -41,7 +41,7 @@ class Url:
         for i, tl_group_list in enumerate(Constante.tl_group):
             if i == len(Constante.tl_group) - 1:
                 break
-            
+
             for tl in tl_group_list:
                 Url.patterns.append(re.escape(tl))
                 Url.mapping[tl] = i  # Associe chaque texte au bon index
@@ -60,7 +60,7 @@ class Url:
 
         # Vérification : on évite un numéro de chapitre inférieur à 0
         if new_number < 0:
-            return None  # On ne traite pas ce cas si le numéro devient invalide
+            return ""  # On ne traite pas ce cas si le numéro devient invalide
 
         new_segment = f"{prefix}{new_number}{suffix}{extension}"
         return new_segment
@@ -71,13 +71,13 @@ class Url:
         segment = Url.get_last_segment(url)
         match = re.search(pattern, segment)
         if not match:
-            return None
+            return ""
 
         # Extraire les différentes parties capturées
         parts = {name: match.group(i + 1) if i < len(groups) else "" for i, name in enumerate(groups)}
         new_segment = Url.modify_chapter_number(segment, parts.get("prefix", ""), int(parts.get("number", 1)), parts.get("suffix", ""), parts.get("extension", ""), direction)
         if not new_segment:
-            return None
+            return ""
 
         # Recomposer l'URL complète
         base = url[: -len(segment)]
