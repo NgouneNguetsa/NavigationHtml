@@ -137,15 +137,14 @@ class Url:
         else:
             url_to_test = Url.test_indirect(url,direction)
             if url_to_test:
+                index += 1
                 url_to_test = Url.test_direct(url,direction)
                 if url_to_test:
-                    index = 2
+                    index += 1
                     Display.show_status_message("Image a rajoutée")
-                    return
 
-        if not url_to_test:
-            Constante.update_tl_group(tl_group,index)
-            Url.update_regex()
+        Constante.update_tl_group(tl_group,index)
+        Url.update_regex()
 
     def create_new_url(url,direction):
         url_parser = url.rstrip("/").split("/")

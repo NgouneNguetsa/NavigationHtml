@@ -81,12 +81,8 @@ class Constante:
         buffer = open(fr"{Path(__file__).parent}/translationgroups.txt",'r').read()
 
         new_file = ""
-        if index == 0:
-            new_file = buffer[:Constante.tl_group_index[0]-3] + f"{tl_group}," + buffer[Constante.tl_group_index[0]-3:]
-        elif index == 1:
-            new_file = buffer[:Constante.tl_group_index[1]-6] + f"{tl_group}," + buffer[Constante.tl_group_index[1]-6:]
-        elif index == 2:
-            new_file = buffer[:Constante.tl_group_index[2]-9] + f"{tl_group}," + buffer[Constante.tl_group_index[2]-9:]
+        if index < len(Constante.tl_group) - 1:
+            new_file = buffer[:Constante.tl_group_index[index]-(3*(index+1))] + f"{tl_group}," + buffer[Constante.tl_group_index[index]-(3*(index+1)):]
         elif index == len(Constante.tl_group) - 1:
             new_file = buffer[:Constante.tl_group_index[index]-2] + f"{tl_group},"
         else:
