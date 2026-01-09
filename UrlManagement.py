@@ -39,6 +39,9 @@ class Url:
         Url.patterns.clear()
 
         for i, tl_group_list in enumerate(Constante.tl_group):
+            if i == len(Constante.tl_group) - 1:
+                break
+            
             for tl in tl_group_list:
                 Url.patterns.append(re.escape(tl))
                 Url.mapping[tl] = i  # Associe chaque texte au bon index
