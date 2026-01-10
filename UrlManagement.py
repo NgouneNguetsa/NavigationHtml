@@ -195,7 +195,7 @@ class Url:
             return True
 
         if url1 != url2:
-            Display.show_status_message("BIP BLIP")
+            return True
 
         toCheck = any(s.isdigit() for s in url1.split("/")[:-1])
                 
@@ -239,7 +239,7 @@ class Url:
         url2 = Url.handle_prefix_number_suffix_extension_test(url,direction)
 
         if url1 != url2:
-            Display.show_status_message("BIP BIP")
+            return True
 
         response = Url.get_url(url1)
         
