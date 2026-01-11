@@ -51,7 +51,8 @@ class Url:
 
     def get_last_segment(url):
         """Retourne la dernière partie de l'URL après le dernier /"""
-        return url.rstrip("/").split("/")[-1]
+        url_split = url.rstrip("/").split("/")
+        return url_split[-2] if url_split[-1].startswith("#") else url_split[-1] 
 
     def modify_chapter_number(segment, prefix, chapter_number, suffix, extension, direction):
         """Modifie le numéro selon la direction (next/last) et reconstruit le segment"""
@@ -103,7 +104,7 @@ class Url:
 
         yDiff = abs((Constante.screenHeight / 2) - y) if y < (Constante.screenHeight / 2) else 0
         pyautogui.moveTo(0.989*Constante.screenWidth,min(0.83*Constante.screenHeight,Constante.screenHeight - 2*yDiff))            
-        time.sleep(1.5)
+        time.sleep(2)
 
         pyautogui.leftClick()
         pyautogui.moveTo(Constante.screenWidth,y)

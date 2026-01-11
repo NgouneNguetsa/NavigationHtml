@@ -2,7 +2,7 @@
 nobadnovel,shanghaifantasy,shiningnoveltranslations,mainichitl,readhive
 
 # First research method - Second case
-brightnovels,otakutl,zkytl,breaknovel,hostednovel,tinytranslation,dragonholictranslations
+brightnovels,otakutl,zkytl,breaknovel,hostednovel,tinytranslation,dragonholictranslations,goblinslate
 
 # Second research method
 botitranslation,dasuitl,foxaholic,readrift,bayabuscotranslation,weebsread
