@@ -51,8 +51,8 @@ class Url:
 
     def get_last_segment(url):
         """Retourne la dernière partie de l'URL après le dernier /"""
-        url_split = url.rstrip("/").split("/")
-        return url_split[-2] if url_split[-1].startswith("#") else url_split[-1] 
+        
+        return url.rstrip("/").split("/")[-1] 
 
     def modify_chapter_number(segment, prefix, chapter_number, suffix, extension, direction):
         """Modifie le numéro selon la direction (next/last) et reconstruit le segment"""
@@ -69,6 +69,10 @@ class Url:
     def apply_regex_and_modify(url, pattern, groups, direction):
         """Applique un pattern à la fin de l'URL et retourne la nouvelle URL (incrémentée ou décrémentée)"""
         
+        if '#' in url:
+            index = url.index("#")
+            url = url.replace(url[index:],"")
+
         segment = Url.get_last_segment(url)
         match = re.search(pattern, segment)
         if not match:
@@ -277,8 +281,12 @@ class Url:
             
             soup = BeautifulSoup(response.text, "lxml")
             
-            new_page_link = next((a["href"] for a in soup.find_all("a",href=True) if start_url in a["href"] and "#" not in a["href"]),"")
+            new_page_link = next((a["href"] for a in soup.find_all("a",href=True) if start_url in a["href"]),"")
  
+            if '#' in new_page_link:
+                index = new_page_link.index("#")
+                new_page_link = new_page_link.replace(new_page_link[index:],"")
+
             if new_page_link != "":
                 pyperclip.copy(new_page_link)
                 Url.copy_paste(True)
