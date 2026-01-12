@@ -368,8 +368,7 @@ class Url:
             Url.reset_thread_list()
             return
         
-        Display.show_status_message("L'image n'existe pas ou il n'y a pas de nouveau chapitre") if direction == "next" \
-        else Display.show_status_message("L'image n'existe pas ou il n'y a pas d'ancien chapitre")
+        Display.show_status_message("L'image n'existe pas")
 
         Url.reset_thread_list()
         
