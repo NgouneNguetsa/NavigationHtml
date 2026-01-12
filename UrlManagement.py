@@ -69,8 +69,8 @@ class Url:
     def apply_regex_and_modify(url, pattern, groups, direction):
         """Applique un pattern à la fin de l'URL et retourne la nouvelle URL (incrémentée ou décrémentée)"""
         
-        if '#' in url:
-            index = url.index("#")
+        index = url.find("#")
+        if index != -1:
             url = url.replace(url[index:],"")
 
         segment = Url.get_last_segment(url)
@@ -283,8 +283,8 @@ class Url:
             
             new_page_link = next((a["href"] for a in soup.find_all("a",href=True) if start_url in a["href"]),"")
  
-            if '#' in new_page_link:
-                index = new_page_link.index("#")
+            index = new_page_link.find("#")
+            if index != -1:
                 new_page_link = new_page_link.replace(new_page_link[index:],"")
 
             if new_page_link != "":

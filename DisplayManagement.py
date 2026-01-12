@@ -1,4 +1,4 @@
-from constants import ctypes, gw, keyboard, time, pyautogui, os
+from constants import ctypes, gw, keyboard, time, pyautogui, os, ttk
 from constants import Constante
 
 class Display:

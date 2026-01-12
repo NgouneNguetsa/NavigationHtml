@@ -14,6 +14,7 @@ from datetime import date, timedelta
 import threading
 from pynput.keyboard import Key, KeyCode, Listener
 import signal
+from tkinter import ttk
 
 class Constante:
 
