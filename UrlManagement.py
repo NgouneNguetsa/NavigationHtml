@@ -277,8 +277,8 @@ class Url:
             
             soup = BeautifulSoup(response.text, "lxml")
             
-            new_page_link = next((a["href"] for a in soup.find_all("a",href=True) if start_url in a["href"]),"")
-
+            new_page_link = next((a["href"] for a in soup.find_all("a",href=True) if start_url in a["href"] and "#" not in a["href"]),"")
+ 
             if new_page_link != "":
                 pyperclip.copy(new_page_link)
                 Url.copy_paste(True)
