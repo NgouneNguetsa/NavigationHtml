@@ -376,8 +376,6 @@ class Url:
             Url.reset_thread_list()
             return
         
-        Display.show_status_message("L'image n'existe pas")
-
         Url.reset_thread_list()
         
     def search_in_multithread_2nd_method(img_path):
