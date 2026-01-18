@@ -76,8 +76,13 @@ class Constante:
         else:
             raise FileNotFoundError("Je n'ai pas l'air de trouver le dossier nécessaire")
         
+        if len(Constante.imagesPrevButton) != len(Constante.imagesNextButton):
+            pyautogui.alert("Image Next/Previous Button a rajouté")
+            os._exit(0)
+
         if len(Constante.imagesPrevButton) != len(Constante.tl_group[-2]):
             pyautogui.alert("Groupe de traduction a rajouté")
+            os._exit(0)
         
     def update_tl_group(tl_group,index):
 
