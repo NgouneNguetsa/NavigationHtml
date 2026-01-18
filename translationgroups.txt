@@ -2,10 +2,10 @@
 nobadnovel,shanghaifantasy,shiningnoveltranslations,mainichitl,readhive,kaystls
 
 # First research method - Second case
-brightnovels,otakutl,zkytl,breaknovel,hostednovel,tinytranslation,dragonholictranslations,goblinslate
+brightnovels,otakutl,zkytl,breaknovel,hostednovel,tinytranslation,dragonholictranslations,goblinslate,weebsread
 
 # Second research method
-botitranslation,dasuitl,foxaholic,readrift,bayabuscotranslation,weebsread
+botitranslation,dasuitl,foxaholic,readrift,bayabuscotranslation
 
 # To skip
 f-w-o,patreon
