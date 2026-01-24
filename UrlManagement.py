@@ -193,8 +193,8 @@ class Url:
     
     def test_direct(url,direction):
         """Le test est effectué à l'aide de la logique interne au programme"""
-        url1 = Url.handle_prefix_number(url,direction)
-        url2 = Url.handle_prefix_number_test(url,direction)
+        url1 = Url.handle_prefix_number_suffix_extension(url,direction)
+        url2 = Url.handle_prefix_number_suffix_extension_test(url,direction)
 
         if not url1:
             return True
@@ -240,8 +240,8 @@ class Url:
 
     def test_indirect(url,direction):
         """Le test est effectué à l'aide du lien url généré"""
-        url1 = Url.handle_prefix_number_suffix_extension(url,direction)
-        url2 = Url.handle_prefix_number_suffix_extension_test(url,direction)
+        url1 = Url.handle_prefix_number(url,direction)
+        url2 = Url.handle_prefix_number_test(url,direction)
 
         if url1 != url2:
             return True
