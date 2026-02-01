@@ -160,14 +160,24 @@ class Url:
         date_parser = [ele for ele in url_parser[:-1] if ele.isdigit()]
 
         if len(date_parser) == 2:
-            date_parser[1] = str(int(date_parser[1]) + 1) if direction == "next" else str(int(date_parser[1]) - 1)
-            date_parser[1] = '0'+ date_parser[1] if int(date_parser[1]) < 10 else date_parser[1]
-            if int(date_parser[1]) > 12:
-                date_parser[1] = '01'
-                date_parser[0] = str(int(date_parser[0]) + 1)
-            elif int(date_parser[1]) < 1:
-                date_parser[1] = '12'
-                date_parser[0] = str(int(date_parser[0]) - 1)
+            if date_parser[1] < date_parser[0]:
+                date_parser[1] = str(int(date_parser[1]) + 1) if direction == "next" else str(int(date_parser[1]) - 1)
+                date_parser[1] = '0'+ date_parser[1] if int(date_parser[1]) < 10 else date_parser[1]
+                if int(date_parser[1]) > 12:
+                    date_parser[1] = '01'
+                    date_parser[0] = str(int(date_parser[0]) + 1)
+                elif int(date_parser[1]) < 1:
+                    date_parser[1] = '12'
+                    date_parser[0] = str(int(date_parser[0]) - 1)
+            else:
+                date_parser[0] = str(int(date_parser[0]) + 1) if direction == "next" else str(int(date_parser[0]) - 1)
+                date_parser[0] = '0'+ date_parser[0] if int(date_parser[0]) < 10 else date_parser[0]
+                if int(date_parser[0]) > 12:
+                    date_parser[0] = '01'
+                    date_parser[1] = str(int(date_parser[1]) + 1)
+                elif int(date_parser[0]) < 1:
+                    date_parser[0] = '12'
+                    date_parser[1] = str(int(date_parser[1]) - 1)
 
             date_parser.append('/')
             
