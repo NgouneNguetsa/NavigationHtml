@@ -160,7 +160,7 @@ class Url:
         date_parser = [ele for ele in url_parser[:-1] if ele.isdigit()]
 
         if len(date_parser) == 2:
-            if date_parser[1] < date_parser[0]:
+            if int(date_parser[1]) < int(date_parser[0]):
                 date_parser[1] = str(int(date_parser[1]) + 1) if direction == "next" else str(int(date_parser[1]) - 1)
                 date_parser[1] = '0'+ date_parser[1] if int(date_parser[1]) < 10 else date_parser[1]
                 if int(date_parser[1]) > 12:
