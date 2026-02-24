@@ -35,6 +35,7 @@ class Constante:
         Constante.globalListener_disabled.set()
         
     def ThreadInterrupt(self):
+        time.sleep(5)
         try:
             keyboard.unblock_key("left")
         except KeyError:
