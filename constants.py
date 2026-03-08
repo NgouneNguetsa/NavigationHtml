@@ -27,6 +27,8 @@ class Constante:
     interrupt_handler = threading.Event()
     tl_group = []
     tl_group_index = []
+    ADD = False
+    REMOVE = True
 
     def EnableGlobalListener():
         Constante.globalListener_disabled.clear()
@@ -83,16 +85,25 @@ class Constante:
         if len(Constante.imagesPrevButton) != len(Constante.tl_group[-2]):
             pyautogui.alert("Groupe de traduction a rajouté")
             os._exit(0)
-        
-    def update_tl_group(tl_group,index):
+
+    def update_tl_group(tl_group,index,addremove):
 
         buffer = open(fr"{Path(__file__).parent}/translationgroups.txt",'r').read()
 
         new_file = ""
-        if index < len(Constante.tl_group) - 1:
+        if index < len(Constante.tl_group) - 1 and addremove == Constante.ADD:
             new_file = buffer[:Constante.tl_group_index[index]-(3*(index+1))] + f",{tl_group}" + buffer[Constante.tl_group_index[index]-(3*(index+1)):]
+        
+        elif index < len(Constante.tl_group) - 1 and addremove == Constante.REMOVE:
+            index_to_delete = Constante.tl_group[index].index(tl_group)
+            new_string = ",".join(Constante.tl_group[index][:index_to_delete])
+            new_string = new_string + "," + ",".join(Constante.tl_group[index][index_to_delete+1:]) if index_to_delete != len(Constante.tl_group[index])-1 else new_string
+
+            new_file = buffer[:Constante.tl_group_index[index]-(3*(index+1)) - len(",".join(Constante.tl_group[index]))] + new_string + buffer[Constante.tl_group_index[index]-(3*(index+1)):]
+        
         elif index == len(Constante.tl_group) - 1:
             new_file = buffer[:Constante.tl_group_index[index]-2] + f",{tl_group}"
+        
         else:
             pyautogui.alert("Il y a eu un problème dans le code")
 

@@ -152,7 +152,7 @@ class Url:
                     index += 1
                     Display.show_status_message("Image a rajoutée")
 
-        Constante.update_tl_group(tl_group,index)
+        Constante.update_tl_group(tl_group,index,Constante.ADD)
         Url.update_regex()
 
     def create_new_url(url,direction):
@@ -301,7 +301,21 @@ class Url:
                 pyperclip.copy(new_page_link)
                 Url.copy_paste(True)
             else:
-                Display.show_status_message("Il n'y a pas de lien présent dans la page") if response.ok else Display.show_status_message(f"Error code :\n{response.status_code}")
+                if response.ok:
+                    Display.show_status_message("Il n'y a pas de lien présent dans la page") 
+                else:
+                    if response.status_code == 403:
+                        match = Url.global_regex.search(url)
+                        tl_found = match.group(0)
+                        i = Url.mapping[tl_found]
+
+                        Constante.update_tl_group(tl_found,i,Constante.REMOVE)
+                        Constante.update_tl_group(tl_found,i+1,Constante.ADD)
+                        Url.update_regex()
+                        Url.go_to_page(url,direction)
+                    else:
+                        Display.show_status_message(f"Error code :\n{response.status_code}")
+
                 pyperclip.copy("")
         else:
 
@@ -419,7 +433,6 @@ class Url:
         match = Url.global_regex.search(url)
         if not match:
             Url.test_url(url,direction)
-            # Display.show_status_message(f"{url}\nLien invalide ou groupe de traduction non présent dans la database")
             return
 
         tl_found = match.group(0)
