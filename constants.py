@@ -113,17 +113,21 @@ class Constante:
         Constante.reload_tl_group_list()
 
     def reload_tl_group_list():
-        Constante.reload_handler.set()
-        Constante.tl_group_index.clear()
-        Constante.tl_group.clear()
-        with open(fr"{Constante.folder}/translationgroups.txt","rb") as f:
-            for s in f:
-                s = s.decode().strip()
-                if not s.startswith("#") and s != "":
-                    ind = f.tell()
-                    Constante.tl_group_index.append(ind)
-                    Constante.tl_group.append(s.split(","))
-
+        try:
+            with open(fr"{Constante.folder}/translationgroups.txt","rb") as f:
+                Constante.reload_handler.set()
+                Constante.tl_group_index.clear()
+                Constante.tl_group.clear()            
+                for s in f:
+                    s = s.decode().strip()
+                    if not s.startswith("#") and s != "":
+                        ind = f.tell()
+                        Constante.tl_group_index.append(ind)
+                        Constante.tl_group.append(s.split(","))
+        except IOError:
+            pass
+        except PermissionError:
+            pass
 
 if __name__ == "__main__":
     print("Ce programme doit être lancé avec le fichier NavigationHtml.py")
