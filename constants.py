@@ -25,6 +25,7 @@ class Constante:
     ARBITRARY_LARGEST_CHAPTER = 2000 # Quand le programme test les liens, regarde si la valeur n'est pas supérieure à 2000 chapitres
     globalListener_disabled = threading.Event()
     interrupt_handler = threading.Event()
+    reload_handler = threading.Event()
     tl_group = []
     tl_group_index = []
     ADD = False
@@ -112,6 +113,7 @@ class Constante:
         Constante.reload_tl_group_list()
 
     def reload_tl_group_list():
+        Constante.reload_handler.set()
         Constante.tl_group_index.clear()
         Constante.tl_group.clear()
         with open(fr"{Constante.folder}/translationgroups.txt","rb") as f:

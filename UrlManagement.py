@@ -451,6 +451,9 @@ class Url:
 
     def search_page(direction):
         """Fonction qui recherche la page html précédente/suivante en fonction de la page actuelle"""
+        if Constante.reload_handler.is_set():
+            Url.update_regex()
+            Constante.reload_handler.clear()
 
         Url.copy_paste()
         url = pyperclip.paste()
