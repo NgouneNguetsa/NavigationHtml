@@ -108,7 +108,10 @@ class Constante:
             pyautogui.alert("Il y a eu un problème dans le code")
 
         open(fr"{Path(__file__).parent}/translationgroups.txt",'w').write(new_file)
-        
+
+        Constante.reload_tl_group_list()
+
+    def reload_tl_group_list():
         Constante.tl_group_index.clear()
         Constante.tl_group.clear()
         with open(fr"{Constante.folder}/translationgroups.txt","rb") as f:
@@ -118,6 +121,7 @@ class Constante:
                     ind = f.tell()
                     Constante.tl_group_index.append(ind)
                     Constante.tl_group.append(s.split(","))
+
 
 if __name__ == "__main__":
     print("Ce programme doit être lancé avec le fichier NavigationHtml.py")

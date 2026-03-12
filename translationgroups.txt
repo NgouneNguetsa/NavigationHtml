@@ -8,4 +8,4 @@ brightnovels,otakutl,zkytl,breaknovel,hostednovel,tinytranslation,dragonholictra
 botitranslation,dasuitl,foxaholic,readrift,bayabuscotranslation,shmtranslations
 
 # To skip
-f-w-o,patreon
+f-w-o,patreon,novelupdates

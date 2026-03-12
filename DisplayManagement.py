@@ -44,6 +44,7 @@ class Display:
         print("Appuyez <- jusqu'à ce que le lien soit surligné en bleu afin d'aller à la page précédente.")
         print("Appuyez -> jusqu'à ce que le lien soit surligné en bleu afin d'aller à la page suivante.")
         print("Appuyez sur * (star) pour mettre en pause/résumer le programme.")
+        print("Appuyez sur r pour mettre à jour les groupes de traduction.")
         print("Appuyez sur ECHAP/ESC pour que le programme se ferme.")
         
     def start_message():

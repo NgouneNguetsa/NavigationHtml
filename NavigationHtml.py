@@ -36,6 +36,9 @@ class Navigation:
             Constante.DisableGlobalListener()
             threading.Thread(target=Url.search_page, args=("last",), daemon=True).start()
 
+        elif key == KeyCode.from_char("r") or key == KeyCode.from_char("R"):
+            Constante.reload_tl_group_list()
+
     # La fonction est responsable de la pause/remise en marche du programme
     def PR_on_press(self,key):
         if Constante.interrupt_handler.is_set() or self.stopEvent.is_set():
@@ -57,6 +60,9 @@ class Navigation:
             self.pauseHandler.clear()
             Constante.EnableGlobalListener()
             self.KeyboardInterrupt()
+
+        elif key == KeyCode.from_char("r") or key == KeyCode.from_char("R"):
+            Constante.reload_tl_group_list()
 
     def KeyboardInterrupt(self):
         self.hotkeyHandler = keyboard.add_hotkey('ctrl+c', lambda: Constante.interrupt_handler.set())
