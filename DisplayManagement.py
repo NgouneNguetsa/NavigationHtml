@@ -46,7 +46,7 @@ class Display:
         print("Appuyez sur * (star) pour mettre en pause/résumer le programme.")
         print("Appuyez sur r pour mettre à jour les groupes de traduction.")
         print("Appuyez sur ECHAP/ESC pour que le programme se ferme.")
-        
+
     def start_message():
         Display.state_message()
         print("\nBonne utilisation.\n(Appuyer sur ENTRÉE pour commencer le programme)")
