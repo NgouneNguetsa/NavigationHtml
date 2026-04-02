@@ -32,7 +32,16 @@ class Display:
         """Met la fenêtre correspondant au handle hwnd au premier plan."""
         
         try:
-            Constante.user32.ShowWindow(hwnd, 3)  # 3 = SW_SHOWMAXIMIZED (si elle est minimisée)
+            Constante.user32.ShowWindow(hwnd, 3)  # 3 = Active la fenêtre en plein écran
+            Constante.user32.SetForegroundWindow(hwnd)
+        except Exception:
+            pass
+
+    def window_end_message(hwnd):
+        """Met la fenêtre correspondant au handle hwnd au premier plan."""
+        
+        try:
+            Constante.user32.ShowWindow(hwnd, 2)  # 2 = Active la fenêtre en tant qu'icône
             Constante.user32.SetForegroundWindow(hwnd)
         except Exception:
             pass
@@ -58,10 +67,9 @@ class Display:
         print("\nLe programme est en pause")
 
     def stop_message():
-        Display.focus_window(Display.console["handle"])
-        print("\nMerci d'avoir utilisé le programme NavigationHtml.")
-        print("J'espère qu'il vous a été utile.")
-        time.sleep(2)
+        Display.window_end_message(Display.console["handle"])
+        pyautogui.alert("Merci d'avoir utilisé le programme NavigationHtml.\n" 
+                        "J'espère qu'il vous a été utile.")
         pyautogui.hotkey('alt','tab')
 
     def show_status_message(status_message : str):
