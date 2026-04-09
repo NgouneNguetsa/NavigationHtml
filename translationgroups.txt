@@ -1,8 +1,8 @@
 # First research method - First case
-nobadnovel,shiningnoveltranslations,mainichitl,readhive,kaystls,goblinslate,lorenovels
+nobadnovel,mainichitl,readhive,kaystls,goblinslate,lorenovels
 
 # First research method - Second case
-brightnovels,otakutl,zkytl,breaknovel,hostednovel,tinytranslation,dragonholictranslations,weebsread,shanghaifantasy,inoveltranslation
+brightnovels,otakutl,zkytl,breaknovel,hostednovel,tinytranslation,dragonholictranslations,weebsread,shanghaifantasy,shiningnoveltranslations
 
 # Second research method
 botitranslation,dasuitl,foxaholic,readrift,bayabuscotranslation,shmtranslations

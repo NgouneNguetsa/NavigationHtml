@@ -70,7 +70,6 @@ class Display:
         Display.window_end_message(Display.console["handle"])
         pyautogui.alert("Merci d'avoir utilisé le programme NavigationHtml.\n" 
                         "J'espère qu'il vous a été utile.")
-        pyautogui.hotkey('alt','tab')
 
     def show_status_message(status_message : str):
         pyautogui.alert(f"{status_message}")
