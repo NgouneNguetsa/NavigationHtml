@@ -64,6 +64,8 @@ class Constante:
 
         subdirectory = next((sub for sub in Constante.folder.iterdir() if sub.is_dir() and "imgs" in str(sub)),None)
 
+        Constante.rename_chapter_buttons(subdirectory)
+
         if subdirectory:
             Constante.imagesPrevButton = [
                                 os.path.join(subdirectory, f)
@@ -83,9 +85,54 @@ class Constante:
             pyautogui.alert("Image Next/Previous Button a rajouté")
             os._exit(0)
 
-        if len(Constante.imagesPrevButton) != len(Constante.tl_group[-2]):
-            pyautogui.alert("Groupe de traduction a rajouté")
-            os._exit(0)
+    def rename_chapter_buttons(directory_path):
+        if not os.path.isdir(directory_path):
+            raise FileNotFoundError("Je n'ai pas l'air de trouver le dossier nécessaire")
+
+        os.chdir(directory_path)
+        files = os.listdir('.')
+
+        next_pattern = re.compile(r'^NextChapterButton(\d+)')
+        existing_numbers = [0]
+
+        for f in files:
+            match = next_pattern.match(f)
+            if match:
+                existing_numbers.append(int(match.group(1)))
+
+        current_number = max(existing_numbers) + 1
+        print(f"Starting numbering from: {current_number}")
+
+        unprocessed_files = [
+            f for f in files 
+            if os.path.isfile(f) 
+            and not f.startswith("NextChapterButton") 
+            and not f.startswith("PreviousChapterButton")
+        ]
+
+        unprocessed_files.sort(key=os.path.getmtime)
+
+        if not unprocessed_files:
+            return
+
+        for i in range(0, len(unprocessed_files), 2):
+            file_next = unprocessed_files[i]
+            ext_next = os.path.splitext(file_next)[1]
+            new_name_next = f"NextChapterButton{current_number}{ext_next}"
+            
+            os.rename(file_next, new_name_next)
+
+            if i + 1 < len(unprocessed_files):
+                file_prev = unprocessed_files[i + 1]
+                ext_prev = os.path.splitext(file_prev)[1]
+                new_name_prev = f"PreviousChapterButton{current_number}{ext_prev}"
+                
+                os.rename(file_prev, new_name_prev)
+            else:
+                pyautogui.alert("Image Next/Previous Button a rajouté")
+                os._exit(0)
+
+            current_number += 1
 
     def update_tl_group(tl_group,index,addremove):
 
@@ -144,10 +191,6 @@ class Constante:
         
         if len(Constante.imagesPrevButton) != len(Constante.imagesNextButton):
             pyautogui.alert("Image Next/Previous Button a rajouté")
-            os._exit(0)
-
-        if len(Constante.imagesPrevButton) != len(Constante.tl_group[-2]):
-            pyautogui.alert("Groupe de traduction a rajouté")
             os._exit(0)
 
 if __name__ == "__main__":
