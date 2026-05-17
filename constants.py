@@ -174,6 +174,8 @@ class Constante:
 
         subdirectory = next((sub for sub in Constante.folder.iterdir() if sub.is_dir() and "imgs" in str(sub)),None)
 
+        Constante.rename_chapter_buttons(subdirectory)
+
         if subdirectory:
             Constante.imagesPrevButton = [
                                 os.path.join(subdirectory, f)
