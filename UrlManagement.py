@@ -150,6 +150,7 @@ class Url:
                 if url_to_test:
                     index += 1
                     Display.show_status_message("Image a rajoutée")
+                    Url.tentatives_test = 0
                 else:
                     Url.tentatives_test = 0
             else:
