@@ -13,6 +13,7 @@ class Url:
     patterns = []
 
     tentatives = 31
+    tentatives_test = 1
     thread_list = []
     url_found = threading.Event()
     img_found = threading.Event()
@@ -138,8 +139,9 @@ class Url:
         Url.copy_paste()
         new_url = pyperclip.paste()
 
-        if new_url != url:
+        if new_url != url or Url.tentatives_test >= 3:
             index = len(Constante.tl_group) - 1
+            Url.tentatives_test = 0
         else:
             url_to_test = Url.test_indirect(url,direction)
             if url_to_test:
@@ -148,9 +150,14 @@ class Url:
                 if url_to_test:
                     index += 1
                     Display.show_status_message("Image a rajoutée")
+                else:
+                    Url.tentatives_test = 0
+            else:
+                Url.tentatives_test = 0
 
         Constante.update_tl_group(tl_group,index,Constante.ADD)
         Url.update_regex()
+        Url.tentatives_test += 1
 
     def create_new_url(url,direction):
         url_parser = url.rstrip("/").split("/")
