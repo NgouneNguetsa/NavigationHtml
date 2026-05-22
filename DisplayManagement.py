@@ -37,15 +37,6 @@ class Display:
         except Exception:
             pass
 
-    def window_end_message(hwnd):
-        """Met la fenêtre correspondant au handle hwnd au premier plan."""
-        
-        try:
-            Constante.user32.ShowWindow(hwnd, 2)  # 2 = Active la fenêtre en tant qu'icône
-            Constante.user32.SetForegroundWindow(hwnd)
-        except Exception:
-            pass
-
     def state_message():
         os.system("cls")
         print("Bienvenue dans le programme NavigationHtml.")
@@ -67,7 +58,6 @@ class Display:
         print("\nLe programme est en pause")
 
     def stop_message():
-        Display.window_end_message(Display.console["handle"])
         pyautogui.alert("Merci d'avoir utilisé le programme NavigationHtml.\n" 
                         "J'espère qu'il vous a été utile.")
 
@@ -85,16 +75,14 @@ class Display:
         pyautogui.hotkey('alt','tab')
 
     def show_interrupt_message():
-        Display.focus_window(Display.console["handle"])
-        print("Le programme s'est fini en avance par interruption clavier")
-        Display.stop_message()
+        pyautogui.alert("Le programme s'est fini en avance par interruption clavier")
 
     def show_test_message():
         Display.focus_window(Display.console["handle"])
         for i in range(3):
             print(f"Commencement du test de l'url dans {3-i} s")
             time.sleep(1)
-        pyautogui.hotkey('alt',"tab")
+        pyautogui.hotkey('alt','tab')
         time.sleep(0.5)
         Display.state_message()
 

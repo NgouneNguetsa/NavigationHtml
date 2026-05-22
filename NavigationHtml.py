@@ -59,12 +59,12 @@ class Navigation:
             Display.state_message()
             self.pauseHandler.clear()
             Constante.EnableGlobalListener()
-            self.KeyboardInterrupt()
+            self.HotkeyInterrupt()
 
         elif key == KeyCode.from_char("r") or key == KeyCode.from_char("R"):
             Constante.reload_tl_group_list()
 
-    def KeyboardInterrupt(self):
+    def HotkeyInterrupt(self):
         self.hotkeyHandler = keyboard.add_hotkey('ctrl+c', lambda: Constante.interrupt_handler.set())
 
     def Run(self):
@@ -72,7 +72,7 @@ class Navigation:
         speListener = Listener(on_press=self.PR_on_press)
         globalListener.start()
         speListener.start()
-        self.KeyboardInterrupt()
+        self.HotkeyInterrupt()
         globalListener.join()
         speListener.join()
 
