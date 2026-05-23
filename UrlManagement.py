@@ -1,5 +1,14 @@
-from constants import re, pyperclip, pyautogui, time, requests, BeautifulSoup, date, timedelta, threading, keyboard
-from constants import urljoin
+import re
+import pyperclip
+import pyautogui
+import time
+import requests
+from bs4 import BeautifulSoup
+from datetime import date, timedelta
+import threading
+import keyboard
+from urllib.parse import urljoin
+
 from constants import Constante
 from DisplayManagement import Display
 

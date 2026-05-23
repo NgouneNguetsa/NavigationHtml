@@ -1,4 +1,7 @@
-from constants import keyboard, Key, KeyCode, Listener, threading
+import keyboard
+from pynput.keyboard import Key, KeyCode, Listener
+import threading
+
 from DisplayManagement import Display
 from UrlManagement import Url
 from constants import Constante

@@ -1,4 +1,11 @@
-from constants import ctypes, gw, keyboard, time, pyautogui, os, ttk
+import keyboard
+import ctypes
+import pygetwindow as gw
+import time
+import pyautogui
+import os
+from tkinter import ttk
+
 from constants import Constante
 
 class Display:

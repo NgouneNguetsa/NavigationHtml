@@ -1,20 +1,12 @@
-import requests
-from bs4 import BeautifulSoup
 import keyboard
 import pyautogui
-import pyperclip
 import time
-import pygetwindow as gw
 import os
 from pathlib import Path
 import re
 import ctypes
-from urllib.parse import urljoin
-from datetime import date, timedelta
 import threading
-from pynput.keyboard import Key, KeyCode, Listener
 import signal
-from tkinter import ttk
 
 class Constante:
 
