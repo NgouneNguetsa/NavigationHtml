@@ -1,6 +1,7 @@
 import keyboard
 from pynput.keyboard import Key, KeyCode, Listener
 import threading
+import time
 
 from DisplayManagement import Display
 from UrlManagement import Url
@@ -12,11 +13,11 @@ class Navigation:
         Url.InitVar()
         Display.InitVar()
         Display.start_message()
-        self.pauseHandler = threading.Event()
         self.stopEvent = threading.Event()
+        self.pauseHandler = threading.Event()
 
     # La fonction est responsable de toute les actions du thread d'écoute globale
-    def GL_on_press(self,key):
+    def GlobalListener_on_press(self,key):
         if Constante.interrupt_handler.is_set():
             Display.show_interrupt_message()
             return False
@@ -25,8 +26,8 @@ class Navigation:
             return
 
         if key == Key.esc:
-            Display.stop_message()
             self.stopEvent.set()
+            Display.stop_message()
             return False
         
         elif key == Key.right:
@@ -43,41 +44,39 @@ class Navigation:
             Constante.reload_tl_group_list()
 
     # La fonction est responsable de la pause/remise en marche du programme
-    def PR_on_press(self,key):
-        if Constante.interrupt_handler.is_set() or self.stopEvent.is_set():
-            return False
-        
-        if key == KeyCode.from_char("*") and not self.pauseHandler.is_set():
-            Display.show_status_message("Programme en pause")
-            Display.pause_state_message()
-            self.pauseHandler.set()
-            Constante.DisableGlobalListener()
-            try:
-                keyboard.remove_hotkey(self.hotkeyHandler)
-            except KeyError:
-                pass
+    def PauseResume(self):
+        while not Constante.interrupt_handler.is_set() and not self.stopEvent.is_set():
 
-        elif key == KeyCode.from_char("*") and self.pauseHandler.is_set():
-            Display.show_status_message("Reprise du programme")
-            Display.state_message()
-            self.pauseHandler.clear()
-            Constante.EnableGlobalListener()
-            self.HotkeyInterrupt()
+            if not Display.is_browser_window() and not self.pauseHandler.is_set():
+                self.pauseHandler.set()
+                Display.show_status_message("Programme en pause")
+                Display.pause_state_message()
+                Constante.DisableGlobalListener()
+                try:
+                    keyboard.remove_hotkey(self.hotkeyHandler)
+                except KeyError:
+                    pass
 
-        elif key == KeyCode.from_char("r") or key == KeyCode.from_char("R"):
-            Constante.reload_tl_group_list()
+            elif Display.is_browser_window() and self.pauseHandler.is_set():
+                self.pauseHandler.clear()
+                Display.show_status_message("Reprise du programme")
+                Display.state_message()
+                Constante.EnableGlobalListener()
+                self.HotkeyInterrupt()
+
+            if self.stopEvent.wait(0.1):
+                break
 
     def HotkeyInterrupt(self):
         self.hotkeyHandler = keyboard.add_hotkey('ctrl+c', lambda: Constante.interrupt_handler.set())
 
     def Run(self):
-        globalListener = Listener(on_press=self.GL_on_press)
-        speListener = Listener(on_press=self.PR_on_press)
+        globalListener = Listener(on_press=self.GlobalListener_on_press)
+        PRListener = threading.Thread(target=self.PauseResume, daemon=True)
         globalListener.start()
-        speListener.start()
+        PRListener.start()
         self.HotkeyInterrupt()
         globalListener.join()
-        speListener.join()
 
 if __name__ == "__main__":
     prog = Navigation()

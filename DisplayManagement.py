@@ -4,6 +4,7 @@ import pygetwindow as gw
 import time
 import pyautogui
 import os
+import psutil
 from tkinter import ttk
 
 from constants import Constante
@@ -44,13 +45,21 @@ class Display:
         except Exception:
             pass
 
+    def is_browser_window():
+        window = Display.get_active_window_info()
+        try:
+            proc = psutil.Process(window["pid"])
+            process_name = proc.name().lower()
+            return any(nav in process_name for nav in Constante.navigators_list)
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
+            return False
+
     def state_message():
         os.system("cls")
         print("Bienvenue dans le programme NavigationHtml.")
         print("Ce programme vous permet de vous déplacer d'une page html à une autre à l'aide de vos flèches directionnelles")
         print("Appuyez <- jusqu'à ce que le lien soit surligné en bleu afin d'aller à la page précédente.")
         print("Appuyez -> jusqu'à ce que le lien soit surligné en bleu afin d'aller à la page suivante.")
-        print("Appuyez sur * (star) pour mettre en pause/résumer le programme.")
         print("Appuyez sur r pour mettre à jour les groupes de traduction.")
         print("Appuyez sur ECHAP/ESC pour que le programme se ferme.")
 

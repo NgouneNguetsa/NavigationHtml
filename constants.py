@@ -15,6 +15,7 @@ class Constante:
     screenWidth, screenHeight = pyautogui.size()
     BLOG_TEXT_THRESHOLD = 2500 # Regarde si le blog a plus de 2500 caracteres avant de copier le lien
     ARBITRARY_LARGEST_CHAPTER = 2000 # Quand le programme test les liens, regarde si la valeur n'est pas supérieure à 2000 chapitres
+    navigators_list = ["chrome.exe", "firefox.exe", "msedge.exe", "opera.exe","brave.exe", "safari.exe"]
     globalListener_disabled = threading.Event()
     interrupt_handler = threading.Event()
     reload_handler = threading.Event()
