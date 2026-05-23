@@ -226,11 +226,14 @@ class Url:
         if url1 != url2:
             return True
 
+        response = Url.get_url(url1)
+
+        if response.status_code == 500:
+            return True
+
         toCheck = any(s.isdigit() for s in url1.split("/")[:-1])
                 
         if toCheck:
-            response = Url.get_url(url1)
-
             soup = BeautifulSoup(response.text,"lxml")
             if len(soup.text) < Constante.BLOG_TEXT_THRESHOLD:
                 for _ in range(Url.tentatives):
