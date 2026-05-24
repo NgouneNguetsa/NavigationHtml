@@ -7,6 +7,8 @@ Ce programme permet simplement de se déplacer d'une page web à une autre de 2 
 **2ème méthode**
 - Le programme cherche simplement où se trouve le bouton du précédent/prochain chapitre
 
+Le programme annoncera sa mise en pause lorsque vous changerez de fênetre. Il reprendra son cours si vous revenez sur une page web.
+
 # Pré-requis
 Ce programme ne fonctionne qu'avec Windows *Cela pourrait changer en fonction de ma motivation à continuer*\
 Pour que ce programme fonctionne, il faut lancer la commande suivante :
@@ -20,6 +22,11 @@ Cela permet de récupérer les librairies nécessaires au bon fonctionnement du 
 
 /!\ Pour rajouter une nouvelle paire d'images, commencer par ajouter le Next bouton avant le Previous bouton.\
     La fonction qui renomme les fichiers les traitent de façon bête et méchante.
+
+# Exemple d'application (sur Windows)
+```bash
+& py .\NavigationHtml\NavigationHtml.py
+```
 
 # Mot de remerciement
 Pour tout ceux qui utiliseront ce programme *autre que moi*, je vous remercie de l'attention portée à un petit projet tel que le mien et je vous souhaite une bonne journée.
