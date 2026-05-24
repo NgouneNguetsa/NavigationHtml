@@ -59,7 +59,6 @@ class Navigation:
 
             elif Display.is_browser_window() and self.pauseHandler.is_set():
                 self.pauseHandler.clear()
-                Display.show_status_message("Reprise du programme")
                 Display.state_message()
                 Constante.EnableGlobalListener()
                 self.HotkeyInterrupt()
