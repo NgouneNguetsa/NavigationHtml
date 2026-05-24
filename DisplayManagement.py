@@ -47,6 +47,9 @@ class Display:
 
     def is_browser_window():
         window = Display.get_active_window_info()
+        if not window:
+            return False
+        
         try:
             proc = psutil.Process(window["pid"])
             process_name = proc.name().lower()
