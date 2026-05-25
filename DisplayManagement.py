@@ -52,7 +52,7 @@ class Display:
         window = Display.get_active_window_info()
 
         if not window:
-            return False
+            return True
         
         try:
             proc = psutil.Process(window["pid"])
