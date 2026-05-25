@@ -25,6 +25,7 @@ class Display:
                 "handle": hwnd,
                 "pid": pid.value
             }
+        
         except Exception:
             return None
 
@@ -33,6 +34,7 @@ class Display:
         
         try:
             return Display.get_window_info(gw.getActiveWindow())
+        
         except Exception:
             return None
 
@@ -42,11 +44,13 @@ class Display:
         try:
             Constante.user32.ShowWindow(hwnd, 3)  # 3 = Active la fenêtre en plein écran
             Constante.user32.SetForegroundWindow(hwnd)
+
         except Exception:
             pass
 
     def is_browser_window():
         window = Display.get_active_window_info()
+
         if not window:
             return False
         
@@ -54,6 +58,7 @@ class Display:
             proc = psutil.Process(window["pid"])
             process_name = proc.name().lower()
             return any(nav in process_name for nav in Constante.navigators_list)
+        
         except (psutil.NoSuchProcess, psutil.AccessDenied):
             return False
 
@@ -88,9 +93,11 @@ class Display:
         Display.focus_window(Display.console["handle"])
         print("Il y a eu une erreur de connexion (Internet ou retentatives max atteintes)")
         time.sleep(2)
+
         for i in range(3):
             print(f"Le programme va reprendre son cours dans {3-i} s")
             time.sleep(1)
+
         pyautogui.hotkey('alt','tab')
 
     def show_interrupt_message():
@@ -98,9 +105,11 @@ class Display:
 
     def show_test_message():
         Display.focus_window(Display.console["handle"])
+
         for i in range(3):
             print(f"Commencement du test de l'url dans {3-i} s")
             time.sleep(1)
+
         pyautogui.hotkey('alt','tab')
         time.sleep(0.5)
         Display.state_message()

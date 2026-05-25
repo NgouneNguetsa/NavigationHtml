@@ -47,13 +47,22 @@ class Navigation:
     def PauseResume(self):
         while not Constante.interrupt_handler.is_set() and not self.stopEvent.is_set():
 
+            if Constante.pauseResumeListener_disabled.is_set():
+
+                if self.stopEvent.wait(0.1):
+                    break
+
+                continue
+
             if not Display.is_browser_window() and not self.pauseHandler.is_set():
                 self.pauseHandler.set()
                 Display.show_status_message("Programme en pause")
                 Display.pause_state_message()
                 Constante.DisableGlobalListener()
+
                 try:
                     keyboard.remove_hotkey(self.hotkeyHandler)
+
                 except KeyError:
                     pass
 
@@ -61,21 +70,34 @@ class Navigation:
                 self.pauseHandler.clear()
                 Display.state_message()
                 Constante.EnableGlobalListener()
-                self.HotkeyInterrupt()
+                self.hotkeyHandler = HotkeyInterruption()
 
             if self.stopEvent.wait(0.1):
                 break
-
-    def HotkeyInterrupt(self):
-        self.hotkeyHandler = keyboard.add_hotkey('ctrl+c', lambda: Constante.interrupt_handler.set())
 
     def Run(self):
         globalListener = Listener(on_press=self.GlobalListener_on_press)
         PRListener = threading.Thread(target=self.PauseResume, daemon=True)
         globalListener.start()
         PRListener.start()
-        self.HotkeyInterrupt()
+        self.hotkeyHandler = HotkeyInterruption()
+        WindowChangeState()
         globalListener.join()
+
+def HotkeyInterruption():
+    return keyboard.add_hotkey('ctrl+c', lambda: Constante.interrupt_handler.set())
+
+def WindowChangeState():
+    keyboard.hook(onAltEvent)
+
+def onAltEvent(event):
+    if 'alt' in event.name:
+
+        if event.event_type == keyboard.KEY_DOWN:
+            Constante.DisablePauseResumeListener()
+
+        elif event.event_type == keyboard.KEY_UP:
+            Constante.EnablePauseResumeListener()
 
 if __name__ == "__main__":
     prog = Navigation()

@@ -17,6 +17,7 @@ class Constante:
     ARBITRARY_LARGEST_CHAPTER = 2000 # Quand le programme test les liens, regarde si la valeur n'est pas supérieure à 2000 chapitres
     navigators_list = ["chrome.exe", "firefox.exe", "msedge.exe", "opera.exe","brave.exe", "safari.exe"]
     globalListener_disabled = threading.Event()
+    pauseResumeListener_disabled = threading.Event()
     interrupt_handler = threading.Event()
     reload_handler = threading.Event()
     tl_group = []
@@ -29,23 +30,32 @@ class Constante:
 
     def DisableGlobalListener():
         Constante.globalListener_disabled.set()
+
+    def EnablePauseResumeListener():
+        Constante.pauseResumeListener_disabled.clear()
+
+    def DisablePauseResumeListener():
+        Constante.pauseResumeListener_disabled.set()
         
-    def ThreadInterrupt(self):
+    def ThreadInterruption(self):
         time.sleep(5)
+
         try:
             keyboard.unblock_key("left")
+
         except KeyError:
             pass
         
         try:
             keyboard.unblock_key("right")
+
         except KeyError:
             pass
 
         os._exit(0)
 
     def InitVar():
-        signal.signal(signal.SIGINT,Constante.ThreadInterrupt)
+        signal.signal(signal.SIGINT,Constante.ThreadInterruption)
 
         with open(fr"{Constante.folder}/translationgroups.txt","rb") as f:
             for s in f:
@@ -90,6 +100,7 @@ class Constante:
 
         for f in files:
             match = next_pattern.match(f)
+
             if match:
                 existing_numbers.append(int(match.group(1)))
 
@@ -121,6 +132,7 @@ class Constante:
                 new_name_prev = f"PreviousChapterButton{current_number}{ext_prev}"
                 
                 os.rename(file_prev, new_name_prev)
+
             else:
                 pyautogui.alert("Image Next/Previous Button a rajouté")
                 os._exit(0)
@@ -128,7 +140,6 @@ class Constante:
             current_number += 1
 
     def update_tl_group(tl_group,index,addremove):
-
         buffer = open(fr"{Path(__file__).parent}/translationgroups.txt",'r').read()
 
         new_file = ""
@@ -160,6 +171,7 @@ class Constante:
         with open(fr"{Constante.folder}/translationgroups.txt","rb") as f:
             for s in f:
                 s = s.decode().strip()
+                
                 if not s.startswith("#") and s != "":
                     ind = f.tell()
                     Constante.tl_group_index.append(ind)
