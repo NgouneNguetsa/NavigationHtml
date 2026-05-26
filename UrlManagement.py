@@ -108,12 +108,6 @@ class Url:
 
     def handle_prefix_number(url, direction):
         return Url.apply_regex_and_modify(url, r"^([a-zA-Z_-]*?)(\d+)(?=[^0-9]|$)(?:.*)$", ["prefix", "number"], direction)
-    
-    def handle_prefix_number_suffix_extension_test(url, direction):
-        return Url.apply_regex_and_modify(url, r"^([a-zA-Z_-]*?)(\d+)([a-zA-Z0-9_-]*)?([.a-zA-Z]*)?(?:[#a-zA-Z_-]*)?$", ["prefix", "number", "suffix", "extension"], direction)
-
-    def handle_prefix_number_test(url, direction):
-        return Url.apply_regex_and_modify(url, r"^([a-zA-Z_-]*?)(\d+)(?:.*)$", ["prefix", "number"], direction)
 
     @test_screen_corners
     def mouse_move(x,y):
@@ -240,21 +234,17 @@ class Url:
     
     def test_direct(url,direction):
         """Le test est effectué à l'aide de la logique interne au programme"""
-        url1 = Url.handle_prefix_number_suffix_extension(url,direction)
-        url2 = Url.handle_prefix_number_suffix_extension_test(url,direction)
+        new_url = Url.handle_prefix_number_suffix_extension(url,direction)
 
-        if not url1:
+        if not new_url:
             return True
 
-        if url1 != url2:
-            return True
-
-        response = Url.get_url(url1)
+        response = Url.get_url(new_url)
 
         if response.status_code in (500, 404, 403):
             return True
 
-        toCheck = any(s.isdigit() for s in url1.split("/")[:-1])
+        toCheck = any(s.isdigit() for s in new_url.split("/")[:-1])
                 
         if toCheck:
 
@@ -263,8 +253,8 @@ class Url:
             if len(soup.text) < Constante.BLOG_TEXT_THRESHOLD:
 
                 for _ in range(Url.tentatives):
-                    url1 = Url.create_new_url(url1,direction)
-                    thread = threading.Thread(target=Url.search_in_multithread,args=(url1,))
+                    new_url = Url.create_new_url(new_url,direction)
+                    thread = threading.Thread(target=Url.search_in_multithread,args=(new_url,))
                     Url.thread_list.append(thread)
                     thread.start()
 
@@ -282,10 +272,10 @@ class Url:
                 Url.reset_thread_list()
                 return True
 
-        pyperclip.copy(url1)
+        pyperclip.copy(new_url)
         Url.copy_paste(True)
 
-        if ".com" not in url1:
+        if ".com" not in new_url:
             _,y = pyautogui.position()
             x = 0.989*Constante.screenWidth
             Url.mouse_move(x,y)
@@ -294,17 +284,13 @@ class Url:
 
     def test_indirect(url,direction):
         """Le test est effectué à l'aide du lien url généré"""
-        url1 = Url.handle_prefix_number(url,direction)
-        url2 = Url.handle_prefix_number_test(url,direction)
+        start_url = Url.handle_prefix_number(url,direction)
 
-        if url1 != url2:
-            return True
-
-        response = Url.get_url(url1)
+        response = Url.get_url(start_url)
         
         soup = BeautifulSoup(response.text, "lxml")
         
-        new_page_link = next((a["href"] for a in soup.find_all("a",href=True) if url1 in a["href"]),"")
+        new_page_link = next((a["href"] for a in soup.find_all("a",href=True) if start_url in a["href"]),"")
 
         if new_page_link != "":
             pyperclip.copy(new_page_link)
@@ -484,7 +470,7 @@ class Url:
 
         else:
             pyautogui.hotkey('ctrl', 'l')
-            pyautogui.hotkey('ctrl','v')
+            pyautogui.hotkey('ctrl', 'v')
             pyautogui.press('enter')
             pyperclip.copy('')
 
