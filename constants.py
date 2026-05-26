@@ -20,6 +20,7 @@ class Constante:
     pauseResumeListener_disabled = threading.Event()
     interrupt_handler = threading.Event()
     reload_handler = threading.Event()
+    test_handler = threading.Event()
     tl_group = []
     tl_group_index = []
     ADD = False
@@ -105,7 +106,6 @@ class Constante:
                 existing_numbers.append(int(match.group(1)))
 
         current_number = max(existing_numbers) + 1
-        print(f"Starting numbering from: {current_number}")
 
         unprocessed_files = [
             f for f in files 

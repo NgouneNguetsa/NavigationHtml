@@ -1,5 +1,5 @@
 # First research method - First case
-nobadnovel,mainichitl,readhive,kaystls,goblinslate,lorenovels
+nobadnovel,mainichitl,readhive,kaystls,goblinslate,lorenovels,goldennovel
 
 # First research method - Second case
 brightnovels,otakutl,zkytl,breaknovel,hostednovel,tinytranslation,dragonholictranslations,shanghaifantasy,shiningnoveltranslations,dreamy-translations
@@ -8,4 +8,4 @@ brightnovels,otakutl,zkytl,breaknovel,hostednovel,tinytranslation,dragonholictra
 botitranslation,dasuitl,foxaholic,readrift,bayabuscotranslation,shmtranslations,weebsread,curspe,42hag
 
 # To skip
-f-w-o,patreon,novelupdates,inoveltranslation,azurechronicles,novelshaven,google,firefox
+f-w-o,patreon,novelupdates,inoveltranslation,azurechronicles,novelshaven,google,firefox,fenrirealm

@@ -139,18 +139,19 @@ class Url:
         return response
     
     def test_url(url,direction):
+        Constante.test_handler.set()
+
         url_to_test = True
         
-        tl_group = ""
+        tl_group = url.split("/")[2]
         index = 0
 
-        if url.count(".") > 1:
-            ind_first_point = url.index(".")
-            ind_second_point = url.index(".",ind_first_point+1)
-            tl_group = url[ind_first_point+1:ind_second_point]
+        if tl_group.count(".") > 1:
+            ind_first_point = tl_group.index(".")
+            ind_second_point = tl_group.index(".",ind_first_point+1)
+            tl_group = tl_group[ind_first_point+1:ind_second_point]
 
         else:
-            tl_group = url.split("/")[2]
             tl_group = tl_group[:tl_group.index(".")]
 
         Display.show_test_message()
@@ -182,6 +183,8 @@ class Url:
         Constante.update_tl_group(tl_group,index,Constante.ADD)
         Url.update_regex()
         Url.tentatives_test += 1
+
+        Constante.test_handler.clear()
 
     def create_new_url(url,direction):
         url_parser = url.rstrip("/").split("/")
@@ -248,7 +251,7 @@ class Url:
 
         response = Url.get_url(url1)
 
-        if response.status_code == 500:
+        if response.status_code in (500, 404, 403):
             return True
 
         toCheck = any(s.isdigit() for s in url1.split("/")[:-1])
