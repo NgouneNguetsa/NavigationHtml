@@ -112,6 +112,8 @@ class Display:
         pyautogui.alert("Le programme s'est fini en avance par interruption clavier")
 
     def show_test_message():
+        Constante.display_handler.set()
+        
         Display.focus_window(Display.console["handle"])
 
         for i in range(3):
@@ -121,6 +123,8 @@ class Display:
         pyautogui.hotkey('alt','tab')
         time.sleep(0.5)
         Display.state_message()
+
+        Constante.display_handler.clear()
 
 if __name__ == "__main__":
     print("Ce programme doit être lancé avec le fichier NavigationHtml.py")
