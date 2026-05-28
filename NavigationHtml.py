@@ -47,7 +47,7 @@ class Navigation:
     def PauseResume(self):
         while not Constante.interrupt_handler.is_set() and not self.stopEvent.is_set():
 
-            if Constante.pauseResumeListener_disabled.is_set() or Constante.test_handler.is_set():
+            if Constante.pauseResumeListener_disabled.is_set() or Constante.test_handler.is_set() or Constante.display_handler.is_set():
 
                 if self.stopEvent.wait(0.1):
                     break

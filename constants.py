@@ -21,6 +21,7 @@ class Constante:
     interrupt_handler = threading.Event()
     reload_handler = threading.Event()
     test_handler = threading.Event()
+    display_handler = threading.Event()
     tl_group = []
     tl_group_index = []
     ADD = False

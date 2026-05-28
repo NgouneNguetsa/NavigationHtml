@@ -86,10 +86,16 @@ class Display:
                         "J'espère qu'il vous a été utile.")
 
     def show_status_message(status_message : str):
+        Constante.display_handler.set()
+
         pyautogui.alert(f"{status_message}")
         time.sleep(0.1)
 
+        Constante.display_handler.clear()
+
     def show_major_error_message():
+        Constante.display_handler.set()
+
         Display.focus_window(Display.console["handle"])
         print("Il y a eu une erreur de connexion (Internet ou retentatives max atteintes)")
         time.sleep(2)
@@ -99,6 +105,8 @@ class Display:
             time.sleep(1)
 
         pyautogui.hotkey('alt','tab')
+
+        Constante.display_handler.clear()
 
     def show_interrupt_message():
         pyautogui.alert("Le programme s'est fini en avance par interruption clavier")
