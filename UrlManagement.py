@@ -454,7 +454,7 @@ class Url:
 
         if button:
             Url.imageFound.set()
-            # Calcule le centre du button
+            # Calcule le centre du bouton
             x, y = pyautogui.center(button)
             Url.mouseMove(x, y)
 
@@ -468,7 +468,7 @@ class Url:
 
         else:
             pyautogui.hotkey('ctrl', 'l')
-            pyautogui.hotkey('ctrl', 'value')
+            pyautogui.hotkey('ctrl', 'v')
             pyautogui.press('enter')
             pyperclip.copy('')
 
