@@ -15,29 +15,28 @@ class Constante:
     screenWidth, screenHeight = pyautogui.size()
     BLOG_TEXT_THRESHOLD = 2500 # Regarde si le blog a plus de 2500 caracteres avant de copier le lien
     ARBITRARY_LARGEST_CHAPTER = 2000 # Quand le programme test les liens, regarde si la valeur n'est pas supérieure à 2000 chapitres
-    navigators_list = ["chrome.exe", "firefox.exe", "msedge.exe", "opera.exe","brave.exe", "safari.exe"]
-    globalListener_disabled = threading.Event()
-    pauseResumeListener_disabled = threading.Event()
-    interrupt_handler = threading.Event()
-    reload_handler = threading.Event()
-    test_handler = threading.Event()
-    display_handler = threading.Event()
-    tl_group = []
-    tl_group_index = []
+    navigatorsList = ["chrome.exe", "firefox.exe", "msedge.exe", "opera.exe","brave.exe", "safari.exe"]
+    globalListenerDisabled = threading.Event()
+    pauseResumeListenerDisabled = threading.Event()
+    interruptHandler = threading.Event()
+    reloadHandler = threading.Event()
+    testHandler = threading.Event()
+    displayHandler = threading.Event()
+    translatorsGroup = []
     ADD = False
     REMOVE = True
 
     def EnableGlobalListener():
-        Constante.globalListener_disabled.clear()
+        Constante.globalListenerDisabled.clear()
 
     def DisableGlobalListener():
-        Constante.globalListener_disabled.set()
+        Constante.globalListenerDisabled.set()
 
     def EnablePauseResumeListener():
-        Constante.pauseResumeListener_disabled.clear()
+        Constante.pauseResumeListenerDisabled.clear()
 
     def DisablePauseResumeListener():
-        Constante.pauseResumeListener_disabled.set()
+        Constante.pauseResumeListenerDisabled.set()
         
     def ThreadInterruption(self):
         time.sleep(5)
@@ -57,32 +56,45 @@ class Constante:
         os._exit(0)
 
     def InitVar():
-        signal.signal(signal.SIGINT,Constante.ThreadInterruption)
+        signal.signal(signal.SIGINT, Constante.ThreadInterruption)
 
-        with open(fr"{Constante.folder}/translationgroups.txt","rb") as f:
-            for s in f:
-                s = s.decode().strip()
-                if not s.startswith("#") and s != "":
-                    ind = f.tell()
-                    Constante.tl_group_index.append(ind)
-                    Constante.tl_group.append(s.split(","))
+        with open(fr"{Constante.folder}/translationgroups.txt", "r") as file:
+            groups = []
 
-        subdirectory = next((sub for sub in Constante.folder.iterdir() if sub.is_dir() and "imgs" in str(sub)),None)
+            for string in file:
+                string = string.strip()
 
-        Constante.rename_chapter_buttons(subdirectory)
+                if not string.startswith("#") and string != "":
+                    
+                    for translator in string.split(","):
+                        groups.append(translator)
+
+                elif string.startswith("#"):
+                    
+                    if len(groups) > 0:
+                        Constante.translatorsGroup.append([translator for translator in groups])
+                        groups.clear()
+
+            Constante.translatorsGroup.append([translator for translator in groups])
+
+
+        subdirectory = next((sub for sub in Constante.folder.iterdir() if sub.is_dir() and "imgs" in str(sub)), None)
+
+        renameChapterButtons(subdirectory)
 
         if subdirectory:
             Constante.imagesPrevButton = [
-                                os.path.join(subdirectory, f)
-                                for f in os.listdir(subdirectory)
-                                if f.lower().endswith(".png") and f.startswith("PreviousChapterButton")
+                                os.path.join(subdirectory, file)
+                                for file in os.listdir(subdirectory)
+                                if file.lower().endswith(".png") and file.startswith("PreviousChapterButton")
                             ]
 
             Constante.imagesNextButton = [
-                                os.path.join(subdirectory, f)
-                                for f in os.listdir(subdirectory)
-                                if f.lower().endswith(".png") and f.startswith("NextChapterButton")
+                                os.path.join(subdirectory, file)
+                                for file in os.listdir(subdirectory)
+                                if file.lower().endswith(".png") and file.startswith("NextChapterButton")
                             ]
+            
         else:
             raise FileNotFoundError("Je n'ai pas l'air de trouver le dossier nécessaire")
         
@@ -90,109 +102,114 @@ class Constante:
             pyautogui.alert("Image Next/Previous Button a rajouté")
             os._exit(0)
 
-    def rename_chapter_buttons(directory_path):
-        if not os.path.isdir(directory_path):
-            raise FileNotFoundError("Je n'ai pas l'air de trouver le dossier nécessaire")
+    def updateTranslatorsGroup(translatorGroup : str, index : int, addremove : bool):
+            filePath = os.path.join(Constante.folder, "translationgroups.txt")
+            maxColumns = 130
 
-        os.chdir(directory_path)
-        files = os.listdir('.')
+            with open(filePath, 'r', encoding='utf-8') as file:
+                lines = file.read().splitlines()
 
-        next_pattern = re.compile(r'^NextChapterButton(\d+)')
-        existing_numbers = [0]
+            headerIndices = [
+                i for i, line in enumerate(lines) 
+                if line.strip().startswith("#")
+            ]
 
-        for f in files:
-            match = next_pattern.match(f)
+            if index >= len(headerIndices):
+                pyautogui.alert("L'index demandé dépasse les groupes configurés.")
+                return
 
-            if match:
-                existing_numbers.append(int(match.group(1)))
+            targetHeaderIndex = headerIndices[index]
+            nextHeaderIndex = len(lines)
 
-        current_number = max(existing_numbers) + 1
+            for headerIndex in headerIndices:
+                if headerIndex > targetHeaderIndex:
+                    nextHeaderIndex = headerIndex
+                    break
 
-        unprocessed_files = [
-            f for f in files 
-            if os.path.isfile(f) 
-            and not f.startswith("NextChapterButton") 
-            and not f.startswith("PreviousChapterButton")
-        ]
+            if addremove == Constante.ADD:
+                targetLineIndex = nextHeaderIndex - 1
 
-        unprocessed_files.sort(key=os.path.getmtime)
+                while targetLineIndex > targetHeaderIndex and lines[targetLineIndex].strip() == "":
+                    targetLineIndex -= 1
 
-        if not unprocessed_files:
-            return
+                if targetLineIndex == targetHeaderIndex:
+                    lines.insert(targetHeaderIndex + 1, translatorGroup)
 
-        for i in range(0, len(unprocessed_files), 2):
-            file_next = unprocessed_files[i]
-            ext_next = os.path.splitext(file_next)[1]
-            new_name_next = f"NextChapterButton{current_number}{ext_next}"
-            
-            os.rename(file_next, new_name_next)
+                else:
+                    lastDataLine = lines[targetLineIndex].strip()
+                    potentialtranslatorGroup = f",{translatorGroup}"
+                    
+                    if len(lastDataLine) + len(potentialtranslatorGroup) > maxColumns:
+                        lines.insert(targetLineIndex + 1, translatorGroup)
 
-            if i + 1 < len(unprocessed_files):
-                file_prev = unprocessed_files[i + 1]
-                ext_prev = os.path.splitext(file_prev)[1]
-                new_name_prev = f"PreviousChapterButton{current_number}{ext_prev}"
-                
-                os.rename(file_prev, new_name_prev)
+                    else:
+                        lines[targetLineIndex] = lastDataLine + potentialtranslatorGroup
+
+            elif addremove == Constante.REMOVE:
+
+                for idx in range(targetHeaderIndex + 1, nextHeaderIndex):
+
+                    if translatorGroup in lines[idx]:
+                        elements = [element.strip() for element in lines[idx].split(",") if element.strip()]
+
+                        if translatorGroup in elements:
+                            elements.remove(translatorGroup)
+                            
+                            if not elements:
+                                lines.pop(idx)
+
+                            else:
+                                lines[idx] = ",".join(elements)
+                            
+                            break
 
             else:
-                pyautogui.alert("Image Next/Previous Button a rajouté")
-                os._exit(0)
+                pyautogui.alert("Il y a eu un problème dans le code")
+                return
 
-            current_number += 1
+            with open(filePath, 'w', encoding='utf-8') as file:
+                file.write("\n".join(lines) + "\n")
 
-    def update_tl_group(tl_group,index,addremove):
-        buffer = open(fr"{Path(__file__).parent}/translationgroups.txt",'r').read()
+            Constante.reloadTranslatorsGroupList()
 
-        new_file = ""
-        if index < len(Constante.tl_group) - 1 and addremove == Constante.ADD:
-            new_file = buffer[:Constante.tl_group_index[index]-(3*(index+1))] + f",{tl_group}" + buffer[Constante.tl_group_index[index]-(3*(index+1)):]
+    def reloadTranslatorsGroupList():
+        Constante.reloadHandler.set()
+        Constante.translatorsGroup.clear()
         
-        elif index < len(Constante.tl_group) - 1 and addremove == Constante.REMOVE:
-            index_to_delete = Constante.tl_group[index].index(tl_group)
-            new_string = ",".join(Constante.tl_group[index][:index_to_delete])
-            new_string = new_string + "," + ",".join(Constante.tl_group[index][index_to_delete+1:]) if index_to_delete != len(Constante.tl_group[index])-1 else new_string
+        with open(fr"{Constante.folder}/translationgroups.txt", "r") as file:
+            groups = []
 
-            new_file = buffer[:Constante.tl_group_index[index]-(3*(index+1)) - len(",".join(Constante.tl_group[index]))] + new_string + buffer[Constante.tl_group_index[index]-(3*(index+1)):]
-        
-        elif index == len(Constante.tl_group) - 1:
-            new_file = buffer[:Constante.tl_group_index[index]-2] + f",{tl_group}"
-        
-        else:
-            pyautogui.alert("Il y a eu un problème dans le code")
+            for string in file:
+                string = string.strip()
 
-        open(fr"{Path(__file__).parent}/translationgroups.txt",'w').write(new_file)
+                if not string.startswith("#") and string != "":
+                    
+                    for translator in string.split(","):
+                        groups.append(translator)
 
-        Constante.reload_tl_group_list()
+                elif string.startswith("#"):
+                    
+                    if len(groups) > 0:
+                        Constante.translatorsGroup.append([translator for translator in groups])
+                        groups.clear()
 
-    def reload_tl_group_list():
-        Constante.reload_handler.set()
-        Constante.tl_group_index.clear()
-        Constante.tl_group.clear()
-        
-        with open(fr"{Constante.folder}/translationgroups.txt","rb") as f:
-            for s in f:
-                s = s.decode().strip()
-                
-                if not s.startswith("#") and s != "":
-                    ind = f.tell()
-                    Constante.tl_group_index.append(ind)
-                    Constante.tl_group.append(s.split(","))
+            Constante.translatorsGroup.append([translator for translator in groups])
 
-        subdirectory = next((sub for sub in Constante.folder.iterdir() if sub.is_dir() and "imgs" in str(sub)),None)
+        subdirectory = next((sub for sub in Constante.folder.iterdir() if sub.is_dir() and "imgs" in str(sub)), None)
 
-        Constante.rename_chapter_buttons(subdirectory)
+        renameChapterButtons(subdirectory)
 
         if subdirectory:
             Constante.imagesPrevButton = [
-                                os.path.join(subdirectory, f)
-                                for f in os.listdir(subdirectory)
-                                if f.lower().endswith(".png") and f.startswith("PreviousChapterButton")
+                                os.path.join(subdirectory, file)
+                                for file in os.listdir(subdirectory)
+                                if file.lower().endswith(".png") and file.startswith("PreviousChapterButton")
                             ]
 
             Constante.imagesNextButton = [
-                                os.path.join(subdirectory, f)
-                                for f in os.listdir(subdirectory)
-                                if f.lower().endswith(".png") and f.startswith("NextChapterButton")
+                                os.path.join(subdirectory, file)
+                                for file in os.listdir(subdirectory)
+                                if file.lower().endswith(".png") and file.startswith("NextChapterButton")
                             ]
         else:
             raise FileNotFoundError("Je n'ai pas l'air de trouver le dossier nécessaire")
@@ -200,6 +217,57 @@ class Constante:
         if len(Constante.imagesPrevButton) != len(Constante.imagesNextButton):
             pyautogui.alert("Image Next/Previous Button a rajouté")
             os._exit(0)
+
+def renameChapterButtons(directoryPath : Path):
+
+    if not os.path.isdir(directoryPath):
+        raise FileNotFoundError("Je n'ai pas l'air de trouver le dossier nécessaire")
+
+    os.chdir(directoryPath)
+    files = os.listdir('.')
+
+    nextPattern = re.compile(r'^NextChapterButton(\d+)')
+    existingNumbers = [0]
+
+    for file in files:
+        match = nextPattern.match(file)
+
+        if match:
+            existingNumbers.append(int(match.group(1)))
+
+    currentNumber = max(existingNumbers) + 1
+
+    unprocessedFiles = [
+        file for file in files 
+        if os.path.isfile(file) 
+        and not file.startswith("NextChapterButton") 
+        and not file.startswith("PreviousChapterButton")
+    ]
+
+    unprocessedFiles.sort(key=os.path.getmtime)
+
+    if not unprocessedFiles:
+        return
+
+    for i in range(0, len(unprocessedFiles), 2):
+        nextFile = unprocessedFiles[i]
+        extension = os.path.splitext(nextFile)[1]
+        newNameNextFile = f"NextChapterButton{currentNumber}{extension}"
+        
+        os.rename(nextFile, newNameNextFile)
+
+        if i + 1 < len(unprocessedFiles):
+            previousFile = unprocessedFiles[i + 1]
+            extension = os.path.splitext(previousFile)[1]
+            newNamePreviousFile = f"PreviousChapterButton{currentNumber}{extension}"
+            
+            os.rename(previousFile, newNamePreviousFile)
+
+        else:
+            pyautogui.alert("Image Next/Previous Button a rajouté")
+            os._exit(0)
+
+        currentNumber += 1
 
 if __name__ == "__main__":
     print("Ce programme doit être lancé avec le fichier NavigationHtml.py")

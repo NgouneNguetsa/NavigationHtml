@@ -14,76 +14,76 @@ from DisplayManagement import Display
 
 class Url:
     methods = [
-        lambda url, index, direction: Url.search_and_go_to_page(url, index, direction),
-        lambda direction: Url.search_and_go_to_page_2nd_method(direction)
+        lambda url, index, direction: Url.searchAndGoToPage(url, index, direction),
+        lambda direction: Url.searchAndGoToPage_2ndMethod(direction)
     ]
 
     mapping = {}
     patterns = []
 
     tentatives = 31
-    tentatives_test = 1
-    thread_list = []
-    url_found = threading.Event()
-    img_found = threading.Event()
+    tentativesTest = 1
+    threadsList = []
+    urlFound = threading.Event()
+    imageFound = threading.Event()
     
     def InitVar():
-        Url.update_regex()
+        Url.updateRegex()
 
-    def test_screen_corners(function):
-        def inner(*args,**kwargs):
+    def testScreenCorners(function):
+        def inner(*args, **kwargs):
             try:
-                function(*args,*kwargs)
+                function(*args, *kwargs)
 
             except pyautogui.FailSafeException:
                 pyautogui.FAILSAFE = False
                 pyautogui.move(Constante.screenWidth, Constante.screenHeight / 2)
                 pyautogui.FAILSAFE = True
-                function(*args,*kwargs)
+                function(*args, *kwargs)
 
         return inner
 
-    def reset_thread_list():
-        Url.thread_list.clear()
+    def resetThreadsList():
+        Url.threadsList.clear()
 
-    def update_regex():
+    def updateRegex():
         Url.mapping.clear()
         Url.patterns.clear()
 
-        for i, tl_group_list in enumerate(Constante.tl_group):
-            for tl in tl_group_list:
-                Url.patterns.append(re.escape(tl))
-                Url.mapping[tl] = i  # Associe chaque texte au bon index
+        for i, translatorsGroupList in enumerate(Constante.translatorsGroup):
+            for translator in translatorsGroupList:
+                Url.patterns.append(re.escape(translator))
+                Url.mapping[translator] = i  # Associe chaque texte au bon index
 
         # Compile une seule regex globale
-        Url.global_regex = re.compile("|".join(Url.patterns))
+        Url.globalRegex = re.compile("|".join(Url.patterns))
 
-    def get_last_segment(url):
+    def getLastSegment(url : str):
         """Retourne la dernière partie de l'URL après le dernier /"""
         
         return url.rstrip("/").split("/")[-1] 
 
-    def modify_chapter_number(segment, prefix, chapter_number, suffix, extension, direction):
+    def modifyChapterNumber(segment : str, prefix : str, chapterNumber : int, suffix : str, extension : str, direction : str):
         """Modifie le numéro selon la direction (next/last) et reconstruit le segment"""
         # En fonction de la direction, on incrémente ou décrémente
-        new_number = chapter_number + 1 if direction == "next" else chapter_number - 1
+        newNumber = chapterNumber + 1 if direction == "next" else chapterNumber - 1
 
         # Vérification : on évite un numéro de chapitre inférieur à 0
-        if new_number < 0:
+        if newNumber < 0:
             return ""  # On ne traite pas ce cas si le numéro devient invalide
 
-        new_segment = f"{prefix}{new_number}{suffix}{extension}"
-        return new_segment
+        newSegment = f"{prefix}{newNumber}{suffix}{extension}"
+        return newSegment
 
-    def apply_regex_and_modify(url, pattern, groups, direction):
+    def applyRegexAndModify(url : str, pattern : str, groups, direction : str):
         """Applique un pattern à la fin de l'URL et retourne la nouvelle URL (incrémentée ou décrémentée)"""
         
         index = url.find("#")
 
         if index != -1:
-            url = url.replace(url[index:],"")
+            url = url.replace(url[index:], "")
 
-        segment = Url.get_last_segment(url)
+        segment = Url.getLastSegment(url)
         match = re.search(pattern, segment)
 
         if not match:
@@ -92,214 +92,213 @@ class Url:
         # Extraire les différentes parties capturées
         parts = {name: match.group(i + 1) if i < len(groups) else "" for i, name in enumerate(groups)}
 
-        new_segment = Url.modify_chapter_number(segment, parts.get("prefix", ""), int(parts.get("number", 1)), parts.get("suffix", ""), parts.get("extension", ""), direction)
+        newSegment = Url.modifyChapterNumber(segment, parts.get("prefix", ""), int(parts.get("number", 1)), parts.get("suffix", ""), parts.get("extension", ""), direction)
         
-        if (not new_segment) or (int(parts["number"]) > Constante.ARBITRARY_LARGEST_CHAPTER):
+        if (not newSegment) or (int(parts["number"]) > Constante.ARBITRARY_LARGEST_CHAPTER):
             return ""
 
         # Recomposer l'URL complète
         base = url[: -len(segment)]
 
-        return urljoin(base, new_segment)
+        return urljoin(base, newSegment)
 
-    # --- Tous les handle_* appellent apply_regex_and_modify avec un pattern différent ---
-    def handle_prefix_number_suffix_extension(url, direction):
-        return Url.apply_regex_and_modify(url, r"^([a-zA-Z_-]*?)(\d+)(?=-|_[^-]*|)([a-zA-Z0-9_-]*)?([.a-zA-Z]*)?(?:[#a-zA-Z_-]*)?$", ["prefix", "number", "suffix", "extension"], direction)
+    # --- Tous les handles appellent applyRegexAndModify avec un pattern différent ---
+    def handlePrefixNumberSuffixExtension(url : str, direction : str):
+        return Url.applyRegexAndModify(url, r"^([a-zA-Z_-]*?)(\d+)(?=-|_[^-]*|)([a-zA-Z0-9_-]*)?([.a-zA-Z]*)?(?:[#a-zA-Z_-]*)?$", ["prefix", "number", "suffix", "extension"], direction)
 
-    def handle_prefix_number(url, direction):
-        return Url.apply_regex_and_modify(url, r"^([a-zA-Z_-]*?)(\d+)(?=[^0-9]|$)(?:.*)$", ["prefix", "number"], direction)
+    def handlePrefixNumber(url : str, direction : str):
+        return Url.applyRegexAndModify(url, r"^([a-zA-Z_-]*?)(\d+)(?=[^0-9]|$)(?:.*)$", ["prefix", "number"], direction)
 
-    @test_screen_corners
-    def mouse_move(x,y):
+    @testScreenCorners
+    def mouseMove(x, y):
         pyautogui.click(x, y)
 
         yDiff = abs((Constante.screenHeight / 2) - y) if y < (Constante.screenHeight / 2) else 0
-        pyautogui.moveTo(0.989*Constante.screenWidth,min(0.83*Constante.screenHeight,Constante.screenHeight - 2*yDiff))            
+        pyautogui.moveTo(0.989*Constante.screenWidth, min(0.83*Constante.screenHeight, Constante.screenHeight - 2*yDiff))            
         time.sleep(2)
 
         pyautogui.leftClick()
-        pyautogui.moveTo(Constante.screenWidth,y)
+        pyautogui.moveTo(Constante.screenWidth, y)
 
-    def get_url(url):
+    def getUrl(url : str):
         response = None
 
         try:
             response = requests.get(url)
 
         except requests.exceptions.RequestException:
-            Display.show_major_error_message()
-            return Url.get_url(url)
+            Display.showMajorErrorMessage()
+            return Url.getUrl(url)
 
         return response
     
-    def test_url(url,direction):
-        Constante.test_handler.set()
+    def testUrl(url : str, direction : str):
+        Constante.testHandler.set()
 
-        url_to_test = True
+        urlToTest = True
         
-        tl_group = url.split("/")[2]
+        translatorGroup = url.split("/")[2]
         index = 0
 
-        if tl_group.count(".") > 1:
-            ind_first_point = tl_group.index(".")
-            ind_second_point = tl_group.index(".",ind_first_point+1)
-            tl_group = tl_group[ind_first_point+1:ind_second_point]
+        if translatorGroup.count(".") > 1:
+            indexFirstPoint = translatorGroup.index(".")
+            indexSecondPoint = translatorGroup.index(".",indexFirstPoint + 1)
+            translatorGroup = translatorGroup[indexFirstPoint + 1 : indexSecondPoint]
 
         else:
-            tl_group = tl_group[:tl_group.index(".")]
+            translatorGroup = translatorGroup[ : translatorGroup.index(".")]
 
-        Display.show_test_message()
-        Url.copy_paste()
-        new_url = pyperclip.paste()
+        Display.showTestMessage()
+        Url.copyPaste()
+        newUrl = pyperclip.paste()
 
-        if new_url != url or Url.tentatives_test >= 3:
-            index = len(Constante.tl_group) - 1
-            Url.tentatives_test = 0
+        if newUrl != url or Url.tentativesTest >= 3:
+            index = len(Constante.translatorsGroup) - 1
+            Url.tentativesTest = 0
 
         else:
-            url_to_test = Url.test_indirect(url,direction)
+            urlToTest = Url.testIndirect(url, direction)
 
-            if url_to_test:
+            if urlToTest:
                 index += 1
-                url_to_test = Url.test_direct(url,direction)
+                urlToTest = Url.testDirect(url, direction)
 
-                if url_to_test:
+                if urlToTest:
                     index += 1
-                    Display.show_status_message("Image a rajoutée")
-                    Url.tentatives_test = 0
+                    Display.showStatusMessage("Image a rajoutée")
+                    Url.tentativesTest = 0
 
                 else:
-                    Url.tentatives_test = 0
+                    Url.tentativesTest = 0
 
             else:
-                Url.tentatives_test = 0
+                Url.tentativesTest = 0
 
-        Constante.update_tl_group(tl_group,index,Constante.ADD)
-        Url.update_regex()
-        Url.tentatives_test += 1
+        Constante.updateTranslatorsGroup(translatorGroup, index, Constante.ADD)
+        Url.tentativesTest += 1
 
-        Constante.test_handler.clear()
+        Constante.testHandler.clear()
 
-    def create_new_url(url,direction):
-        url_parser = url.rstrip("/").split("/")
-        date_parser = [ele for ele in url_parser[:-1] if ele.isdigit()]
+    def createNewUrl(url : str, direction : str):
+        urlParser = url.rstrip("/").split("/")
+        dateParser = [element for element in urlParser[ : -1] if element.isdigit()]
 
-        if len(date_parser) == 2:
+        if len(dateParser) == 2:
 
-            if int(date_parser[1]) < int(date_parser[0]):
-                date_parser[1] = str(int(date_parser[1]) + 1) if direction == "next" else str(int(date_parser[1]) - 1)
-                date_parser[1] = '0'+ date_parser[1] if int(date_parser[1]) < 10 else date_parser[1]
+            if int(dateParser[1]) < int(dateParser[0]):
+                dateParser[1] = str(int(dateParser[1]) + 1) if direction == "next" else str(int(dateParser[1]) - 1)
+                dateParser[1] = '0'+ dateParser[1] if int(dateParser[1]) < 10 else dateParser[1]
 
-                if int(date_parser[1]) > 12:
-                    date_parser[1] = '01'
-                    date_parser[0] = str(int(date_parser[0]) + 1)
+                if int(dateParser[1]) > 12:
+                    dateParser[1] = '01'
+                    dateParser[0] = str(int(dateParser[0]) + 1)
 
-                elif int(date_parser[1]) < 1:
-                    date_parser[1] = '12'
-                    date_parser[0] = str(int(date_parser[0]) - 1)
+                elif int(dateParser[1]) < 1:
+                    dateParser[1] = '12'
+                    dateParser[0] = str(int(dateParser[0]) - 1)
 
             else:
-                date_parser[0] = str(int(date_parser[0]) + 1) if direction == "next" else str(int(date_parser[0]) - 1)
-                date_parser[0] = '0'+ date_parser[0] if int(date_parser[0]) < 10 else date_parser[0]
+                dateParser[0] = str(int(dateParser[0]) + 1) if direction == "next" else str(int(dateParser[0]) - 1)
+                dateParser[0] = '0'+ dateParser[0] if int(dateParser[0]) < 10 else dateParser[0]
 
-                if int(date_parser[0]) > 12:
-                    date_parser[0] = '01'
-                    date_parser[1] = str(int(date_parser[1]) + 1)
+                if int(dateParser[0]) > 12:
+                    dateParser[0] = '01'
+                    dateParser[1] = str(int(dateParser[1]) + 1)
 
-                elif int(date_parser[0]) < 1:
-                    date_parser[0] = '12'
-                    date_parser[1] = str(int(date_parser[1]) - 1)
+                elif int(dateParser[0]) < 1:
+                    dateParser[0] = '12'
+                    dateParser[1] = str(int(dateParser[1]) - 1)
 
-            date_parser.append('/')
+            dateParser.append('/')
             
-        elif len(date_parser) == 3:
-            date_string = "".join(date_parser)
+        elif len(dateParser) == 3:
+            dateString = "".join(dateParser)
 
             day = timedelta(days=1)
 
-            date_object = date.fromisoformat(date_string)
-            date_object = date_object + day if direction == "next" else date_object - day
-            date_parser = date_object.isoformat().split("-")
+            dateObject = date.fromisoformat(dateString)
+            dateObject = dateObject + day if direction == "next" else dateObject - day
+            dateParser = dateObject.isoformat().split("-")
 
-            date_parser.append('/')
+            dateParser.append('/')
 
-        index = next((i for i,v in enumerate(url_parser) if v.isdigit()),None)
+        index = next((i for i, value in enumerate(urlParser) if value.isdigit()), None)
 
-        base = "/".join(url_parser[:index+1])
+        base = "/".join(urlParser[ : index + 1])
 
-        date_string = "/".join(date_parser)
+        dateString = "/".join(dateParser)
 
-        suffixe = url_parser[-1]
-        return urljoin(urljoin(base,date_string),suffixe)
+        suffixe = urlParser[-1]
+        return urljoin(urljoin(base,dateString), suffixe)
     
-    def test_direct(url,direction):
+    def testDirect(url : str, direction : str):
         """Le test est effectué à l'aide de la logique interne au programme"""
-        new_url = Url.handle_prefix_number_suffix_extension(url,direction)
+        newUrl = Url.handlePrefixNumberSuffixExtension(url, direction)
 
-        if not new_url:
+        if not newUrl:
             return True
 
-        response = Url.get_url(new_url)
+        response = Url.getUrl(newUrl)
 
         if response.status_code in (500, 404, 403):
             return True
 
-        toCheck = any(s.isdigit() for s in new_url.split("/")[:-1])
+        toCheck = any(s.isdigit() for s in newUrl.split("/")[ : -1])
                 
         if toCheck:
 
-            soup = BeautifulSoup(response.text,"lxml")
+            soup = BeautifulSoup(response.text,  "lxml")
 
             if len(soup.text) < Constante.BLOG_TEXT_THRESHOLD:
 
                 for _ in range(Url.tentatives):
-                    new_url = Url.create_new_url(new_url,direction)
-                    thread = threading.Thread(target=Url.search_in_multithread,args=(new_url,))
-                    Url.thread_list.append(thread)
+                    newUrl = Url.createNewUrl(newUrl, direction)
+                    thread = threading.Thread(target=Url.searchInMultithreads, args=(newUrl,))
+                    Url.threadsList.append(thread)
                     thread.start()
 
-                    if Url.url_found.is_set():
+                    if Url.urlFound.is_set():
                         break
 
-                for thread in Url.thread_list:
+                for thread in Url.threadsList:
                     thread.join()
 
-                if Url.url_found.is_set():
-                    Url.url_found.clear()
-                    Url.reset_thread_list()
+                if Url.urlFound.is_set():
+                    Url.urlFound.clear()
+                    Url.resetThreadsList()
                     return False
                 
-                Url.reset_thread_list()
+                Url.resetThreadsList()
                 return True
 
-        pyperclip.copy(new_url)
-        Url.copy_paste(True)
+        pyperclip.copy(newUrl)
+        Url.copyPaste(True)
 
-        if ".com" not in new_url:
-            _,y = pyautogui.position()
+        if ".com" not in newUrl:
+            _, y = pyautogui.position()
             x = 0.989*Constante.screenWidth
-            Url.mouse_move(x,y)
+            Url.mouseMove(x, y)
 
         return False
 
-    def test_indirect(url,direction):
+    def testIndirect(url : str, direction : str):
         """Le test est effectué à l'aide du lien url généré"""
-        start_url = Url.handle_prefix_number(url,direction)
+        startUrl = Url.handlePrefixNumber(url, direction)
 
-        response = Url.get_url(start_url)
+        response = Url.getUrl(startUrl)
         
         soup = BeautifulSoup(response.text, "lxml")
         
-        new_page_link = next((a["href"] for a in soup.find_all("a",href=True) if start_url in a["href"]),"")
+        newPageLink = next((a["href"] for a in soup.find_all("a", href=True) if startUrl in a["href"]), "")
 
-        if new_page_link != "":
-            pyperclip.copy(new_page_link)
-            Url.copy_paste(True)
+        if newPageLink != "":
+            pyperclip.copy(newPageLink)
+            Url.copyPaste(True)
             return False
         
         return True
 
-    def search_and_go_to_page(url, index, direction="next"):
+    def searchAndGoToPage(url : str, index : int, direction="next"):
         """
         Gère la navigation entre les pages :
         - url: L'url copié du clipboard
@@ -311,181 +310,180 @@ class Url:
         """
 
         if index == 0:
-            start_url = Url.handle_prefix_number(url,direction)
+            startUrl = Url.handlePrefixNumber(url, direction)
 
-            if not start_url:
-                Display.show_status_message("Le chapitre -1 n'existe pas") if direction == "last" else Display.show_status_message("Si tu es rentré là, une erreur est survenue dans le code")
+            if not startUrl:
+                Display.showStatusMessage("Le chapitre -1 n'existe pas") if direction == "last" else Display.showStatusMessage("Si tu es rentré là, une erreur est survenue dans le code")
                 return
             
-            response = Url.get_url(url)
+            response = Url.getUrl(url)
             
             soup = BeautifulSoup(response.text, "lxml")
             
-            new_page_link = next((a["href"] for a in soup.find_all("a",href=True) if start_url in a["href"]),"")
+            newPageLink = next((a["href"] for a in soup.find_all("a", href=True) if startUrl in a["href"]), "")
  
-            index = new_page_link.find("#")
+            index = newPageLink.find("#")
 
             if index != -1:
-                new_page_link = new_page_link.replace(new_page_link[index:],"")
+                newPageLink = newPageLink.replace(newPageLink[index:], "")
 
-            if new_page_link != "":
-                pyperclip.copy(new_page_link)
-                Url.copy_paste(True)
+            if newPageLink != "":
+                pyperclip.copy(newPageLink)
+                Url.copyPaste(True)
 
             else:
 
                 if response.ok:
-                    Display.show_status_message("Il n'y a pas de lien présent dans la page")
+                    Display.showStatusMessage("Il n'y a pas de lien présent dans la page")
 
                 else:
 
                     if response.status_code == 403:
-                        match = Url.global_regex.search(url)
-                        tl_found = match.group(0)
-                        i = Url.mapping[tl_found]
+                        match = Url.globalRegex.search(url)
+                        translatorFound = match.group(0)
+                        i = Url.mapping[translatorFound]
 
-                        Constante.update_tl_group(tl_found,i,Constante.REMOVE)
-                        Constante.update_tl_group(tl_found,i+1,Constante.ADD)
-                        Url.update_regex()
-                        Url.go_to_page(url,direction)
+                        Constante.updateTranslatorsGroup(translatorFound, i, Constante.REMOVE)
+                        Constante.updateTranslatorsGroup(translatorFound, i + 1, Constante.ADD)
+                        Url.goToPage(url, direction)
 
                     else:
-                        Display.show_status_message(f"Error code :\n{response.status_code}")
+                        Display.showStatusMessage(f"Error code :\n{response.status_code}")
 
                 pyperclip.copy("")
 
         else:
             # On génère la nouvelle URL
-            new_url = Url.handle_prefix_number_suffix_extension(url, direction)
+            newUrl = Url.handlePrefixNumberSuffixExtension(url, direction)
 
-            if not new_url:
-                Display.show_status_message("Le chapitre -1 n'existe pas") if direction == "last" else Display.show_status_message("Si tu es rentré là, une erreur est survenue dans le code")
+            if not newUrl:
+                Display.showStatusMessage("Le chapitre -1 n'existe pas") if direction == "last" else Display.showStatusMessage("Si tu es rentré là, une erreur est survenue dans le code")
                 return
 
-            toCheck = any(s.isdigit() for s in new_url.split("/")[:-1])
+            toCheck = any(s.isdigit() for s in newUrl.split("/")[ : -1])
                     
             if toCheck:
-                response = Url.get_url(new_url)
+                response = Url.getUrl(newUrl)
 
-                soup = BeautifulSoup(response.text,"lxml")
+                soup = BeautifulSoup(response.text, "lxml")
 
                 if len(soup.text) < Constante.BLOG_TEXT_THRESHOLD:
 
                     for _ in range(Url.tentatives):
-                        new_url = Url.create_new_url(new_url,direction)
-                        thread = threading.Thread(target=Url.search_in_multithread,args=(new_url,))
-                        Url.thread_list.append(thread)
+                        newUrl = Url.createNewUrl(newUrl, direction)
+                        thread = threading.Thread(target=Url.searchInMultithreads, args=(newUrl,))
+                        Url.threadsList.append(thread)
                         thread.start()
 
-                        if Url.url_found.is_set():
+                        if Url.urlFound.is_set():
                             break
 
-                    for thread in Url.thread_list:
+                    for thread in Url.threadsList:
                         thread.join()
 
-                    if Url.url_found.is_set():
-                        Url.url_found.clear()
-                        Url.reset_thread_list()
+                    if Url.urlFound.is_set():
+                        Url.urlFound.clear()
+                        Url.resetThreadsList()
                         return
                     
-                    Display.show_status_message("Il n'existe pas de nouveau chapitre\nou\nil y a un problème dans le blog") if direction == "next" else Display.show_status_message("Il n'y a pas d'ancien chapitre\nou\nil y a un problème dans le blog")
-                    Url.reset_thread_list()
+                    Display.showStatusMessage("Il n'existe pas de nouveau chapitre\nou\nil y a un problème dans le blog") if direction == "next" else Display.showStatusMessage("Il n'y a pas d'ancien chapitre\nou\nil y a un problème dans le blog")
+                    Url.resetThreadsList()
                     return
 
             # On copie l'URL générée
-            pyperclip.copy(new_url)
-            Url.copy_paste(True)
+            pyperclip.copy(newUrl)
+            Url.copyPaste(True)
 
-            if ".com" not in new_url:
-                _,y = pyautogui.position()
+            if ".com" not in newUrl:
+                _, y = pyautogui.position()
                 x = 0.989*Constante.screenWidth
-                Url.mouse_move(x,y)
+                Url.mouseMove(x, y)
 
-    def search_in_multithread(url):
-        response = Url.get_url(url)
+    def searchInMultithreads(url):
+        response = Url.getUrl(url)
 
         soup = BeautifulSoup(response.text,"lxml")
 
         if len(soup.text) < Constante.BLOG_TEXT_THRESHOLD:
             return
         
-        Url.url_found.set()
+        Url.urlFound.set()
         pyperclip.copy(url)
-        Url.copy_paste(True)
+        Url.copyPaste(True)
 
-    def search_and_go_to_page_2nd_method(direction : str):
-        """Cherche le bouton Previous/Next sur l'écran et clique dessus"""
+    def searchAndGoToPage_2ndMethod(direction : str):
+        """Cherche le button Previous/Next sur l'écran et clique dessus"""
         if direction == "next":
 
-            for img_path in Constante.imagesNextButton:
-                thread = threading.Thread(target=Url.search_in_multithread_2nd_method,args=(img_path,))
-                Url.thread_list.append(thread)
+            for imagePath in Constante.imagesNextButton:
+                thread = threading.Thread(target=Url.searchInMultithreads_2ndMethod, args=(imagePath,))
+                Url.threadsList.append(thread)
                 thread.start()
 
-                if Url.img_found.is_set():
+                if Url.imageFound.is_set():
                     break
 
         elif direction == "last":
 
-            for img_path in Constante.imagesPrevButton:
-                thread = threading.Thread(target=Url.search_in_multithread_2nd_method,args=(img_path,))
-                Url.thread_list.append(thread)
+            for imagePath in Constante.imagesPrevButton:
+                thread = threading.Thread(target=Url.searchInMultithreads_2ndMethod, args=(imagePath,))
+                Url.threadsList.append(thread)
                 thread.start()
 
-                if Url.img_found.is_set():
+                if Url.imageFound.is_set():
                     break
 
-        for thread in Url.thread_list:
+        for thread in Url.threadsList:
             thread.join()
 
-        if Url.img_found.is_set():
-            Url.img_found.clear()
-            Url.reset_thread_list()
+        if Url.imageFound.is_set():
+            Url.imageFound.clear()
+            Url.resetThreadsList()
             return
         
-        Url.reset_thread_list()
+        Url.resetThreadsList()
         
-    def search_in_multithread_2nd_method(img_path):
-        bouton = None
+    def searchInMultithreads_2ndMethod(imagePath):
+        button = None
 
         try:
-            bouton = pyautogui.locateOnScreen(img_path,confidence=0.831)
+            button = pyautogui.locateOnScreen(imagePath, confidence=0.831)
 
         except pyautogui.ImageNotFoundException:
             return
 
-        if bouton:
-            Url.img_found.set()
-            # Calcule le centre du bouton
-            x, y = pyautogui.center(bouton)
-            Url.mouse_move(x,y)
+        if button:
+            Url.imageFound.set()
+            # Calcule le centre du button
+            x, y = pyautogui.center(button)
+            Url.mouseMove(x, y)
 
-    @test_screen_corners
-    def copy_paste(copy_or_paste = False):
+    @testScreenCorners
+    def copyPaste(copyOrPaste=False):
         """"Copier-coller automatique + vidange de la clipboard"""
-        if not copy_or_paste:
+        if not copyOrPaste:
             pyautogui.hotkey('ctrl', 'l')
             pyautogui.hotkey('ctrl', 'c')
             pyautogui.press('esc')
 
         else:
             pyautogui.hotkey('ctrl', 'l')
-            pyautogui.hotkey('ctrl', 'v')
+            pyautogui.hotkey('ctrl', 'value')
             pyautogui.press('enter')
             pyperclip.copy('')
 
-    def go_to_page(url, direction):
+    def goToPage(url : str, direction : str):
         """"Cherche si le groupe de traduction existe et exécute la fonction correspondante"""
-        match = Url.global_regex.search(url)
+        match = Url.globalRegex.search(url)
 
         if not match:
-            Url.test_url(url,direction)
+            Url.testUrl(url, direction)
             return
 
-        tl_found = match.group(0)
-        i = Url.mapping[tl_found]
+        translatorFound = match.group(0)
+        i = Url.mapping[translatorFound]
 
-        if i == len(Constante.tl_group) - 1:
+        if i == len(Constante.translatorsGroup) - 1:
             return
 
         func = Url.methods[0] if i < 2 else Url.methods[1]
@@ -497,20 +495,20 @@ class Url:
         else:
             func(direction)
 
-    def search_page(direction):
+    def searchPage(direction):
         """Fonction qui recherche la page html précédente/suivante en fonction de la page actuelle"""
-        if Constante.reload_handler.is_set():
-            Url.update_regex()
-            Constante.reload_handler.clear()
+        if Constante.reloadHandler.is_set():
+            Url.updateRegex()
+            Constante.reloadHandler.clear()
 
-        Url.copy_paste()
+        Url.copyPaste()
         url = pyperclip.paste()
 
         if url.startswith("http"):
-            Url.go_to_page(url,direction)
+            Url.goToPage(url, direction)
 
         else:
-            Url.search_and_go_to_page_2nd_method(direction)
+            Url.searchAndGoToPage_2ndMethod(direction)
 
         keyboard.unblock_key("right") if direction == "next" else keyboard.unblock_key("left")
         Constante.EnableGlobalListener()

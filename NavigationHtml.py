@@ -12,52 +12,52 @@ class Navigation:
         Constante.InitVar()
         Url.InitVar()
         Display.InitVar()
-        Display.start_message()
+        Display.startMessage()
         self.stopEvent = threading.Event()
         self.pauseHandler = threading.Event()
 
     # La fonction est responsable de toute les actions du thread d'écoute globale
-    def GlobalListener_on_press(self,key):
-        if Constante.interrupt_handler.is_set():
-            Display.show_interrupt_message()
+    def GlobalListener(self,key):
+        if Constante.interruptHandler.is_set():
+            Display.showInterruptMessage()
             return False
         
-        elif Constante.globalListener_disabled.is_set():
+        elif Constante.globalListenerDisabled.is_set():
             return
 
         if key == Key.esc:
             self.stopEvent.set()
-            Display.stop_message()
+            Display.stopMessage()
             return False
         
         elif key == Key.right:
             keyboard.block_key("right")
             Constante.DisableGlobalListener()
-            threading.Thread(target=Url.search_page, args=("next",), daemon=True).start()
+            threading.Thread(target=Url.searchPage, args=("next",), daemon=True).start()
 
         elif key == Key.left:
             keyboard.block_key("left")
             Constante.DisableGlobalListener()
-            threading.Thread(target=Url.search_page, args=("last",), daemon=True).start()
+            threading.Thread(target=Url.searchPage, args=("last",), daemon=True).start()
 
         elif key == KeyCode.from_char("r") or key == KeyCode.from_char("R"):
-            Constante.reload_tl_group_list()
+            Constante.reloadTranslatorsGroupList()
 
     # La fonction est responsable de la pause/remise en marche du programme
     def PauseResume(self):
-        while not Constante.interrupt_handler.is_set() and not self.stopEvent.is_set():
+        while not Constante.interruptHandler.is_set() and not self.stopEvent.is_set():
 
-            if Constante.pauseResumeListener_disabled.is_set() or Constante.test_handler.is_set() or Constante.display_handler.is_set():
+            if Constante.pauseResumeListenerDisabled.is_set() or Constante.testHandler.is_set() or Constante.displayHandler.is_set():
 
                 if self.stopEvent.wait(0.1):
                     break
 
                 continue
 
-            if not Display.is_browser_window() and not self.pauseHandler.is_set():
+            if not Display.isBrowserWindow() and not self.pauseHandler.is_set():
                 self.pauseHandler.set()
-                Display.show_status_message("Programme en pause")
-                Display.pause_state_message()
+                Display.showStatusMessage("Programme en pause")
+                Display.pauseStateMessage()
                 Constante.DisableGlobalListener()
 
                 try:
@@ -66,9 +66,9 @@ class Navigation:
                 except KeyError:
                     pass
 
-            elif Display.is_browser_window() and self.pauseHandler.is_set():
+            elif Display.isBrowserWindow() and self.pauseHandler.is_set():
                 self.pauseHandler.clear()
-                Display.state_message()
+                Display.stateMessage()
                 Constante.EnableGlobalListener()
                 self.hotkeyHandler = HotkeyInterruption()
 
@@ -76,16 +76,16 @@ class Navigation:
                 break
 
     def Run(self):
-        globalListener = Listener(on_press=self.GlobalListener_on_press)
-        PRListener = threading.Thread(target=self.PauseResume, daemon=True)
+        globalListener = Listener(on_press=self.GlobalListener)
+        PauseResumeListener = threading.Thread(target=self.PauseResume, daemon=True)
         globalListener.start()
-        PRListener.start()
+        PauseResumeListener.start()
         self.hotkeyHandler = HotkeyInterruption()
         WindowChangeState()
         globalListener.join()
 
 def HotkeyInterruption():
-    return keyboard.add_hotkey('ctrl+c', lambda: Constante.interrupt_handler.set())
+    return keyboard.add_hotkey('ctrl+c', lambda: Constante.interruptHandler.set())
 
 def WindowChangeState():
     keyboard.hook(onAltEvent)

@@ -11,58 +11,23 @@ from constants import Constante
 
 class Display:
     def InitVar():
-        Display.console = Display.get_active_window_info()
-    
-    def get_window_info(window):
-        """Retourne un dict avec titre, handle et pid."""
-        
-        try:
-            hwnd = window._hWnd
-            pid = ctypes.c_ulong()
-            Constante.user32.GetWindowThreadProcessId(hwnd, ctypes.byref(pid))
-            return {
-                "titre": window.title,
-                "handle": hwnd,
-                "pid": pid.value
-            }
-        
-        except Exception:
-            return None
+        Display.console = getActiveWindowInfo()
 
-    def get_active_window_info():
-        """Retourne les infos de la fenêtre actuellement active."""
-        
-        try:
-            return Display.get_window_info(gw.getActiveWindow())
-        
-        except Exception:
-            return None
-
-    def focus_window(hwnd):
-        """Met la fenêtre correspondant au handle hwnd au premier plan."""
-        
-        try:
-            Constante.user32.ShowWindow(hwnd, 3)  # 3 = Active la fenêtre en plein écran
-            Constante.user32.SetForegroundWindow(hwnd)
-
-        except Exception:
-            pass
-
-    def is_browser_window():
-        window = Display.get_active_window_info()
+    def isBrowserWindow():
+        window = getActiveWindowInfo()
 
         if not window:
             return False
         
         try:
-            proc = psutil.Process(window["pid"])
-            process_name = proc.name().lower()
-            return any(nav in process_name for nav in Constante.navigators_list)
+            process = psutil.Process(window["pid"])
+            processName = process.name().lower()
+            return any(navigator in processName for navigator in Constante.navigatorsList)
         
         except (psutil.NoSuchProcess, psutil.AccessDenied):
             return False
 
-    def state_message():
+    def stateMessage():
         os.system("cls")
         print("Bienvenue dans le programme NavigationHtml.")
         print("Ce programme vous permet de vous déplacer d'une page html à une autre à l'aide de vos flèches directionnelles")
@@ -71,32 +36,32 @@ class Display:
         print("Appuyez sur r pour mettre à jour les groupes de traduction.")
         print("Appuyez sur ECHAP/ESC pour que le programme se ferme.")
 
-    def start_message():
-        Display.state_message()
+    def startMessage():
+        Display.stateMessage()
         print("\nBonne utilisation.\n(Appuyer sur ENTRÉE pour commencer le programme)")
         keyboard.wait("enter")
-        pyautogui.hotkey('alt','tab')
+        pyautogui.hotkey('alt', 'tab')
 
-    def pause_state_message():
-        Display.state_message()
+    def pauseStateMessage():
+        Display.stateMessage()
         print("\nLe programme est en pause")
 
-    def stop_message():
+    def stopMessage():
         pyautogui.alert("Merci d'avoir utilisé le programme NavigationHtml.\n" 
                         "J'espère qu'il vous a été utile.")
 
-    def show_status_message(status_message : str):
-        Constante.display_handler.set()
+    def showStatusMessage(statusMessage : str):
+        Constante.displayHandler.set()
 
-        pyautogui.alert(f"{status_message}")
+        pyautogui.alert(f"{statusMessage}")
         time.sleep(0.1)
 
-        Constante.display_handler.clear()
+        Constante.displayHandler.clear()
 
-    def show_major_error_message():
-        Constante.display_handler.set()
+    def showMajorErrorMessage():
+        Constante.displayHandler.set()
 
-        Display.focus_window(Display.console["handle"])
+        focusWindow(Display.console["handle"])
         print("Il y a eu une erreur de connexion (Internet ou retentatives max atteintes)")
         time.sleep(2)
 
@@ -104,27 +69,62 @@ class Display:
             print(f"Le programme va reprendre son cours dans {3-i} s")
             time.sleep(1)
 
-        pyautogui.hotkey('alt','tab')
+        pyautogui.hotkey('alt', 'tab')
 
-        Constante.display_handler.clear()
+        Constante.displayHandler.clear()
 
-    def show_interrupt_message():
+    def showInterruptMessage():
         pyautogui.alert("Le programme s'est fini en avance par interruption clavier")
 
-    def show_test_message():
-        Constante.display_handler.set()
+    def showTestMessage():
+        Constante.displayHandler.set()
         
-        Display.focus_window(Display.console["handle"])
+        focusWindow(Display.console["handle"])
 
         for i in range(3):
             print(f"Commencement du test de l'url dans {3-i} s")
             time.sleep(1)
 
-        pyautogui.hotkey('alt','tab')
+        pyautogui.hotkey('alt', 'tab')
         time.sleep(0.5)
-        Display.state_message()
+        Display.stateMessage()
 
-        Constante.display_handler.clear()
+        Constante.displayHandler.clear()
+
+def getWindowInfo(window):
+    """Retourne un dict avec titre, handle et pid."""
+    
+    try:
+        hwnd = window._hWnd
+        pid = ctypes.c_ulong()
+        Constante.user32.GetWindowThreadProcessId(hwnd, ctypes.byref(pid))
+        return {
+            "titre": window.title,
+            "handle": hwnd,
+            "pid": pid.value
+        }
+    
+    except Exception:
+        return None
+
+def getActiveWindowInfo():
+    """Retourne les infos de la fenêtre actuellement active."""
+    
+    try:
+        return getWindowInfo(gw.getActiveWindow())
+    
+    except Exception:
+        return None
+
+def focusWindow(hwnd):
+    """Met la fenêtre correspondant au handle hwnd au premier plan."""
+    
+    try:
+        Constante.user32.ShowWindow(hwnd, 3)  # 3 = Active la fenêtre en plein écran
+        Constante.user32.SetForegroundWindow(hwnd)
+
+    except Exception:
+        pass
 
 if __name__ == "__main__":
     print("Ce programme doit être lancé avec le fichier NavigationHtml.py")
