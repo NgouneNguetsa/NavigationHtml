@@ -322,10 +322,10 @@ class Url:
             
             newPageLink = next((a["href"] for a in soup.find_all("a", href=True) if startUrl in a["href"]), "")
  
-            index = newPageLink.find("#")
+            hashIndex = newPageLink.find("#")
 
-            if index != -1:
-                newPageLink = newPageLink.replace(newPageLink[index:], "")
+            if hashIndex != -1:
+                newPageLink = newPageLink.replace(newPageLink[hashIndex : ], "")
 
             if newPageLink != "":
                 pyperclip.copy(newPageLink)
@@ -334,7 +334,9 @@ class Url:
             else:
 
                 if response.ok:
-                    Display.showStatusMessage("Il n'y a pas de lien présent dans la page")
+
+                    if not Url.searchAndGoToPageAlternative(startUrl):
+                        Display.showStatusMessage("Il n'y a pas de lien présent dans la page")
 
                 else:
 
@@ -398,6 +400,34 @@ class Url:
                 _, y = pyautogui.position()
                 x = 0.989*Constante.screenWidth
                 Url.mouseMove(x, y)
+
+    def searchAndGoToPageAlternative(url : str):
+        
+        if "goldennovel" in url:
+            urlParser = url.split("/")
+
+            index = next((i for i, value in enumerate(urlParser) if value == "index.php"), None)
+
+            urlParser.insert(index + 1, "category")
+            urlToCheck = "/".join(urlParser[ : -1])
+
+            response = Url.getUrl(urlToCheck)
+
+            soup = BeautifulSoup(response.text, "lxml")
+            
+            newPageLink = next((a["href"] for a in soup.find_all("a", href=True) if url in a["href"]), "")
+ 
+            hashIndex = newPageLink.find("#")
+
+            if hashIndex != -1:
+                newPageLink = newPageLink.replace(newPageLink[hashIndex : ], "")
+
+            if newPageLink != "":
+                pyperclip.copy(newPageLink)
+                Url.copyPaste(True)
+                return True
+
+        return False
 
     def searchInMultithreads(url):
         response = Url.getUrl(url)
