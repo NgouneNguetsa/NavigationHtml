@@ -56,9 +56,9 @@ class Navigation:
 
             if not Display.isBrowserWindow() and not self.pauseHandler.is_set():
                 self.pauseHandler.set()
+                Constante.DisableGlobalListener()
                 Display.showStatusMessage("Programme en pause")
                 Display.pauseStateMessage()
-                Constante.DisableGlobalListener()
 
                 try:
                     keyboard.remove_hotkey(self.hotkeyHandler)
