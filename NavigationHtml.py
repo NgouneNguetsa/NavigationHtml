@@ -59,6 +59,8 @@ class Navigation:
                 Constante.DisableGlobalListener()
                 Display.showStatusMessage("Programme en pause")
                 Display.pauseStateMessage()
+                self.specialListener = Listener(on_press=self.SpecialListener)
+                self.specialListener.start()
 
                 try:
                     keyboard.remove_hotkey(self.hotkeyHandler)
@@ -68,12 +70,23 @@ class Navigation:
 
             elif Display.isBrowserWindow() and self.pauseHandler.is_set():
                 self.pauseHandler.clear()
+                self.specialListener.join()
                 Display.stateMessage()
                 Constante.EnableGlobalListener()
                 self.hotkeyHandler = HotkeyInterruption()
 
             if self.stopEvent.wait(0.1):
                 break
+
+    def SpecialListener(self,key):
+        if not self.pauseHandler.is_set():
+            return False
+
+        elif (key == KeyCode.from_char("l") or key == KeyCode.from_char("L")) and Display.isConsoleWindow():
+            Display.showTranslatorGroupsList()
+
+        elif key == KeyCode.from_char("r") or key == KeyCode.from_char("R"):
+            Constante.reloadTranslatorsGroupList()
 
     def Run(self):
         globalListener = Listener(on_press=self.GlobalListener)

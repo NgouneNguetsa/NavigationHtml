@@ -26,6 +26,17 @@ class Display:
         
         except (psutil.NoSuchProcess, psutil.AccessDenied):
             return False
+        
+    def isConsoleWindow():
+        window = getActiveWindowInfo()
+
+        if not window:
+            return False
+        
+        if window == Display.console:
+            return True
+        
+        return False
 
     def stateMessage():
         os.system("cls")
@@ -34,6 +45,7 @@ class Display:
         print("Appuyez <- jusqu'à ce que le lien soit surligné en bleu afin d'aller à la page précédente.")
         print("Appuyez -> jusqu'à ce que le lien soit surligné en bleu afin d'aller à la page suivante.")
         print("Appuyez sur r pour mettre à jour les groupes de traduction.")
+        print("Appuyer sur l pour afficher les groupes de traduction.")
         print("Appuyez sur ECHAP/ESC pour que le programme se ferme.")
 
     def startMessage():
@@ -90,6 +102,19 @@ class Display:
         Display.stateMessage()
 
         Constante.displayHandler.clear()
+
+    def showTranslatorGroupsList():
+        print("\nFirst research method - First case")
+        print("; ".join(Constante.translatorsGroup[0]),"\n")
+
+        print("First research method - Second case")
+        print("; ".join(Constante.translatorsGroup[1]),"\n")
+
+        print("Second research method")
+        print("; ".join(Constante.translatorsGroup[2]),"\n")
+
+        print("To skip")
+        print("; ".join(Constante.translatorsGroup[3]),"\n")
 
 def getWindowInfo(window):
     """Retourne un dict avec titre, handle et pid."""
