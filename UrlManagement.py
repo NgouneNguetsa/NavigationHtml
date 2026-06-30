@@ -15,7 +15,7 @@ from DisplayManagement import Display
 class Url:
     methods = [
         lambda url, index, direction: Url.searchAndGoToPage(url, index, direction),
-        lambda direction: Url.searchAndGoToPage_2ndMethod(direction)
+        lambda url, direction: Url.searchAndGoToPage_2ndMethod(url, direction)
     ]
 
     mapping = {}
@@ -115,6 +115,16 @@ class Url:
 
         yDiff = abs((Constante.screenHeight / 2) - y) if y < (Constante.screenHeight / 2) else 0
         pyautogui.moveTo(0.989*Constante.screenWidth, min(0.83*Constante.screenHeight, Constante.screenHeight - 2*yDiff))            
+        time.sleep(2)
+
+        pyautogui.leftClick()
+        pyautogui.moveTo(Constante.screenWidth, y)
+
+    @testScreenCorners
+    def mouseMoveAlternative(x, y):
+        pyautogui.click(x, y)
+
+        pyautogui.moveTo(0.5*Constante.screenWidth, 0.35*Constante.screenHeight)            
         time.sleep(2)
 
         pyautogui.leftClick()
@@ -441,12 +451,12 @@ class Url:
         pyperclip.copy(url)
         Url.copyPaste(True)
 
-    def searchAndGoToPage_2ndMethod(direction : str):
+    def searchAndGoToPage_2ndMethod(url : str, direction : str):
         """Cherche le button Previous/Next sur l'écran et clique dessus"""
         if direction == "next":
 
             for imagePath in Constante.imagesNextButton:
-                thread = threading.Thread(target=Url.searchInMultithreads_2ndMethod, args=(imagePath,))
+                thread = threading.Thread(target=Url.searchInMultithreads_2ndMethod, args=(url, imagePath))
                 Url.threadsList.append(thread)
                 thread.start()
 
@@ -456,7 +466,7 @@ class Url:
         elif direction == "last":
 
             for imagePath in Constante.imagesPrevButton:
-                thread = threading.Thread(target=Url.searchInMultithreads_2ndMethod, args=(imagePath,))
+                thread = threading.Thread(target=Url.searchInMultithreads_2ndMethod, args=(url, imagePath))
                 Url.threadsList.append(thread)
                 thread.start()
 
@@ -473,7 +483,7 @@ class Url:
         
         Url.resetThreadsList()
         
-    def searchInMultithreads_2ndMethod(imagePath):
+    def searchInMultithreads_2ndMethod(url : str, imagePath):
         button = None
 
         try:
@@ -486,7 +496,12 @@ class Url:
             Url.imageFound.set()
             # Calcule le centre du bouton
             x, y = pyautogui.center(button)
-            Url.mouseMove(x, y)
+
+            if not "nulltranslation" in url:
+                Url.mouseMove(x, y)
+
+            else:
+                Url.mouseMoveAlternative(x, y)
 
     @testScreenCorners
     def copyPaste(copyOrPaste=False):
@@ -519,11 +534,11 @@ class Url:
         func = Url.methods[0] if i < 2 else Url.methods[1]
 
         # Appel de la fonction correspondante
-        if func.__code__.co_argcount > 1:
+        if func.__code__.co_argcount > 2:
             func(url, i, direction)
 
         else:
-            func(direction)
+            func(url, direction)
 
     def searchPage(direction):
         """Fonction qui recherche la page html précédente/suivante en fonction de la page actuelle"""
@@ -538,7 +553,7 @@ class Url:
             Url.goToPage(url, direction)
 
         else:
-            Url.searchAndGoToPage_2ndMethod(direction)
+            Url.searchAndGoToPage_2ndMethod(url, direction)
 
         keyboard.unblock_key("right") if direction == "next" else keyboard.unblock_key("left")
         Constante.EnableGlobalListener()

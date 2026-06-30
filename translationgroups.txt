@@ -6,7 +6,7 @@ otakutl,zkytl,breaknovel,hostednovel,tinytranslation,dragonholictranslations,sha
 dreamy-translations
 
 # Second research method
-botitranslation,dasuitl,foxaholic,readrift,bayabuscotranslation,shmtranslations,weebsread,curspe,42hag,konkon
+botitranslation,dasuitl,foxaholic,readrift,bayabuscotranslation,shmtranslations,weebsread,curspe,42hag,konkon,nulltranslation
 
 # To skip
 f-w-o,patreon,novelupdates,inoveltranslation,azurechronicles,novelshaven,google,firefox,fenrirealm,lovelyblossoms,brightnovels
