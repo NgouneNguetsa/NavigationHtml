@@ -125,7 +125,7 @@ class Url:
         pyautogui.click(x, y)
 
         pyautogui.moveTo(0.5*Constante.screenWidth, 0.35*Constante.screenHeight)            
-        time.sleep(0.75)
+        time.sleep(1)
 
         pyautogui.leftClick()
         pyautogui.moveTo(Constante.screenWidth, y)
