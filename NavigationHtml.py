@@ -70,6 +70,7 @@ class Navigation:
 
             elif Display.isBrowserWindow() and self.pauseHandler.is_set():
                 self.pauseHandler.clear()
+                self.specialListener.stop()
                 self.specialListener.join()
                 Display.stateMessage()
                 Constante.EnableGlobalListener()
@@ -79,14 +80,20 @@ class Navigation:
                 break
 
     def SpecialListener(self,key):
-        if not self.pauseHandler.is_set():
-            return False
-
-        elif (key == KeyCode.from_char("l") or key == KeyCode.from_char("L")) and Display.isConsoleWindow():
+        if (key == KeyCode.from_char("l") or key == KeyCode.from_char("L")) and Display.isConsoleWindow():
             Display.showTranslatorGroupsList()
 
         elif key == KeyCode.from_char("r") or key == KeyCode.from_char("R"):
             Constante.reloadTranslatorsGroupList()
+
+        elif (key == KeyCode.from_char("c") or key == KeyCode.from_char("C")) and Display.isConsoleWindow():
+            changeThread = threading.Thread(target=Display.changeTranslatorGroupsList, daemon=True)
+            changeThread.start()
+            changeThread.join()
+
+            Display.pauseStateMessage()
+            print("\nNouvelle liste de groupe de traduction\n")
+            Display.showTranslatorGroupsList()
 
     def Run(self):
         globalListener = Listener(on_press=self.GlobalListener)
