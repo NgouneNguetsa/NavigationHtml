@@ -40,9 +40,6 @@ class Navigation:
             Constante.DisableGlobalListener()
             threading.Thread(target=Url.searchPage, args=("last",), daemon=True).start()
 
-        elif key == KeyCode.from_char("r") or key == KeyCode.from_char("R"):
-            Constante.reloadTranslatorsGroupList()
-
     # La fonction est responsable de la pause/remise en marche du programme
     def PauseResume(self):
         while not Constante.interruptHandler.is_set() and not self.stopEvent.is_set():
