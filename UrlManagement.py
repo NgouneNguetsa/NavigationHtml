@@ -383,7 +383,7 @@ class Url:
 
                     for _ in range(Url.tentatives):
                         newUrl = Url.createNewUrl(newUrl, direction)
-                        thread = threading.Thread(target=Url.searchInMultithreads, args=(newUrl,))
+                        thread = threading.Thread(target=Url.searchInMultithreads, args=(newUrl,), daemon=True)
                         Url.threadsList.append(thread)
                         thread.start()
 
@@ -456,7 +456,7 @@ class Url:
         if direction == "next":
 
             for imagePath in Constante.imagesNextButton:
-                thread = threading.Thread(target=Url.searchInMultithreads_2ndMethod, args=(url, imagePath))
+                thread = threading.Thread(target=Url.searchInMultithreads_2ndMethod, args=(url, imagePath), daemon=True)
                 Url.threadsList.append(thread)
                 thread.start()
 
@@ -466,7 +466,7 @@ class Url:
         elif direction == "last":
 
             for imagePath in Constante.imagesPrevButton:
-                thread = threading.Thread(target=Url.searchInMultithreads_2ndMethod, args=(url, imagePath))
+                thread = threading.Thread(target=Url.searchInMultithreads_2ndMethod, args=(url, imagePath), daemon=True)
                 Url.threadsList.append(thread)
                 thread.start()
 
