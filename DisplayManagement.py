@@ -214,6 +214,13 @@ class Display:
 
         else:
             Display.changeTranslatorGroupsList()
+            return False
+
+        Display.pauseStateMessage()
+        print("\nNouvelle liste de groupe de traduction\n")
+        Display.showTranslatorGroupsList()
+        
+        return False
 
 def getWindowInfo(window):
     """Retourne un dict avec titre, handle et pid."""

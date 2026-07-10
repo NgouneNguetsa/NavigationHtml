@@ -88,10 +88,6 @@ class Navigation:
             changeThread.start()
             changeThread.join()
 
-            Display.pauseStateMessage()
-            print("\nNouvelle liste de groupe de traduction\n")
-            Display.showTranslatorGroupsList()
-
     def Run(self):
         globalListener = Listener(on_press=self.GlobalListener)
         PauseResumeListener = threading.Thread(target=self.PauseResume, daemon=True)
