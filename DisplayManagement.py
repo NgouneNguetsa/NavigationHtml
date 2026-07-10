@@ -124,13 +124,18 @@ class Display:
                        "\nTapez une lettre (a/r/c) : ")
         choice = choice.lower()
 
+        methodDict = {1 : "First research method - First case", 
+                      2 : "First research method - Second case", 
+                      3 : "Second research method", 
+                      4 : "To skip"}
+
         if choice == 'a':
             translatorGroup = input("\nQuel est le groupe de traduction ?\n")
             index = input("\nDans quelle méthode de recherche voulez-vous le mettre ?"
-                          "\nFirst research method - First case (1)"
-                          "\nFirst research method - Second case (2)"
-                          "\nSecond research method (3)"
-                          "\nTo skip (4)"
+                         f"\n{methodDict[1]} (1)"
+                         f"\n{methodDict[2]} (2)"
+                         f"\n{methodDict[3]} (3)"
+                         f"\n{methodDict[4]} (4)"
                           "\nTapez un chiffre (1-4) : ")
             
             translatorGroup = translatorGroup.lower()
@@ -144,10 +149,10 @@ class Display:
 
         elif choice == 'r':
             index = input("\nDans quelle méthode de recherche voulez-vous retirer le groupe de traduction ?"
-                          "\nFirst research method - First case (1)"
-                          "\nFirst research method - Second case (2)"
-                          "\nSecond research method (3)"
-                          "\nTo skip (4)"
+                         f"\n{methodDict[1]} (1)"
+                         f"\n{methodDict[2]} (2)"
+                         f"\n{methodDict[3]} (3)"
+                         f"\n{methodDict[4]} (4)"
                           "\nTapez un chiffre (1-4) : ")
             
             intIndex = int(index)
@@ -169,14 +174,13 @@ class Display:
             Constante.updateTranslatorsGroup(Constante.translatorsGroup[intIndex - 1][int(groupChoice) - 1], intIndex - 1, Constante.REMOVE)
 
         elif choice == 'c':
-            methodDict = {1 : "First research method - First case", 2 : "First research method - Second case", 3 : "Second research method", 4 : "To skip"}
-
+            
             index = input("\nDans quelle méthode de recherche voulez-vous retirer le groupe de traduction ?"
-            f"\n{methodDict[1]} (1)"
-            f"\n{methodDict[2]} (2)"
-            f"\n{methodDict[3]} (3)"
-            f"\n{methodDict[4]} (4)"
-            "\nTapez un chiffre (1-4) : ")
+                         f"\n{methodDict[1]} (1)"
+                         f"\n{methodDict[2]} (2)"
+                         f"\n{methodDict[3]} (3)"
+                         f"\n{methodDict[4]} (4)"
+                          "\nTapez un chiffre (1-4) : ")
 
             intIndex = int(index)
 
