@@ -484,6 +484,8 @@ class Url:
         Url.resetThreadsList()
         
     def searchInMultithreads_2ndMethod(url : str, imagePath):
+        specificGroup = True if "nulltranslation" in url else False
+
         button = None
 
         try:
@@ -497,7 +499,7 @@ class Url:
             # Calcule le centre du bouton
             x, y = pyautogui.center(button)
 
-            if not "nulltranslation" in url:
+            if not specificGroup:
                 Url.mouseMove(x, y)
 
             else:
