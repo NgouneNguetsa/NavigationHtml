@@ -10,4 +10,4 @@ botitranslation,dasuitl,foxaholic,readrift,bayabuscotranslation,shmtranslations,
 
 # To skip
 f-w-o,patreon,novelupdates,inoveltranslation,azurechronicles,novelshaven,google,firefox,fenrirealm,lovelyblossoms,brightnovels
-noicetranslations,primodialtranslation,zetrotranslation,woopread,wuxiatranslate,mangadex
+noicetranslations,primodialtranslation,zetrotranslation,woopread,wuxiatranslate
