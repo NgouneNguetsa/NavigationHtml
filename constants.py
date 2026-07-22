@@ -7,6 +7,10 @@ import re
 import ctypes
 import threading
 import signal
+import pyperclip
+
+from DisplayManagement import Display, focusWindow
+from UrlManagement import Url
 
 class Constante:
 
@@ -218,6 +222,69 @@ class Constante:
             pyautogui.alert("Image Next/Previous Button a rajouté")
             os._exit(0)
 
+    def changeTranslatorGroupsList():
+        os.system("cls")
+        flushStdin()
+
+        methodDict = {1 : "First research method - First case", 
+                      2 : "First research method - Second case", 
+                      3 : "Second research method", 
+                      4 : "To skip"}
+
+        focusWindow(Display.browser["handle"])
+        Url.copyPaste()
+        url = pyperclip.paste()
+        pyautogui.hotkey('alt','tab')
+
+        partUrl = url.split("/")[2]
+        if partUrl == "":
+            translatorGroup = input("\nQuel est le groupe de traduction (symbolique)?\n")
+            translatorGroup = translatorGroup.lower()
+
+            index = input("\nDans quelle méthode de recherche voulez-vous le mettre ?"
+                         f"\n{methodDict[3]} (3)"
+                         f"\n{methodDict[4]} (4)"
+                          "\nTapez un chiffre (3 ou 4) : ")
+            intIndex = int(index)
+
+            while intIndex < 3 or intIndex > 4:
+                index = input("Entrée invalide. Tapez un nouveau chiffre (3 ou 4) : ")
+                intIndex = int(index)
+
+            Constante.updateTranslatorsGroup(translatorGroup, intIndex - 1, Constante.ADD)
+
+        else:
+            translatorGroup = ""
+            if partUrl.count(".") > 1:
+                indexFirstPoint = partUrl.index(".")
+                indexSecondPoint = partUrl.index(".", indexFirstPoint + 1)
+                translatorGroup = partUrl[indexFirstPoint + 1 : indexSecondPoint]
+
+            else:
+                translatorGroup = partUrl[ : partUrl.index(".")]
+
+            groupIndex = -1
+            found = False
+            for n in range(len(Constante.translatorsGroup)):
+
+                for group in Constante.translatorsGroup[n]:
+
+                    if translatorGroup == group:
+                        groupIndex = n
+                        found = True
+                        break
+
+                if found == True:
+                    break
+
+            searchAndChangeTranslatorGroup(methodDict, translatorGroup, groupIndex)
+
+        Display.pauseStateMessage()
+        print("\nNouvelle liste de groupe de traduction\n")
+        Display.showTranslatorGroupsList()
+        
+        return False
+
 def renameChapterButtons(directoryPath : Path):
 
     if not os.path.isdir(directoryPath):
@@ -297,6 +364,75 @@ def renameChapterButtons(directoryPath : Path):
                 os._exit(0)
 
             currentNumber += 1
+
+def searchAndChangeTranslatorGroup(methodDict : dict, translatorGroup : str, groupIndex : int):
+    flushStdin()
+
+    if groupIndex != -1:
+        choice = input("Voulez-vous enlever (r) ou changer (c) le groupe de traduction ?"
+                       "\nTapez une lettre (r/c) : ")
+        choice = choice.lower()
+
+        if choice == "r":
+            validation = input(f"\nVoulez-vous retirer {translatorGroup} de {methodDict[groupIndex + 1]} ?"
+                                "\nTapez y/n : ")
+            validation = validation.lower()
+
+            while validation != "y" or validation != "n":
+                validation = input("Entrée invalide. Tapez y/n : ")
+                validation = validation.lower()
+
+            if validation == "y":
+                Constante.updateTranslatorsGroup(translatorGroup, groupIndex, Constante.REMOVE)
+        
+        elif choice == "c":
+            matchingPairs = [(key, value) for key, value in methodDict.items() if key != (groupIndex + 1)]
+
+            print(f"\nDans quelle méthode de recherche voulez-vous changer {translatorGroup} ?")
+            for key, value in matchingPairs:
+                print(f"{value} ({key})")
+
+            otherIndex = input("Tapez un chiffre (1-4) : ")
+            intOtherIndex = int(otherIndex)
+
+            while (intIndex == intOtherIndex) or intOtherIndex < 1 or intOtherIndex > 4:
+                otherIndex = input("Entrée invalide. Tapez un chiffre (1-4) : ")
+                intOtherIndex = int(otherIndex)
+
+            Constante.updateTranslatorsGroup(translatorGroup, groupIndex, Constante.REMOVE)
+            Constante.updateTranslatorsGroup(translatorGroup, intOtherIndex - 1, Constante.ADD)
+
+        else:
+            searchAndChangeTranslatorGroup(methodDict, translatorGroup, groupIndex)
+
+    else:
+        index = input(f"\nDans quelle méthode de recherche voulez-vous ajouter {translatorGroup} ?"
+                      f"\n{methodDict[1]} (1)"
+                      f"\n{methodDict[2]} (2)"
+                      f"\n{methodDict[3]} (3)"
+                      f"\n{methodDict[4]} (4)"
+                       "\nTapez un chiffre (1-4) : ")
+        intIndex = int(index)
+
+        while intIndex < 1 or intIndex > 4:
+            index = input("Entrée invalide. Tapez un nouveau chiffre (1-4) : ")
+            intIndex = int(index)
+
+        Constante.updateTranslatorsGroup(translatorGroup, intIndex - 1, Constante.ADD)
+    
+    return
+
+def flushStdin():
+    try:
+        from msvcrt import kbhit, getch
+
+        while kbhit():
+            getch()
+
+    except ImportError:
+        import sys, termios
+
+        termios.tcflush(sys.stdin, termios.TCIFLUSH)
 
 if __name__ == "__main__":
     print("Ce programme doit être lancé avec le fichier NavigationHtml.py")
