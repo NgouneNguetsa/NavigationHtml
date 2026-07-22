@@ -152,7 +152,7 @@ class Url:
 
         if translatorGroup.count(".") > 1:
             indexFirstPoint = translatorGroup.index(".")
-            indexSecondPoint = translatorGroup.index(".",indexFirstPoint + 1)
+            indexSecondPoint = translatorGroup.index(".", indexFirstPoint + 1)
             translatorGroup = translatorGroup[indexFirstPoint + 1 : indexSecondPoint]
 
         else:

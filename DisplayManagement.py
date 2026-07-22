@@ -131,16 +131,16 @@ class Display:
 
         if choice == 'a':
             translatorGroup = input("\nQuel est le groupe de traduction ?\n")
+            translatorGroup = translatorGroup.lower()
+
             index = input("\nDans quelle méthode de recherche voulez-vous le mettre ?"
                          f"\n{methodDict[1]} (1)"
                          f"\n{methodDict[2]} (2)"
                          f"\n{methodDict[3]} (3)"
                          f"\n{methodDict[4]} (4)"
                           "\nTapez un chiffre (1-4) : ")
-            
-            translatorGroup = translatorGroup.lower()
-
             intIndex = int(index)
+
             while intIndex < 1 or intIndex > 4:
                 index = input("Entrée invalide. Tapez un nouveau chiffre (1-4) : ")
                 intIndex = int(index)
@@ -154,8 +154,8 @@ class Display:
                          f"\n{methodDict[3]} (3)"
                          f"\n{methodDict[4]} (4)"
                           "\nTapez un chiffre (1-4) : ")
-            
             intIndex = int(index)
+
             while intIndex < 1 or intIndex > 4:
                 index = input("Entrée invalide. Tapez un nouveau chiffre (1-4) : ")
                 intIndex = int(index)
@@ -174,14 +174,12 @@ class Display:
             Constante.updateTranslatorsGroup(Constante.translatorsGroup[intIndex - 1][int(groupChoice) - 1], intIndex - 1, Constante.REMOVE)
 
         elif choice == 'c':
-            
             index = input("\nDans quelle méthode de recherche voulez-vous retirer le groupe de traduction ?"
                          f"\n{methodDict[1]} (1)"
                          f"\n{methodDict[2]} (2)"
                          f"\n{methodDict[3]} (3)"
                          f"\n{methodDict[4]} (4)"
                           "\nTapez un chiffre (1-4) : ")
-
             intIndex = int(index)
 
             while intIndex < 1 or intIndex > 4:
@@ -194,7 +192,6 @@ class Display:
             for key, value in matchingPairs:
                 print(f"{value} ({key})")
             otherIndex = input("Tapez un chiffre (1-4) : ")
-
             intOtherIndex = int(otherIndex)
 
             while (intIndex == intOtherIndex) or intOtherIndex < 1 or intOtherIndex > 4:
@@ -207,12 +204,14 @@ class Display:
 
             groupChoice = input("\nQuel est le groupe de traduction que vous voulez changer ?"
                                f"\nTapez un chiffre (1-{len(Constante.translatorsGroup[intIndex - 1])}) : ")
+            intGroupChoice = int(groupChoice)
 
-            while int(groupChoice) < 1 or int(groupChoice) > len(Constante.translatorsGroup[intIndex - 1]):
+            while intGroupChoice < 1 or intGroupChoice > len(Constante.translatorsGroup[intIndex - 1]):
                 groupChoice = input("Entrée invalide."
                                    f"Tapez un nouveau chiffre (1-{len(Constante.translatorsGroup[intIndex - 1])}) : ")
+                intGroupChoice = int(groupChoice)
                 
-            translatorGroup = Constante.translatorsGroup[intIndex - 1][int(groupChoice) - 1]
+            translatorGroup = Constante.translatorsGroup[intIndex - 1][intGroupChoice - 1]
             Constante.updateTranslatorsGroup(translatorGroup, intIndex - 1, Constante.REMOVE)
             Constante.updateTranslatorsGroup(translatorGroup, intOtherIndex - 1, Constante.ADD)
 

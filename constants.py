@@ -235,7 +235,14 @@ def renameChapterButtons(directoryPath : Path):
         if match:
             existingNumbers.append(int(match.group(1)))
 
-    currentNumber = max(existingNumbers) + 1
+    currentNumber = 0
+    currentNumbers = list()
+
+    if len(existingNumbers) != max(existingNumbers):
+        currentNumbers = list(set(range(existingNumbers[0], existingNumbers[-1] + 1)) - set(existingNumbers))
+    
+    else:
+        currentNumber = max(existingNumbers) + 1
 
     unprocessedFiles = [
         file for file in files 
@@ -249,25 +256,47 @@ def renameChapterButtons(directoryPath : Path):
     if not unprocessedFiles:
         return
 
-    for i in range(0, len(unprocessedFiles), 2):
-        nextFile = unprocessedFiles[i]
-        extension = os.path.splitext(nextFile)[1]
-        newNameNextFile = f"NextChapterButton{currentNumber}{extension}"
+    if currentNumbers:
         
-        os.rename(nextFile, newNameNextFile)
-
-        if i + 1 < len(unprocessedFiles):
-            previousFile = unprocessedFiles[i + 1]
-            extension = os.path.splitext(previousFile)[1]
-            newNamePreviousFile = f"PreviousChapterButton{currentNumber}{extension}"
+        for i in range(0, len(unprocessedFiles), 2):
+            nextFile = unprocessedFiles[i]
+            extension = os.path.splitext(nextFile)[1]
+            newNameNextFile = f"NextChapterButton{currentNumbers[i / 2]}{extension}"
             
-            os.rename(previousFile, newNamePreviousFile)
+            os.rename(nextFile, newNameNextFile)
 
-        else:
-            pyautogui.alert("Image Next/Previous Button a rajouté")
-            os._exit(0)
+            if i + 1 < len(unprocessedFiles):
+                previousFile = unprocessedFiles[i + 1]
+                extension = os.path.splitext(previousFile)[1]
+                newNamePreviousFile = f"PreviousChapterButton{currentNumbers[i / 2]}{extension}"
+                
+                os.rename(previousFile, newNamePreviousFile)
 
-        currentNumber += 1
+            else:
+                pyautogui.alert("Image Next/Previous Button a rajouté")
+                os._exit(0)
+
+    else:
+
+        for i in range(0, len(unprocessedFiles), 2):
+            nextFile = unprocessedFiles[i]
+            extension = os.path.splitext(nextFile)[1]
+            newNameNextFile = f"NextChapterButton{currentNumber}{extension}"
+            
+            os.rename(nextFile, newNameNextFile)
+
+            if i + 1 < len(unprocessedFiles):
+                previousFile = unprocessedFiles[i + 1]
+                extension = os.path.splitext(previousFile)[1]
+                newNamePreviousFile = f"PreviousChapterButton{currentNumber}{extension}"
+                
+                os.rename(previousFile, newNamePreviousFile)
+
+            else:
+                pyautogui.alert("Image Next/Previous Button a rajouté")
+                os._exit(0)
+
+            currentNumber += 1
 
 if __name__ == "__main__":
     print("Ce programme doit être lancé avec le fichier NavigationHtml.py")
