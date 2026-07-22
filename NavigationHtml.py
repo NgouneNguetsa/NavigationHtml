@@ -84,7 +84,7 @@ class Navigation:
             Constante.reloadTranslatorsGroupList()
 
         elif (key == KeyCode.from_char("c") or key == KeyCode.from_char("C")) and Display.isConsoleWindow():
-            changeThread = threading.Thread(target=Constante.changeTranslatorGroupsList, daemon=True)
+            changeThread = threading.Thread(target=Display.changeTranslatorGroupsList, daemon=True)
             changeThread.start()
             changeThread.join()
 
