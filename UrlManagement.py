@@ -501,8 +501,8 @@ class Url:
 
         try:
             button = pyautogui.locate(imagePath, screen, confidence=0.831,
-                                      region=[0, 0.14 * Constante.screenHeight, 
-                                              Constante.screenWidth, 99.86 * Constante.screenHeight])
+                                      region=[0, 0.1 * Constante.screenHeight, 
+                                              Constante.screenWidth, 99.9 * Constante.screenHeight])
 
         except pyautogui.ImageNotFoundException:
             return
