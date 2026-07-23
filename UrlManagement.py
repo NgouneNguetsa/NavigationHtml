@@ -397,8 +397,10 @@ class Url:
                         Url.urlFound.clear()
                         Url.resetThreadsList()
                         return
-                    
-                    Display.showStatusMessage("Il n'existe pas de nouveau chapitre\nou\nil y a un problème dans le blog") if direction == "next" else Display.showStatusMessage("Il n'y a pas d'ancien chapitre\nou\nil y a un problème dans le blog")
+
+                    if not Url.searchAndGoToPageAlternative(url, direction):
+                        Display.showStatusMessage("Il n'existe pas de nouveau chapitre\nou\nil y a un problème dans le blog") if direction == "next" else Display.showStatusMessage("Il n'y a pas d'ancien chapitre\nou\nil y a un problème dans le blog")
+
                     Url.resetThreadsList()
                     return
 
