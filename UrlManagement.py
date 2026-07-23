@@ -515,7 +515,7 @@ class Url:
 
     @testScreenCorners
     def copyPaste(copyOrPaste=False):
-        """"Copier-coller automatique + vidange de la clipboard"""
+        """Copier-coller automatique + vidange de la clipboard"""
         if not copyOrPaste:
             pyautogui.hotkey('ctrl', 'l')
             pyautogui.hotkey('ctrl', 'c')
@@ -523,12 +523,14 @@ class Url:
 
         else:
             pyautogui.hotkey('ctrl', 'l')
+            pyautogui.press("backspace")
             pyautogui.hotkey('ctrl', 'v')
+            time.sleep(0.3)
             pyautogui.press('enter')
             pyperclip.copy('')
 
     def goToPage(url : str, direction : str):
-        """"Cherche si le groupe de traduction existe et exécute la fonction correspondante"""
+        """Cherche si le groupe de traduction existe et exécute la fonction correspondante"""
         match = Url.globalRegex.search(url)
 
         if not match:
