@@ -46,7 +46,7 @@ class Navigation:
 
             if Constante.pauseResumeListenerDisabled.is_set() or Constante.testHandler.is_set() or Constante.displayHandler.is_set():
 
-                if self.stopEvent.wait(0.1):
+                if self.stopEvent.wait(0.3):
                     break
 
                 continue
@@ -73,7 +73,7 @@ class Navigation:
                 Constante.EnableGlobalListener()
                 self.hotkeyHandler = HotkeyInterruption()
 
-            if self.stopEvent.wait(0.1):
+            if self.stopEvent.wait(0.3):
                 break
 
     def SpecialListener(self,key):

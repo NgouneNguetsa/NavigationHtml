@@ -3,13 +3,15 @@ import ctypes
 import pygetwindow as gw
 import time
 import pyautogui
-import os
 import psutil
 from tkinter import ttk
 
 from constants import Constante
 
 class Display:
+
+    pid_cache = {}
+
     def InitVar():
         Display.console = getActiveWindowInfo()
 
@@ -18,14 +20,23 @@ class Display:
 
         if not window:
             return False
-        
-        try:
-            process = psutil.Process(window["pid"])
-            processName = process.name().lower()
-            return any(navigator in processName for navigator in Constante.navigatorsList)
-        
-        except (psutil.NoSuchProcess, psutil.AccessDenied):
-            return False
+
+        pid = window["pid"]
+
+        if pid in Display.pid_cache:
+            process_name = Display.pid_cache[pid]
+
+        else:
+
+            try:
+                process = psutil.Process(pid)
+                process_name = process.name().lower()
+                Display.pid_cache[pid] = process_name
+
+            except (psutil.NoSuchProcess, psutil.AccessDenied):
+                return False
+
+        return any(navigator in process_name for navigator in Constante.navigatorsList)
         
     def isConsoleWindow():
         window = getActiveWindowInfo()
@@ -39,7 +50,7 @@ class Display:
         return False
 
     def stateMessage():
-        os.system("cls")
+        print("\033[H\033[J", end="")
         print("Bienvenue dans le programme NavigationHtml.")
         print("Ce programme vous permet de vous déplacer d'une page html à une autre à l'aide de vos flèches directionnelles")
         print("Appuyez <- jusqu'à ce que le lien soit surligné en bleu afin d'aller à la page précédente.")
@@ -118,7 +129,7 @@ class Display:
         print("; ".join(Constante.translatorsGroup[3]),"\n")
 
     def changeTranslatorGroupsList():
-        os.system("cls")
+        print("\033[H\033[J", end="")
         flushStdin()
         choice = input("Voulez-vous ajouter (a)/ enlever (r)/ changer (c) un groupe de traduction ?"
                        "\nTapez une lettre (a/r/c) : ")

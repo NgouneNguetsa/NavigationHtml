@@ -26,6 +26,7 @@ class Url:
     threadsList = []
     urlFound = threading.Event()
     imageFound = threading.Event()
+    session = requests.Session()
     
     def InitVar():
         Url.updateRegex()
@@ -134,7 +135,7 @@ class Url:
         response = None
 
         try:
-            response = requests.get(url)
+            response = Url.session.get(url)
 
         except requests.exceptions.RequestException:
             Display.showMajorErrorMessage()
@@ -461,10 +462,12 @@ class Url:
 
     def searchAndGoToPage_2ndMethod(url : str, direction : str):
         """Cherche le button Previous/Next sur l'écran et clique dessus"""
+        screen = pyautogui.screenshot()
+
         if direction == "next":
 
             for imagePath in Constante.imagesNextButton:
-                thread = threading.Thread(target=Url.searchInMultithreads_2ndMethod, args=(url, imagePath), daemon=True)
+                thread = threading.Thread(target=Url.searchInMultithreads_2ndMethod, args=(url, screen, imagePath), daemon=True)
                 Url.threadsList.append(thread)
                 thread.start()
 
@@ -474,7 +477,7 @@ class Url:
         elif direction == "last":
 
             for imagePath in Constante.imagesPrevButton:
-                thread = threading.Thread(target=Url.searchInMultithreads_2ndMethod, args=(url, imagePath), daemon=True)
+                thread = threading.Thread(target=Url.searchInMultithreads_2ndMethod, args=(url, screen, imagePath), daemon=True)
                 Url.threadsList.append(thread)
                 thread.start()
 
@@ -491,13 +494,13 @@ class Url:
         
         Url.resetThreadsList()
         
-    def searchInMultithreads_2ndMethod(url : str, imagePath):
+    def searchInMultithreads_2ndMethod(url : str, screen, imagePath):
         specificGroup = True if "nulltranslation" in url else False
 
         button = None
 
         try:
-            button = pyautogui.locateOnScreen(imagePath, confidence=0.831)
+            button = pyautogui.locate(imagePath, screen, confidence=0.831)
 
         except pyautogui.ImageNotFoundException:
             return
