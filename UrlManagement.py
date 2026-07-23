@@ -462,8 +462,8 @@ class Url:
 
     def searchAndGoToPage_2ndMethod(url : str, direction : str):
         """Cherche le button Previous/Next sur l'écran et clique dessus"""
-        screen = pyautogui.screenshot(region=[0, 0.1 * Constante.screenHeight, 
-                                              Constante.screenWidth, 99.9 * Constante.screenHeight])
+        screen = pyautogui.screenshot(region=[0, int(0.1 * Constante.screenHeight), 
+                                              Constante.screenWidth, int(0.9 * Constante.screenHeight)])
 
         if direction == "next":
 
