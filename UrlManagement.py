@@ -38,7 +38,7 @@ class Url:
 
             except pyautogui.FailSafeException:
                 pyautogui.FAILSAFE = False
-                pyautogui.move(Constante.screenWidth, Constante.screenHeight / 2)
+                pyautogui.move(Constante.screenWidth, Constante.halfScreenHeight)
                 pyautogui.FAILSAFE = True
                 function(*args, *kwargs)
 
@@ -114,8 +114,8 @@ class Url:
     def mouseMove(x, y):
         pyautogui.click(x, y)
 
-        yDiff = abs((Constante.screenHeight / 2) - y) if y < (Constante.screenHeight / 2) else 0
-        pyautogui.moveTo(0.989*Constante.screenWidth, min(0.83*Constante.screenHeight, Constante.screenHeight - 2*yDiff))            
+        yDiff = abs(Constante.halfScreenHeight - y) if y < Constante.halfScreenHeight else 0
+        pyautogui.moveTo(Constante.minScreenWidth[0], min(Constante.minScreenHeight[0], Constante.screenHeight - 2 * yDiff))            
         time.sleep(2)
 
         pyautogui.leftClick()
@@ -125,7 +125,7 @@ class Url:
     def mouseMoveAlternative(x, y):
         pyautogui.click(x, y)
 
-        pyautogui.moveTo(0.5*Constante.screenWidth, 0.35*Constante.screenHeight)            
+        pyautogui.moveTo(Constante.minScreenWidth[1], Constante.minScreenHeight[1])            
         time.sleep(2)
 
         pyautogui.leftClick()
@@ -411,7 +411,7 @@ class Url:
 
             if ".com" not in newUrl:
                 _, y = pyautogui.position()
-                x = 0.989*Constante.screenWidth
+                x = Constante.minScreenWidth[0]
                 Url.mouseMove(x, y)
 
     def searchAndGoToPageAlternative(url : str, direction : str):
@@ -462,8 +462,7 @@ class Url:
 
     def searchAndGoToPage_2ndMethod(url : str, direction : str):
         """Cherche le button Previous/Next sur l'écran et clique dessus"""
-        screen = pyautogui.screenshot(region=[0, int(0.1 * Constante.screenHeight), 
-                                              Constante.screenWidth, int(0.9 * Constante.screenHeight)])
+        screen = pyautogui.screenshot(region=Constante.screenRegion)
 
         if direction == "next":
 
