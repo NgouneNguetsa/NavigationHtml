@@ -462,7 +462,8 @@ class Url:
 
     def searchAndGoToPage_2ndMethod(url : str, direction : str):
         """Cherche le button Previous/Next sur l'écran et clique dessus"""
-        screen = pyautogui.screenshot()
+        screen = pyautogui.screenshot(region=[0, 0.1 * Constante.screenHeight, 
+                                              Constante.screenWidth, 99.9 * Constante.screenHeight])
 
         if direction == "next":
 
@@ -500,9 +501,7 @@ class Url:
         button = None
 
         try:
-            button = pyautogui.locate(imagePath, screen, confidence=0.831,
-                                      region=[0, 0.1 * Constante.screenHeight, 
-                                              Constante.screenWidth, 99.9 * Constante.screenHeight])
+            button = pyautogui.locate(imagePath, screen, confidence=0.831)
 
         except pyautogui.ImageNotFoundException:
             return
