@@ -345,7 +345,7 @@ class Url:
 
                 if response.ok:
 
-                    if not Url.searchAndGoToPageAlternative(startUrl):
+                    if not Url.searchAndGoToPageAlternative(startUrl, direction):
                         Display.showStatusMessage("Il n'y a pas de lien présent dans la page")
 
                 else:
@@ -411,7 +411,7 @@ class Url:
                 x = 0.989*Constante.screenWidth
                 Url.mouseMove(x, y)
 
-    def searchAndGoToPageAlternative(url : str):
+    def searchAndGoToPageAlternative(url : str, direction : str):
         
         if "goldennovel" in url:
             urlParser = url.split("/")
@@ -436,6 +436,12 @@ class Url:
                 pyperclip.copy(newPageLink)
                 Url.copyPaste(True)
                 return True
+
+        else:
+            for translatorGroup in ["weebsread"]:
+                if translatorGroup in url:
+                    Url.searchAndGoToPage_2ndMethod(url, direction)
+                    return True
 
         return False
 

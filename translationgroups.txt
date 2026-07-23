@@ -3,10 +3,10 @@ nobadnovel,mainichitl,readhive,kaystls,goblinslate,lorenovels,goldennovel
 
 # First research method - Second case
 otakutl,zkytl,breaknovel,hostednovel,tinytranslation,dragonholictranslations,shanghaifantasy,shiningnoveltranslations
-dreamy-translations
+dreamy-translations,weebsread
 
 # Second research method
-botitranslation,dasuitl,foxaholic,readrift,bayabuscotranslation,shmtranslations,weebsread,curspe,42hag,konkon,nulltranslation
+botitranslation,dasuitl,foxaholic,readrift,bayabuscotranslation,shmtranslations,curspe,42hag,konkon,nulltranslation
 
 # To skip
 f-w-o,patreon,novelupdates,inoveltranslation,azurechronicles,novelshaven,google,firefox,fenrirealm,lovelyblossoms,brightnovels
