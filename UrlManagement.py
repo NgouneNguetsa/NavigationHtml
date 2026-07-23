@@ -526,9 +526,7 @@ class Url:
 
         else:
             pyautogui.hotkey('ctrl', 'l')
-            pyautogui.press("backspace")
             pyautogui.hotkey('ctrl', 'v')
-            time.sleep(0.3)
             pyautogui.press('enter')
             pyperclip.copy('')
 
