@@ -104,10 +104,10 @@ class Url:
         return urljoin(base, newSegment)
 
     # --- Tous les handles appellent applyRegexAndModify avec un pattern différent ---
-    def handlePrefixNumberSuffixExtension(url : str, direction : str):
+    def handlePrefixNumberSuffixExtension(url : str, direction : str) -> str:
         return Url.applyRegexAndModify(url, r"^([a-zA-Z_-]*?)(\d+)(?=-|_[^-]*|)([a-zA-Z0-9_-]*)?([.a-zA-Z]*)?(?:[#a-zA-Z_-]*)?$", ["prefix", "number", "suffix", "extension"], direction)
 
-    def handlePrefixNumber(url : str, direction : str):
+    def handlePrefixNumber(url : str, direction : str) -> str:
         return Url.applyRegexAndModify(url, r"^([a-zA-Z_-]*?)(\d+)(?=[^0-9]|$)(?:.*)$", ["prefix", "number"], direction)
 
     @testScreenCorners
@@ -131,11 +131,11 @@ class Url:
         pyautogui.leftClick()
         pyautogui.moveTo(Constante.screenWidth, y)
 
-    def getUrl(url : str):
+    def getUrl(url : str) -> requests.Response:
         response = None
 
         try:
-            response = Url.session.get(url)
+            response = Url.session.get(url, headers={"Connection": "close"})
 
         except requests.exceptions.RequestException:
             Display.showMajorErrorMessage()
