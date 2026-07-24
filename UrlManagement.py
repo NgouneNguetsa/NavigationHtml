@@ -528,6 +528,7 @@ class Url:
         else:
             pyautogui.hotkey('ctrl', 'l')
             pyautogui.hotkey('ctrl', 'v')
+            time.sleep(0.3)
             pyautogui.press('enter')
             pyperclip.copy('')
 
