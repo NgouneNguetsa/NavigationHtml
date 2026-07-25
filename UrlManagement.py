@@ -507,6 +507,7 @@ class Url:
 
         if button:
             Url.imageFound.set()
+
             # Calcule le centre du bouton
             x, y = pyautogui.center(button)
             y = y + Constante.screenYOffset
