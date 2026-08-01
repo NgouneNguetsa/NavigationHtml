@@ -60,7 +60,7 @@ class Navigation:
                 self.specialListener.start()
 
                 try:
-                    keyboard.remove_hotkey(self.hotkeyHandler)
+                    keyboard.remove_hotkey('ctrl+c')
 
                 except KeyError:
                     pass
@@ -71,7 +71,7 @@ class Navigation:
                 self.specialListener.join()
                 Display.stateMessage()
                 Constante.EnableGlobalListener()
-                self.hotkeyHandler = HotkeyInterruption()
+                HotkeyInterruption()
 
             if self.stopEvent.wait(0.3):
                 break
@@ -93,12 +93,19 @@ class Navigation:
         PauseResumeListener = threading.Thread(target=self.PauseResume, daemon=True)
         globalListener.start()
         PauseResumeListener.start()
-        self.hotkeyHandler = HotkeyInterruption()
+        HotkeyInterruption()
         WindowChangeState()
         globalListener.join()
 
 def HotkeyInterruption():
-    return keyboard.add_hotkey('ctrl+c', lambda: Constante.interruptHandler.set())
+
+    try:
+        keyboard.remove_hotkey('ctrl+c')
+
+    except KeyError:
+        pass
+
+    keyboard.add_hotkey('ctrl+c', lambda: Constante.interruptHandler.set(), suppress=True)
 
 def WindowChangeState():
     keyboard.hook(onAltEvent)
