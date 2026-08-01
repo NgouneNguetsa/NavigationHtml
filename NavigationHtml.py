@@ -60,7 +60,7 @@ class Navigation:
                 self.specialListener.start()
 
                 try:
-                    keyboard.remove_hotkey('ctrl+c')
+                    keyboard.remove_hotkey('ctrl + c')
 
                 except KeyError:
                     pass
@@ -100,12 +100,12 @@ class Navigation:
 def HotkeyInterruption():
 
     try:
-        keyboard.remove_hotkey('ctrl+c')
+        keyboard.remove_hotkey('ctrl + c')
 
     except KeyError:
         pass
 
-    keyboard.add_hotkey('ctrl+c', lambda: Constante.interruptHandler.set(), suppress=True)
+    keyboard.add_hotkey('ctrl + c', lambda: Constante.interruptHandler.set())
 
 def WindowChangeState():
     keyboard.hook(onAltEvent)
