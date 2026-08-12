@@ -82,6 +82,7 @@ class Navigation:
 
         elif key == KeyCode.from_char("r") or key == KeyCode.from_char("R"):
             Constante.reloadTranslatorsGroupList()
+            print("\nMise a jour des groupes de traduction terminée")
 
         elif (key == KeyCode.from_char("c") or key == KeyCode.from_char("C")) and Display.isConsoleWindow():
             changeThread = threading.Thread(target=Display.changeTranslatorGroupsList, daemon=True)

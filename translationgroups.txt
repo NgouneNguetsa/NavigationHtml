@@ -7,7 +7,7 @@ dreamy-translations,weebsread
 
 # Second research method
 botitranslation,dasuitl,foxaholic,readrift,bayabuscotranslation,shmtranslations,curspe,42hag,konkon,nulltranslation
-indratranslations,kuupress,skynovelvault
+indratranslations,kuupress,skynovelvault,akknovel
 
 # To skip
 f-w-o,patreon,novelupdates,inoveltranslation,azurechronicles,novelshaven,google,firefox,fenrirealm,lovelyblossoms,brightnovels
