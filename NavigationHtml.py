@@ -77,17 +77,19 @@ class Navigation:
                 break
 
     def SpecialListener(self,key):
-        if (key == KeyCode.from_char("l") or key == KeyCode.from_char("L")) and Display.isConsoleWindow():
-            Display.showTranslatorGroupsList()
+        if Display.isConsoleWindow():
 
-        elif key == KeyCode.from_char("r") or key == KeyCode.from_char("R"):
-            Constante.reloadTranslatorsGroupList()
-            print("\nMise a jour des groupes de traduction terminée")
+            if (key == KeyCode.from_char("l") or key == KeyCode.from_char("L")):
+                Display.showTranslatorGroupsList()
 
-        elif (key == KeyCode.from_char("c") or key == KeyCode.from_char("C")) and Display.isConsoleWindow():
-            changeThread = threading.Thread(target=Display.changeTranslatorGroupsList, daemon=True)
-            changeThread.start()
-            changeThread.join()
+            elif key == KeyCode.from_char("r") or key == KeyCode.from_char("R"):
+                Constante.reloadTranslatorsGroupList()
+                print("\nMise a jour des groupes de traduction terminée")
+
+            elif (key == KeyCode.from_char("c") or key == KeyCode.from_char("C")):
+                changeThread = threading.Thread(target=Display.changeTranslatorGroupsList, daemon=True)
+                changeThread.start()
+                changeThread.join()
 
     def Run(self):
         globalListener = Listener(on_press=self.GlobalListener)
