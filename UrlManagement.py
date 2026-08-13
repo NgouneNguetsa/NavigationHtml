@@ -64,7 +64,7 @@ class Url:
         
         return url.rstrip("/").split("/")[-1] 
 
-    def modifyChapterNumber(segment : str, prefix : str, chapterNumber : int, suffix : str, extension : str, direction : str):
+    def modifyChapterNumber(prefix : str, chapterNumber : int, suffix : str, extension : str, direction : str):
         """Modifie le numéro selon la direction (next/last) et reconstruit le segment"""
         # En fonction de la direction, on incrémente ou décrémente
         newNumber = chapterNumber + 1 if direction == "next" else chapterNumber - 1
@@ -93,7 +93,7 @@ class Url:
         # Extraire les différentes parties capturées
         parts = {name: match.group(i + 1) if i < len(groups) else "" for i, name in enumerate(groups)}
 
-        newSegment = Url.modifyChapterNumber(segment, parts.get("prefix", ""), int(parts.get("number", 1)), parts.get("suffix", ""), parts.get("extension", ""), direction)
+        newSegment = Url.modifyChapterNumber(parts.get("prefix", ""), int(parts.get("number", 1)), parts.get("suffix", ""), parts.get("extension", ""), direction)
         
         if (not newSegment) or (int(parts["number"]) > Constante.ARBITRARY_LARGEST_CHAPTER):
             return ""
@@ -114,8 +114,7 @@ class Url:
     def mouseMove(x, y):
         pyautogui.click(x, y)
 
-        yDiff = abs(Constante.halfScreenHeight - y) if y < Constante.halfScreenHeight else 0
-        pyautogui.moveTo(Constante.minScreenWidth[0], min(Constante.minScreenHeight[0], Constante.screenHeight - 2 * yDiff))            
+        pyautogui.moveTo(Constante.halfScreenWidth, Constante.halfScreenHeight)            
         time.sleep(2)
 
         pyautogui.leftClick()
@@ -125,7 +124,7 @@ class Url:
     def mouseMoveAlternative(x, y):
         pyautogui.click(x, y)
 
-        pyautogui.moveTo(Constante.minScreenWidth[1], Constante.minScreenHeight[1])            
+        pyautogui.moveTo(Constante.halfScreenWidth, Constante.minScreenHeight)            
         time.sleep(2)
 
         pyautogui.leftClick()
@@ -258,7 +257,7 @@ class Url:
                 
         if toCheck:
 
-            soup = BeautifulSoup(response.text,  "lxml")
+            soup = BeautifulSoup(response.text, "lxml")
 
             if len(soup.text) < Constante.BLOG_TEXT_THRESHOLD:
 
@@ -451,7 +450,7 @@ class Url:
     def searchInMultithreads(url):
         response = Url.getUrl(url)
 
-        soup = BeautifulSoup(response.text,"lxml")
+        soup = BeautifulSoup(response.text, "lxml")
 
         if len(soup.text) < Constante.BLOG_TEXT_THRESHOLD:
             return
