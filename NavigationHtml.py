@@ -102,6 +102,7 @@ class Navigation:
     def Run(self):
         globalListener = Listener(on_press=self.GlobalListener)
         PauseResumeListener = threading.Thread(target=self.PauseResume, daemon=True)
+
         globalListener.start()
         PauseResumeListener.start()
         self.observer.start()
@@ -109,8 +110,22 @@ class Navigation:
         HotkeyInterruption()
         WindowChangeState()
 
+        while not self.stopEvent.is_set() and not Constante.interruptHandler.is_set():
+
+            if self.stopEvent.wait(1):
+                break
+
+        self.observer.stop()
         self.observer.join()
+
+        globalListener.stop()
         globalListener.join()
+
+        try:
+            keyboard.unhook_all()
+
+        except Exception:
+            pass
 
 def HotkeyInterruption():
 
