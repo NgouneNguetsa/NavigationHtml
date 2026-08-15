@@ -177,8 +177,15 @@ class Url:
 
                 if urlToTest:
                     index += 1
-                    Url.testImage(url, direction)
-                    Display.showStatusMessage("Image a rajoutée")
+
+                    imageToAdd = Url.testImage(url, direction)
+
+                    if imageToAdd:
+                        Display.showStatusMessage("Image a rajoutée")
+
+                    else:
+                        Directory.renameChapterButtons(Url.imagePathFound, translatorGroup)
+
                     Url.tentativesTest = 0
 
                 else:
@@ -325,7 +332,39 @@ class Url:
         return True
 
     def testImage(url : str, direction : str):
-        pass
+        screen = pyautogui.screenshot(region=Constante.screenRegion)
+
+        if direction == "next":
+
+            for imagePath in Constante.imagesNextButton:
+                thread = threading.Thread(target=Url.searchInMultithreads_2ndMethod, args=(url, screen, imagePath), daemon=True)
+                Url.threadsList.append(thread)
+                thread.start()
+
+                if Url.imageFound.is_set():
+                    break
+
+        elif direction == "last":
+
+            for imagePath in Constante.imagesPrevButton:
+                thread = threading.Thread(target=Url.searchInMultithreads_2ndMethod, args=(url, screen, imagePath), daemon=True)
+                Url.threadsList.append(thread)
+                thread.start()
+
+                if Url.imageFound.is_set():
+                    break
+
+        for thread in Url.threadsList:
+            thread.join()
+
+        if Url.imageFound.is_set():
+            Url.imageFound.clear()
+            Url.resetThreadsList()
+            return False
+        
+        Url.resetThreadsList()
+
+        return True
 
     def searchAndGoToPage(url : str, index : int, direction="next"):
         """
@@ -525,6 +564,7 @@ class Url:
 
         if button:
             Url.imageFound.set()
+            Url.imagePathFound = imagePath
 
             # Calcule le centre du bouton
             x, y = pyautogui.center(button)

@@ -72,7 +72,7 @@ class Directory:
                 break
 
         if missingGroup:
-            renameChapterButtons(directoryPath, missingGroup)
+            Directory.renameChapterButtons(directoryPath, missingGroup)
 
     def updateTranslatorsGroupDoc(translatorGroup : str, index : int, addremove : bool):
         filePath = os.path.join(Directory.folder, "translationgroups.txt")
@@ -144,6 +144,82 @@ class Directory:
         with open(filePath, 'w', encoding='utf-8') as file:
             file.write("\n".join(lines) + "\n")
 
+    def renameChapterButtons(ultimatePath: Path, translatorGroup: str):
+        if not translatorGroup:
+            return
+        
+        pathObj = Path(ultimatePath)
+
+        if not pathObj.exists():
+            raise FileNotFoundError("Je n'ai pas l'air de trouver le fichier ou le dossier nécessaire")
+
+        if pathObj.is_file():
+            directory = pathObj.parent
+            fileStem = pathObj.stem
+            extension = pathObj.suffix
+
+            if fileStem.startswith("NextChapterButton"):
+                groupString = fileStem[len("NextChapterButton") : ]
+
+            elif fileStem.startswith("PreviousChapterButton"):
+                groupString = fileStem[len("PreviousChapterButton") : ]
+
+            else:
+                return
+
+            rawParts = [group for group in groupString.split("_") if group]
+            groups = set(rawParts)
+            groups.add(translatorGroup)
+            
+            sortedSuffix = "_" + "_".join(sorted(list(groups)))
+
+            originalNext = directory / f"NextChapterButton{groupString}{extension}"
+            originalPrev = directory / f"PreviousChapterButton{groupString}{extension}"
+
+            newNext = directory / f"NextChapterButton{sortedSuffix}{extension}"
+            newPrev = directory / f"PreviousChapterButton{sortedSuffix}{extension}"
+
+            if originalNext != newNext:
+                originalNext.rename(newNext)
+                
+            if originalPrev != newPrev:
+                originalPrev.rename(newPrev)
+
+            return
+
+        os.chdir(pathObj)
+        files = os.listdir('.')
+
+        unprocessedFiles = [
+            file for file in files 
+            if os.path.isfile(file) 
+            and not file.startswith("NextChapterButton") 
+            and not file.startswith("PreviousChapterButton")
+        ]
+
+        unprocessedFiles.sort(key=os.path.getmtime)
+
+        if not unprocessedFiles:
+            return
+
+        for i in range(0, len(unprocessedFiles), 2):
+            currentFiles = os.listdir('.')
+            
+            nextFile = unprocessedFiles[i]
+            extension = os.path.splitext(nextFile)[1]
+            newNameNextFile = getNextGroupFilename("NextChapterButton", translatorGroup, extension, currentFiles)
+            os.rename(nextFile, newNameNextFile)
+
+            if i + 1 < len(unprocessedFiles):
+                currentFiles = os.listdir('.')
+                previousFile = unprocessedFiles[i + 1]
+                extension = os.path.splitext(previousFile)[1]
+                newNamePreviousFile = getNextGroupFilename("PreviousChapterButton", translatorGroup, extension, currentFiles)
+                os.rename(previousFile, newNamePreviousFile)
+            else:
+                pyautogui.alert("Image Next/Previous Button à rajouter")
+                os._exit(0)
+                
 def getNextGroupFilename(prefix: str, translatorGroup: str, extension: str, existingFiles: list) -> str:
     """
     Generates filenames like:
@@ -170,83 +246,6 @@ def getNextGroupFilename(prefix: str, translatorGroup: str, extension: str, exis
         nextCounter = 2
 
     return f"{prefix}_{translatorGroup}{nextCounter}{extension}"
-
-
-def renameChapterButtons(ultimatePath: Path, translatorGroup: str):
-    if not translatorGroup:
-        return
-    
-    pathObj = Path(ultimatePath)
-
-    if not pathObj.exists():
-        raise FileNotFoundError("Je n'ai pas l'air de trouver le fichier ou le dossier nécessaire")
-
-    if pathObj.is_file():
-        directory = pathObj.parent
-        fileStem = pathObj.stem
-        extension = pathObj.suffix
-
-        if fileStem.startswith("NextChapterButton"):
-            groupString = fileStem[len("NextChapterButton") : ]
-
-        elif fileStem.startswith("PreviousChapterButton"):
-            groupString = fileStem[len("PreviousChapterButton") : ]
-
-        else:
-            return
-
-        rawParts = [group for group in groupString.split("_") if group]
-        groups = set(rawParts)
-        groups.add(translatorGroup)
-        
-        sortedSuffix = "_" + "_".join(sorted(list(groups)))
-
-        originalNext = directory / f"NextChapterButton{groupString}{extension}"
-        originalPrev = directory / f"PreviousChapterButton{groupString}{extension}"
-
-        newNext = directory / f"NextChapterButton{sortedSuffix}{extension}"
-        newPrev = directory / f"PreviousChapterButton{sortedSuffix}{extension}"
-
-        if originalNext != newNext:
-            originalNext.rename(newNext)
-            
-        if originalPrev != newPrev:
-            originalPrev.rename(newPrev)
-
-        return
-
-    os.chdir(pathObj)
-    files = os.listdir('.')
-
-    unprocessedFiles = [
-        file for file in files 
-        if os.path.isfile(file) 
-        and not file.startswith("NextChapterButton") 
-        and not file.startswith("PreviousChapterButton")
-    ]
-
-    unprocessedFiles.sort(key=os.path.getmtime)
-
-    if not unprocessedFiles:
-        return
-
-    for i in range(0, len(unprocessedFiles), 2):
-        currentFiles = os.listdir('.')
-        
-        nextFile = unprocessedFiles[i]
-        extension = os.path.splitext(nextFile)[1]
-        newNameNextFile = getNextGroupFilename("NextChapterButton", translatorGroup, extension, currentFiles)
-        os.rename(nextFile, newNameNextFile)
-
-        if i + 1 < len(unprocessedFiles):
-            currentFiles = os.listdir('.')
-            previousFile = unprocessedFiles[i + 1]
-            extension = os.path.splitext(previousFile)[1]
-            newNamePreviousFile = getNextGroupFilename("PreviousChapterButton", translatorGroup, extension, currentFiles)
-            os.rename(previousFile, newNamePreviousFile)
-        else:
-            pyautogui.alert("Image Next/Previous Button à rajouter")
-            os._exit(0)
 
 if __name__ == "__main__":
     print("Ce programme doit être lancé avec le fichier NavigationHtml.py")
