@@ -4,9 +4,9 @@ import pygetwindow as gw
 import time
 import pyautogui
 import psutil
-from tkinter import ttk
 
 from constants import Constante
+from DirectoryManagement import Directory
 
 class Display:
 
@@ -115,7 +115,7 @@ class Display:
 
         Constante.displayHandler.clear()
 
-    def showTranslatorGroupsList():
+    def showTranslatorsGroupList():
         print("\nFirst research method - First case")
         print("; ".join(Constante.translatorsGroup[0]),"\n")
 
@@ -128,7 +128,7 @@ class Display:
         print("To skip")
         print("; ".join(Constante.translatorsGroup[3]),"\n")
 
-    def changeTranslatorGroupsList():
+    def changeTranslatorsGroupList():
         print("\033[H\033[J", end="")
         flushStdin()
         choice = input("Voulez-vous ajouter (a)/ enlever (r)/ changer (c) un groupe de traduction ?"
@@ -156,7 +156,7 @@ class Display:
                 index = input("Entrée invalide. Tapez un nouveau chiffre (1-4) : ")
                 intIndex = int(index)
 
-            Constante.updateTranslatorsGroup(translatorGroup, intIndex - 1, Constante.ADD)
+            Directory.updateTranslatorsGroupDoc(translatorGroup, intIndex - 1, Constante.ADD)
 
         elif choice == 'r':
             index = input("\nDans quelle méthode de recherche voulez-vous retirer le groupe de traduction ?"
@@ -182,7 +182,7 @@ class Display:
                 groupChoice = input("Entrée invalide."
                                    f"Tapez un nouveau chiffre (1-{len(Constante.translatorsGroup[intIndex - 1])}) : ")
                 
-            Constante.updateTranslatorsGroup(Constante.translatorsGroup[intIndex - 1][int(groupChoice) - 1], intIndex - 1, Constante.REMOVE)
+            Directory.updateTranslatorsGroupDoc(Constante.translatorsGroup[intIndex - 1][int(groupChoice) - 1], intIndex - 1, Constante.REMOVE)
 
         elif choice == 'c':
             index = input("\nDans quelle méthode de recherche voulez-vous retirer le groupe de traduction ?"
@@ -223,16 +223,16 @@ class Display:
                 intGroupChoice = int(groupChoice)
                 
             translatorGroup = Constante.translatorsGroup[intIndex - 1][intGroupChoice - 1]
-            Constante.updateTranslatorsGroup(translatorGroup, intIndex - 1, Constante.REMOVE)
-            Constante.updateTranslatorsGroup(translatorGroup, intOtherIndex - 1, Constante.ADD)
+            Directory.updateTranslatorsGroupDoc(translatorGroup, intIndex - 1, Constante.REMOVE)
+            Directory.updateTranslatorsGroupDoc(translatorGroup, intOtherIndex - 1, Constante.ADD)
 
         else:
-            Display.changeTranslatorGroupsList()
+            Display.changeTranslatorsGroupList()
             return False
 
         Display.pauseStateMessage()
         print("\nNouvelle liste de groupe de traduction\n")
-        Display.showTranslatorGroupsList()
+        Display.showTranslatorsGroupList()
         
         return False
 

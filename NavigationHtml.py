@@ -1,18 +1,26 @@
 import keyboard
 from pynput.keyboard import Key, KeyCode, Listener
 import threading
-import time
+from watchdog.observers import Observer
 
 from DisplayManagement import Display
 from UrlManagement import Url
 from constants import Constante
+from DirectoryManagement import Directory, DirectoryWatcherHandler
 
 class Navigation:
+
     def __init__(self):
+        Directory.InitVar()
         Constante.InitVar()
         Url.InitVar()
         Display.InitVar()
         Display.startMessage()
+
+        self.eventHandler = DirectoryWatcherHandler()
+        self.observer = Observer()
+        self.observer.schedule(self.eventHandler, path=Directory.subdirectory, recursive=False)
+
         self.stopEvent = threading.Event()
         self.pauseHandler = threading.Event()
 
@@ -96,8 +104,12 @@ class Navigation:
         PauseResumeListener = threading.Thread(target=self.PauseResume, daemon=True)
         globalListener.start()
         PauseResumeListener.start()
+        self.observer.start()
+
         HotkeyInterruption()
         WindowChangeState()
+
+        self.observer.join()
         globalListener.join()
 
 def HotkeyInterruption():

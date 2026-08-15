@@ -11,8 +11,10 @@ from urllib.parse import urljoin
 
 from constants import Constante
 from DisplayManagement import Display
+from DirectoryManagement import Directory
 
 class Url:
+
     methods = [
         lambda url, index, direction: Url.searchAndGoToPage(url, index, direction),
         lambda url, direction: Url.searchAndGoToPage_2ndMethod(url, direction)
@@ -175,6 +177,7 @@ class Url:
 
                 if urlToTest:
                     index += 1
+                    Url.testImage(url, direction)
                     Display.showStatusMessage("Image a rajoutée")
                     Url.tentativesTest = 0
 
@@ -184,7 +187,8 @@ class Url:
             else:
                 Url.tentativesTest = 0
 
-        Constante.updateTranslatorsGroup(translatorGroup, index, Constante.ADD)
+        Directory.updateTranslatorsGroupDoc(translatorGroup, index, Constante.ADD)
+        Constante.reloadTranslatorsGroupList()
         Url.tentativesTest += 1
 
         Constante.testHandler.clear()
@@ -248,16 +252,28 @@ class Url:
         if not newUrl:
             return True
 
-        response = Url.getUrl(newUrl)
+        responseNewUrl = Url.getUrl(newUrl)
 
-        if response.status_code in (500, 404, 403):
+        if responseNewUrl.status_code in (500, 404, 403):
             return True
+
+        response = Url.getUrl(url)
+
+        if response.text == responseNewUrl.text:
+            return True
+
+        else:
+            responseSoupText = BeautifulSoup(response.text, "lxml").get_text(strip=True)
+            responseNewUrlSoupText = BeautifulSoup(responseNewUrl.text, "lxml").get_text(strip=True)
+
+            if responseSoupText == responseNewUrlSoupText:
+                return True
 
         toCheck = any(s.isdigit() for s in newUrl.split("/")[ : -1])
                 
         if toCheck:
 
-            soup = BeautifulSoup(response.text, "lxml")
+            soup = BeautifulSoup(responseNewUrl.text, "lxml")
 
             if len(soup.text) < Constante.BLOG_TEXT_THRESHOLD:
 
@@ -308,6 +324,9 @@ class Url:
         
         return True
 
+    def testImage(url : str, direction : str):
+        pass
+
     def searchAndGoToPage(url : str, index : int, direction="next"):
         """
         Gère la navigation entre les pages :
@@ -355,8 +374,8 @@ class Url:
                         translatorFound = match.group(0)
                         i = Url.mapping[translatorFound]
 
-                        Constante.updateTranslatorsGroup(translatorFound, i, Constante.REMOVE)
-                        Constante.updateTranslatorsGroup(translatorFound, i + 1, Constante.ADD)
+                        Directory.updateTranslatorsGroupDoc(translatorFound, i, Constante.REMOVE)
+                        Directory.updateTranslatorsGroupDoc(translatorFound, i + 1, Constante.ADD)
                         Url.goToPage(url, direction)
 
                     else:
