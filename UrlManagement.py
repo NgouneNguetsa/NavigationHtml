@@ -116,11 +116,11 @@ class Url:
     def mouseMove(x, y):
         pyautogui.click(x, y)
 
-        pyautogui.moveTo(Constante.halfScreenWidth, Constante.halfScreenHeight)            
+        pyautogui.moveTo(Constante.screenWidth, y)
         time.sleep(2)
 
         pyautogui.leftClick()
-        pyautogui.moveTo(Constante.screenWidth, y)
+        pyautogui.hotkey('shift' ,'space')
 
     @testScreenCorners
     def mouseMoveAlternative(x, y):
