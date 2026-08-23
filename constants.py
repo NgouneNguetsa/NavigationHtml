@@ -36,6 +36,7 @@ class Constante:
     halfScreenHeight = screenHeight / 2
     halfScreenWidth = screenWidth / 2
     minScreenHeight = 0.35 * screenHeight
+    limitScreenWidth = 0.95 * screenWidth
 
     def EnableGlobalListener():
         Constante.globalListenerDisabled.clear()
