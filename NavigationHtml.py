@@ -28,6 +28,7 @@ class Navigation:
     def GlobalListener(self,key):
         if Constante.interruptHandler.is_set():
             Display.showInterruptMessage()
+
             return False
         
         elif Constante.globalListenerDisabled.is_set():
@@ -36,6 +37,7 @@ class Navigation:
         if key == Key.esc:
             self.stopEvent.set()
             Display.stopMessage()
+
             return False
         
         elif key == Key.right:
@@ -51,9 +53,7 @@ class Navigation:
     # La fonction est responsable de la pause/remise en marche du programme
     def PauseResume(self):
         while not Constante.interruptHandler.is_set() and not self.stopEvent.is_set():
-
             if Constante.pauseResumeListenerDisabled.is_set() or Constante.testHandler.is_set() or Constante.displayHandler.is_set():
-
                 if self.stopEvent.wait(0.3):
                     break
 
@@ -61,9 +61,11 @@ class Navigation:
 
             if not Display.isBrowserWindow() and not self.pauseHandler.is_set():
                 self.pauseHandler.set()
+
                 Constante.DisableGlobalListener()
                 Display.showStatusMessage("Programme en pause")
                 Display.pauseStateMessage()
+
                 self.specialListener = Listener(on_press=self.SpecialListener)
                 self.specialListener.start()
 
@@ -75,8 +77,10 @@ class Navigation:
 
             elif Display.isBrowserWindow() and self.pauseHandler.is_set():
                 self.pauseHandler.clear()
+                
                 self.specialListener.stop()
                 self.specialListener.join()
+
                 Display.stateMessage()
                 Constante.EnableGlobalListener()
                 HotkeyInterruption()
@@ -101,24 +105,22 @@ class Navigation:
 
     def Run(self):
         globalListener = Listener(on_press=self.GlobalListener)
-        PauseResumeListener = threading.Thread(target=self.PauseResume, daemon=True)
-
         globalListener.start()
-        PauseResumeListener.start()
+
+        threading.Thread(target=self.PauseResume, daemon=True).start()
+
         self.observer.start()
 
         HotkeyInterruption()
         WindowChangeState()
 
         while not self.stopEvent.is_set() and not Constante.interruptHandler.is_set():
-
             if self.stopEvent.wait(1):
                 break
 
         self.observer.stop()
         self.observer.join()
 
-        globalListener.stop()
         globalListener.join()
 
         try:
@@ -128,7 +130,6 @@ class Navigation:
             pass
 
 def HotkeyInterruption():
-
     try:
         keyboard.remove_hotkey('ctrl + c')
 
@@ -142,7 +143,6 @@ def WindowChangeState():
 
 def onAltEvent(event):
     if 'alt' in event.name:
-
         if event.event_type == keyboard.KEY_DOWN:
             Constante.DisablePauseResumeListener()
 

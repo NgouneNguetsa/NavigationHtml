@@ -63,7 +63,6 @@ class Url:
 
     def getLastSegment(url : str):
         """Retourne la dernière partie de l'URL après le dernier /"""
-        
         return url.rstrip("/").split("/")[-1] 
 
     def modifyChapterNumber(prefix : str, chapterNumber : int, suffix : str, extension : str, direction : str):
@@ -76,6 +75,7 @@ class Url:
             return ""  # On ne traite pas ce cas si le numéro devient invalide
 
         newSegment = f"{prefix}{newNumber}{suffix}{extension}"
+
         return newSegment
 
     def applyRegexAndModify(url : str, pattern : str, groups, direction : str):
@@ -104,6 +104,13 @@ class Url:
         base = url[: -len(segment)]
 
         return urljoin(base, newSegment)
+
+    def generateUrls(startUrl: str, direction: str):
+        currentUrl = startUrl
+
+        for _ in range(Url.tentatives):
+            currentUrl = Url.modifyDate(currentUrl, direction)
+            yield currentUrl
 
     # --- Tous les handles appellent applyRegexAndModify avec un pattern différent ---
     def handlePrefixNumberSuffixExtension(url : str, direction : str) -> str:
@@ -140,10 +147,11 @@ class Url:
 
         except requests.exceptions.RequestException:
             Display.showMajorErrorMessage()
+
             return Url.getUrl(url)
 
         return response
-    
+
     def testUrl(url : str, direction : str):
         Constante.testHandler.set()
 
@@ -155,6 +163,7 @@ class Url:
         if translatorGroup.count(".") > 1:
             indexFirstPoint = translatorGroup.index(".")
             indexSecondPoint = translatorGroup.index(".", indexFirstPoint + 1)
+
             translatorGroup = translatorGroup[indexFirstPoint + 1 : indexSecondPoint]
 
         else:
@@ -200,12 +209,11 @@ class Url:
 
         Constante.testHandler.clear()
 
-    def createNewUrl(url : str, direction : str):
+    def modifyDate(url : str, direction : str):
         urlParser = url.rstrip("/").split("/")
         dateParser = [element for element in urlParser[ : -1] if element.isdigit()]
 
         if len(dateParser) == 2:
-
             if int(dateParser[1]) < int(dateParser[0]):
                 dateParser[1] = str(int(dateParser[1]) + 1) if direction == "next" else str(int(dateParser[1]) - 1)
                 dateParser[1] = '0'+ dateParser[1] if int(dateParser[1]) < 10 else dateParser[1]
@@ -234,24 +242,22 @@ class Url:
             
         elif len(dateParser) == 3:
             dateString = "".join(dateParser)
-
             day = timedelta(days=1)
 
             dateObject = date.fromisoformat(dateString)
             dateObject = dateObject + day if direction == "next" else dateObject - day
-            dateParser = dateObject.isoformat().split("-")
 
+            dateParser = dateObject.isoformat().split("-")
             dateParser.append('/')
 
         index = next((i for i, value in enumerate(urlParser) if value.isdigit()), None)
 
         base = "/".join(urlParser[ : index + 1])
-
         dateString = "/".join(dateParser)
-
         suffixe = urlParser[-1]
+
         return urljoin(urljoin(base,dateString), suffixe)
-    
+
     def testDirect(url : str, direction : str):
         """Le test est effectué à l'aide de la logique interne au programme"""
         newUrl = Url.handlePrefixNumberSuffixExtension(url, direction)
@@ -283,15 +289,13 @@ class Url:
             soup = BeautifulSoup(responseNewUrl.text, "lxml")
 
             if len(soup.text) < Constante.BLOG_TEXT_THRESHOLD:
-
-                for _ in range(Url.tentatives):
-                    newUrl = Url.createNewUrl(newUrl, direction)
-                    thread = threading.Thread(target=Url.searchInMultithreads, args=(newUrl,))
-                    Url.threadsList.append(thread)
-                    thread.start()
-
+                for newUrl in Url.generateUrls(newUrl, direction):
                     if Url.urlFound.is_set():
                         break
+
+                    thread = threading.Thread(target=Url.searchInMultithreads, args=(newUrl,), daemon=True)
+                    Url.threadsList.append(thread)
+                    thread.start()
 
                 for thread in Url.threadsList:
                     thread.join()
@@ -299,9 +303,11 @@ class Url:
                 if Url.urlFound.is_set():
                     Url.urlFound.clear()
                     Url.resetThreadsList()
+
                     return False
                 
                 Url.resetThreadsList()
+
                 return True
 
         pyperclip.copy(newUrl)
@@ -317,16 +323,15 @@ class Url:
     def testIndirect(url : str, direction : str):
         """Le test est effectué à l'aide du lien url généré"""
         startUrl = Url.handlePrefixNumber(url, direction)
-
         response = Url.getUrl(startUrl)
-        
+
         soup = BeautifulSoup(response.text, "lxml")
-        
         newPageLink = next((a["href"] for a in soup.find_all("a", href=True) if startUrl in a["href"]), "")
 
         if newPageLink != "":
             pyperclip.copy(newPageLink)
             Url.copyPaste(True)
+
             return False
         
         return True
@@ -335,24 +340,22 @@ class Url:
         screen = pyautogui.screenshot(region=Constante.screenRegion)
 
         if direction == "next":
-
             for imagePath in Constante.imagesNextButton:
+                if Url.imageFound.is_set():
+                    break
+
                 thread = threading.Thread(target=Url.searchInMultithreads_2ndMethod, args=(url, screen, imagePath), daemon=True)
                 Url.threadsList.append(thread)
                 thread.start()
-
-                if Url.imageFound.is_set():
-                    break
 
         elif direction == "last":
-
             for imagePath in Constante.imagesPrevButton:
+                if Url.imageFound.is_set():
+                    break
+
                 thread = threading.Thread(target=Url.searchInMultithreads_2ndMethod, args=(url, screen, imagePath), daemon=True)
                 Url.threadsList.append(thread)
                 thread.start()
-
-                if Url.imageFound.is_set():
-                    break
 
         for thread in Url.threadsList:
             thread.join()
@@ -360,6 +363,7 @@ class Url:
         if Url.imageFound.is_set():
             Url.imageFound.clear()
             Url.resetThreadsList()
+
             return False
         
         Url.resetThreadsList()
@@ -384,12 +388,11 @@ class Url:
                 Display.showStatusMessage("Le chapitre -1 n'existe pas") if direction == "last" else Display.showStatusMessage("Si tu es rentré là, une erreur est survenue dans le code")
                 return
             
-            response = Url.getUrl(url)
-            
+            response = Url.getUrl(url)            
             soup = BeautifulSoup(response.text, "lxml")
-            
+
             newPageLink = next((a["href"] for a in soup.find_all("a", href=True) if startUrl in a["href"]), "")
- 
+
             hashIndex = newPageLink.find("#")
 
             if hashIndex != -1:
@@ -400,14 +403,11 @@ class Url:
                 Url.copyPaste(True)
 
             else:
-
                 if response.ok:
-
                     if not Url.searchAndGoToPageAlternative(startUrl, direction):
                         Display.showStatusMessage("Il n'y a pas de lien présent dans la page")
 
                 else:
-
                     if response.status_code == 403:
                         match = Url.globalRegex.search(url)
                         translatorFound = match.group(0)
@@ -434,19 +434,16 @@ class Url:
                     
             if toCheck:
                 response = Url.getUrl(newUrl)
-
                 soup = BeautifulSoup(response.text, "lxml")
 
                 if len(soup.text) < Constante.BLOG_TEXT_THRESHOLD:
+                    for newUrl in Url.generateUrls(newUrl, direction):
+                        if Url.urlFound.is_set():
+                            break
 
-                    for _ in range(Url.tentatives):
-                        newUrl = Url.createNewUrl(newUrl, direction)
                         thread = threading.Thread(target=Url.searchInMultithreads, args=(newUrl,), daemon=True)
                         Url.threadsList.append(thread)
                         thread.start()
-
-                        if Url.urlFound.is_set():
-                            break
 
                     for thread in Url.threadsList:
                         thread.join()
@@ -472,10 +469,8 @@ class Url:
                 Url.mouseMove(x, y)
 
     def searchAndGoToPageAlternative(url : str, direction : str):
-        
         if "goldennovel" in url:
             urlParser = url.split("/")
-
             index = next((i for i, value in enumerate(urlParser) if value == "index.php"), None)
 
             urlParser.insert(index + 1, "category")
@@ -484,9 +479,7 @@ class Url:
             response = Url.getUrl(urlToCheck)
 
             soup = BeautifulSoup(response.text, "lxml")
-            
             newPageLink = next((a["href"] for a in soup.find_all("a", href=True) if url in a["href"]), "")
- 
             hashIndex = newPageLink.find("#")
 
             if hashIndex != -1:
@@ -495,19 +488,20 @@ class Url:
             if newPageLink != "":
                 pyperclip.copy(newPageLink)
                 Url.copyPaste(True)
+
                 return True
 
         else:
             for translatorGroup in ["weebsread"]:
                 if translatorGroup in url:
                     Url.searchAndGoToPage_2ndMethod(url, direction)
+
                     return True
 
         return False
 
     def searchInMultithreads(url):
         response = Url.getUrl(url)
-
         soup = BeautifulSoup(response.text, "lxml")
 
         if len(soup.text) < Constante.BLOG_TEXT_THRESHOLD:
@@ -522,24 +516,22 @@ class Url:
         screen = pyautogui.screenshot(region=Constante.screenRegion)
 
         if direction == "next":
-
             for imagePath in Constante.imagesNextButton:
+                if Url.imageFound.is_set():
+                    break
+
                 thread = threading.Thread(target=Url.searchInMultithreads_2ndMethod, args=(url, screen, imagePath), daemon=True)
                 Url.threadsList.append(thread)
                 thread.start()
-
-                if Url.imageFound.is_set():
-                    break
 
         elif direction == "last":
-
             for imagePath in Constante.imagesPrevButton:
+                if Url.imageFound.is_set():
+                    break
+
                 thread = threading.Thread(target=Url.searchInMultithreads_2ndMethod, args=(url, screen, imagePath), daemon=True)
                 Url.threadsList.append(thread)
                 thread.start()
-
-                if Url.imageFound.is_set():
-                    break
 
         for thread in Url.threadsList:
             thread.join()
@@ -550,11 +542,10 @@ class Url:
             return
         
         Url.resetThreadsList()
-        
-    def searchInMultithreads_2ndMethod(url : str, screen, imagePath):
-        specificGroup = True if "nulltranslation" in url else False
 
+    def searchInMultithreads_2ndMethod(url : str, screen, imagePath):
         button = None
+        specificGroup = True if "nulltranslation" in url else False
 
         try:
             button = pyautogui.locate(imagePath, screen, confidence=0.831)

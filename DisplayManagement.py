@@ -27,7 +27,6 @@ class Display:
             process_name = Display.pid_cache[pid]
 
         else:
-
             try:
                 process = psutil.Process(pid)
                 process_name = process.name().lower()
@@ -172,6 +171,7 @@ class Display:
                 intIndex = int(index)
 
             print("\n")
+
             for i in range(len(Constante.translatorsGroup[intIndex - 1])):
                 print(f"{i + 1} : {Constante.translatorsGroup[intIndex - 1][i]}")
 
@@ -200,8 +200,10 @@ class Display:
             matchingPairs = [(key, value) for key, value in methodDict.items() if key != intIndex]
             
             print("\nDans quelle méthode de recherche voulez-vous le mettre ?")
+
             for key, value in matchingPairs:
                 print(f"{value} ({key})")
+
             otherIndex = input("Tapez un chiffre (1-4) : ")
             intOtherIndex = int(otherIndex)
 
@@ -210,6 +212,7 @@ class Display:
                 intOtherIndex = int(otherIndex)
 
             print("\n")
+
             for i in range(len(Constante.translatorsGroup[intIndex - 1])):
                 print(f"{i + 1} : {Constante.translatorsGroup[intIndex - 1][i]}")
 
@@ -228,6 +231,7 @@ class Display:
 
         else:
             Display.changeTranslatorsGroupList()
+            
             return False
 
         Display.pauseStateMessage()
@@ -243,6 +247,7 @@ def getWindowInfo(window):
         hwnd = window._hWnd
         pid = ctypes.c_ulong()
         Constante.user32.GetWindowThreadProcessId(hwnd, ctypes.byref(pid))
+
         return {
             "titre": window.title,
             "handle": hwnd,

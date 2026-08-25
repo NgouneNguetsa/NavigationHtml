@@ -29,7 +29,6 @@ class Directory:
             lines = file.read().splitlines()
 
         headerIndices = [i for i, line in enumerate(lines) if line.strip().startswith("#")]
-
         SECTION_INDEX = 2
 
         if len(headerIndices) <= SECTION_INDEX:
@@ -38,15 +37,15 @@ class Directory:
         targetHeaderIndex = headerIndices[SECTION_INDEX]
         
         nextHeaderIndex = len(lines)
-        for headerIndex in headerIndices:
 
+        for headerIndex in headerIndices:
             if headerIndex > targetHeaderIndex:
                 nextHeaderIndex = headerIndex
                 break
 
         sectionGroups = []
-        for line in lines[targetHeaderIndex + 1 : nextHeaderIndex]:
 
+        for line in lines[targetHeaderIndex + 1 : nextHeaderIndex]:
             if line.strip() and not line.strip().startswith("#"):
                 items = [item.strip() for item in line.split(",") if item.strip()]
                 sectionGroups.extend(items)
@@ -59,14 +58,11 @@ class Directory:
 
     def processSingleMissingGroup(directoryPath: Path):
         directoryPath = Path(directoryPath)
-        
         sectionGroups = Directory.getLatestGroup()
-
         existingFilesStr = " ".join(os.listdir(directoryPath))
-        
         missingGroup = None
-        for group in sectionGroups:
 
+        for group in sectionGroups:
             if f"_{group}" not in existingFilesStr:
                 missingGroup = group
                 break
@@ -94,7 +90,6 @@ class Directory:
         nextHeaderIndex = len(lines)
 
         for headerIndex in headerIndices:
-
             if headerIndex > targetHeaderIndex:
                 nextHeaderIndex = headerIndex
                 break
@@ -103,7 +98,6 @@ class Directory:
         existingGroups = []
 
         for line in sectionLines:
-
             if line.strip() and not line.strip().startswith("#"):
                 items = [item.strip() for item in line.split(",") if item.strip()]
                 existingGroups.extend(items)
@@ -119,12 +113,10 @@ class Directory:
             return
 
         existingGroups.sort(key=len)
-
         formattedLines = []
         currentLine = ""
 
         for group in existingGroups:
-
             if not currentLine:
                 currentLine = group
 
@@ -170,7 +162,6 @@ class Directory:
             rawParts = [group for group in groupString.split("_") if group]
             groups = set(rawParts)
             groups.add(translatorGroup)
-            
             sortedSuffix = "_" + "_".join(sorted(list(groups)))
 
             originalNext = directory / f"NextChapterButton{groupString}{extension}"
@@ -204,18 +195,22 @@ class Directory:
 
         for i in range(0, len(unprocessedFiles), 2):
             currentFiles = os.listdir('.')
-            
             nextFile = unprocessedFiles[i]
             extension = os.path.splitext(nextFile)[1]
+
             newNameNextFile = getNextGroupFilename("NextChapterButton", translatorGroup, extension, currentFiles)
+
             os.rename(nextFile, newNameNextFile)
 
             if i + 1 < len(unprocessedFiles):
                 currentFiles = os.listdir('.')
                 previousFile = unprocessedFiles[i + 1]
                 extension = os.path.splitext(previousFile)[1]
+
                 newNamePreviousFile = getNextGroupFilename("PreviousChapterButton", translatorGroup, extension, currentFiles)
+
                 os.rename(previousFile, newNamePreviousFile)
+
             else:
                 pyautogui.alert("Image Next/Previous Button à rajouter")
                 os._exit(0)
@@ -230,6 +225,7 @@ def getNextGroupFilename(prefix: str, translatorGroup: str, extension: str, exis
     pattern = re.compile(rf"^{re.escape(prefix)}_{re.escape(translatorGroup)}(\d*)")
     
     usedCounters = []
+    
     for f in existingFiles:
         match = pattern.match(f)
 
