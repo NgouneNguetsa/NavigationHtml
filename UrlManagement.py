@@ -8,6 +8,8 @@ from datetime import date, timedelta
 import threading
 import keyboard
 from urllib.parse import urljoin
+from PIL import Image
+from os.path import join
 
 from constants import Constante
 from DisplayManagement import Display
@@ -134,7 +136,19 @@ class Url:
         pyautogui.click(x, y)
 
         pyautogui.moveTo(Constante.halfScreenWidth, Constante.minScreenHeight)            
-        time.sleep(2)
+
+        nullCheckImage = Image.open(join(Directory.folder, "nulltranslation_check.png"))
+
+        time.sleep(1)
+        while True:
+            try:
+                pyautogui.locateOnScreen(nullCheckImage, region=Constante.screenRegion, confidence=0.99)
+                break
+                    
+            except pyautogui.ImageNotFoundException:
+                time.sleep(0.5)
+
+        nullCheckImage.close()
 
         pyautogui.leftClick()
         pyautogui.moveTo(Constante.screenWidth, y)

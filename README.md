@@ -23,6 +23,9 @@ Cela permet de récupérer les librairies nécessaires au bon fonctionnement du 
 /!\ Pour rajouter une nouvelle paire d'images, commencer par ajouter le Next bouton avant le Previous bouton.\
     La fonction qui renomme les fichiers les traitent de façon bête et méchante.
 
+/!\ Toutes les images ont été réalisées à partir du mode sombre natif des sites web.\
+    Si ce programme est utilisé sur des pages en mode clair, je ne suis pas sûr du résultat.
+
 # Exemple d'application (sur Windows)
 ```bash
 & py .\NavigationHtml\NavigationHtml.py
