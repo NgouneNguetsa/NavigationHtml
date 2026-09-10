@@ -334,7 +334,7 @@ class Url:
 
         if ".com" not in newUrl:
             _, y = pyautogui.position()
-            x = 0.989*Constante.screenWidth
+            x = Constante.minScreenWidth
             Url.mouseMove(x, y)
 
         return False
@@ -342,7 +342,7 @@ class Url:
     def testIndirect(url : str, direction : str):
         """Le test est effectué à l'aide du lien url généré"""
         startUrl = Url.handlePrefixNumber(url, direction)
-        response = Url.getUrl(startUrl)
+        response = Url.getUrl(url)
 
         soup = BeautifulSoup(response.text, "lxml")
         newPageLink = next((a["href"] for a in soup.find_all("a", href=True) if startUrl in a["href"]), "")
@@ -484,7 +484,7 @@ class Url:
 
             if ".com" not in newUrl:
                 _, y = pyautogui.position()
-                x = Constante.minScreenWidth[0]
+                x = Constante.minScreenWidth
                 Url.mouseMove(x, y)
 
     def searchAndGoToPageAlternative(url : str, direction : str):

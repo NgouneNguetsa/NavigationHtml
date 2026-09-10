@@ -1,12 +1,12 @@
 # First research method - First case
-kaystls,readhive,nobadnovel,mainichitl,lorenovels,goblinslate,goldennovel
+kaystls,readhive,akknovel,nobadnovel,mainichitl,lorenovels,goblinslate,goldennovel
 
 # First research method - Second case
 zkytl,otakutl,weebsread,breaknovel,hostednovel,tinytranslation,shanghaifantasy,dreamy-translations,dragonholictranslations
 shiningnoveltranslations
 
 # Second research method
-42hag,curspe,konkon,dasuitl,readrift,kuupress,akknovel,foxaholic,skynovelvault,botitranslation,shmtranslations,nulltranslation
+42hag,curspe,konkon,dasuitl,readrift,kuupress,foxaholic,skynovelvault,botitranslation,shmtranslations,nulltranslation
 indratranslations
 
 # To skip

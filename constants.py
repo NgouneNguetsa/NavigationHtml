@@ -36,6 +36,7 @@ class Constante:
     screenYOffset = screenRegion[1]
     halfScreenHeight = screenHeight / 2
     halfScreenWidth = screenWidth / 2
+    minScreenWidth = 0.989 * screenWidth
     minScreenHeight = 0.35 * screenHeight
     limitScreenWidth = 0.95 * screenWidth
 
