@@ -15,6 +15,7 @@ class Constante:
     user32 = ctypes.windll.user32
     BLOG_TEXT_THRESHOLD = 2600 # Regarde si le blog a plus de 2600 caracteres avant de copier le lien
     ARBITRARY_LARGEST_CHAPTER = 2000 # Quand le programme test les liens, regarde si la valeur n'est pas supérieure à 2000 chapitres
+    ARBITRARY_SECONDS_BEFORE_DENYING_SEARCH = 10
     navigatorsList = ["chrome.exe", "firefox.exe", "msedge.exe", "opera.exe","brave.exe", "safari.exe"]
     translatorsGroup = []
     lastAddedTranslatorGroup = ""

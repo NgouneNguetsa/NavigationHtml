@@ -140,7 +140,10 @@ class Url:
         nullCheckImage = Image.open(join(Directory.folder, "nulltranslation_check.png"))
 
         time.sleep(1)
-        while True:
+
+        startTime = time.time()
+
+        while True or time.time() < (startTime + Constante.ARBITRARY_SECONDS_BEFORE_DENYING_SEARCH):
             try:
                 pyautogui.locateOnScreen(nullCheckImage, region=Constante.screenRegion, confidence=0.99)
                 break
@@ -150,7 +153,9 @@ class Url:
 
         nullCheckImage.close()
 
-        pyautogui.leftClick()
+        if time.time() < (startTime + Constante.ARBITRARY_SECONDS_BEFORE_DENYING_SEARCH):
+            pyautogui.leftClick()
+        
         pyautogui.moveTo(Constante.screenWidth, y)
 
     def getUrl(url : str) -> requests.Response:
