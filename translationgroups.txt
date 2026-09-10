@@ -1,13 +1,12 @@
 # First research method - First case
-kaystls,readhive,akknovel,nobadnovel,mainichitl,lorenovels,goblinslate,goldennovel
+curspe,kaystls,readhive,akknovel,nobadnovel,mainichitl,lorenovels,goblinslate,goldennovel
 
 # First research method - Second case
-zkytl,otakutl,weebsread,breaknovel,hostednovel,tinytranslation,shanghaifantasy,dreamy-translations,dragonholictranslations
+zkytl,42hag,otakutl,weebsread,breaknovel,hostednovel,tinytranslation,shanghaifantasy,dreamy-translations,dragonholictranslations
 shiningnoveltranslations
 
 # Second research method
-42hag,curspe,konkon,dasuitl,readrift,kuupress,foxaholic,skynovelvault,botitranslation,shmtranslations,nulltranslation
-indratranslations
+konkon,dasuitl,readrift,kuupress,foxaholic,skynovelvault,botitranslation,shmtranslations,nulltranslation,indratranslations
 
 # To skip
 f-w-o,google,patreon,firefox,woopread,mangadex,fenrirealm,novelshaven,novelupdates,brightnovels,lovelyblossoms,wuxiatranslate
