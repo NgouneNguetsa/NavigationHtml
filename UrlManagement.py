@@ -67,11 +67,15 @@ class Url:
         """Retourne la dernière partie de l'URL après le dernier /"""
         return url.rstrip("/").split("/")[-1] 
 
-    def modifyChapterNumber(parts : dict, lenSegment : int, direction : str):
+    def modifyChapterNumber(parts : dict, direction : str):
         """Modifie le numéro selon la direction (next/last) et reconstruit le segment"""
         # En fonction de la direction, on incrémente ou décrémente
 
-        chapterNumber = int(parts.get("number", '1'))
+        chapterNumber = parts.get("number", '1')
+
+        lenChapterSegment = len(chapterNumber)
+
+        chapterNumber = int(chapterNumber)
 
         newNumber = chapterNumber + 1 if direction == "next" else chapterNumber - 1
 
@@ -83,12 +87,8 @@ class Url:
         suffix = parts.get("suffix", "")
         extension = parts.get("extension", "")
 
-        if not prefix and not suffix and not extension:
-            missingZeros = lenSegment - len(str(newNumber)) if (lenSegment - len(str(newNumber))) >= 0 else 0
-            newSegment = f"{prefix}{missingZeros * '0'}{newNumber}{suffix}{extension}"
-
-        else:
-            newSegment = f"{prefix}{newNumber}{suffix}{extension}"
+        missingZeros = lenChapterSegment - len(str(newNumber)) if (lenChapterSegment - len(str(newNumber))) >= 0 else 0
+        newSegment = f"{prefix}{missingZeros * '0'}{newNumber}{suffix}{extension}"
 
         return newSegment
 
@@ -109,7 +109,7 @@ class Url:
         # Extraire les différentes parties capturées
         parts = {name: match.group(i + 1) if i < len(groups) else "" for i, name in enumerate(groups)}
 
-        newSegment = Url.modifyChapterNumber(parts, len(segment), direction)
+        newSegment = Url.modifyChapterNumber(parts, direction)
         
         if (not newSegment) or (int(parts["number"]) > Constante.ARBITRARY_LARGEST_CHAPTER):
             return ""
