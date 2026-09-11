@@ -88,6 +88,7 @@ class Url:
         extension = parts.get("extension", "")
 
         missingZeros = lenChapterSegment - len(str(newNumber)) if (lenChapterSegment - len(str(newNumber))) >= 0 else 0
+        
         newSegment = f"{prefix}{missingZeros * '0'}{newNumber}{suffix}{extension}"
 
         return newSegment
