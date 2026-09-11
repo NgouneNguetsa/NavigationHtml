@@ -83,8 +83,8 @@ class Url:
         suffix = parts.get("suffix", "")
         extension = parts.get("extension", "")
 
-        missingZeros = lenSegment - len(str(newNumber))
-        
+        missingZeros = lenSegment - len(str(newNumber)) if (lenSegment - len(str(newNumber))) >= 0 else 0
+
         newSegment = f"{prefix}{missingZeros * '0'}{newNumber}{suffix}{extension}"
 
         return newSegment
